@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Avaliação Nutricional (MAN) — Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question p.qtext{font-size:16px;margin:4px 0 14px;color:var(--ink);}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  label.opt.blank{border-style:dashed;}
+  label.opt.blank.selected{background:#8a8578;border-color:#8a8578;}
+
+  .measures{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px;}
+  .measures .field label{display:block;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .measures input{width:100%;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;}
+  @media (max-width:480px){.measures{grid-template-columns:1fr;}}
+  .toggle-cp{font-size:12.5px;color:var(--gold);cursor:pointer;text-decoration:underline;margin-top:8px;display:inline-block;}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Deméter</div>
+  <h1>Mini Avaliação Nutricional</h1>
+  <p>MAN (forma reduzida) — triagem de risco nutricional em 6 itens</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.
+  </div>
+
+  <div class="blank-note">
+    Pense nos últimos 3 meses para a maioria das perguntas. Se não souber o peso, altura ou circunferência da panturrilha, deixe o campo em branco — o resultado ainda pode ser calculado com os demais itens, com uma observação sobre o que ficou incompleto.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <select id="filledby">
+        <option value="">Selecione</option>
+        <option value="Paciente">O próprio paciente</option>
+        <option value="Cuidador/familiar">Cuidador ou familiar</option>
+        <option value="Profissional de saúde">Profissional de saúde</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Triagem nutricional</div>
+
+  <div id="questions"></div>
+
+  <div class="question">
+    <div class="qnum">Item 6 de 6</div>
+    <p class="qtext">Índice de Massa Corporal (informe peso e altura) — se não souber, use a circunferência da panturrilha</p>
+    <div class="measures">
+      <div class="field">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" id="peso" step="0.1" placeholder="Ex.: 62.0">
+      </div>
+      <div class="field">
+        <label for="altura">Altura (m)</label>
+        <input type="number" id="altura" step="0.01" placeholder="Ex.: 1.60">
+      </div>
+    </div>
+    <span class="toggle-cp" onclick="document.getElementById('cpField').style.display='block'; this.style.display='none';">Não sei o peso/altura — usar circunferência da panturrilha</span>
+    <div class="measures" id="cpField" style="display:none;margin-top:10px;">
+      <div class="field">
+        <label for="cp">Circunferência da panturrilha (cm)</label>
+        <input type="number" id="cp" step="0.1" placeholder="Ex.: 30">
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="category" id="category">–</div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const questions = [
+  {text:"Nos últimos 3 meses, houve diminuição da quantidade de comida que consegue comer, por perda de apetite, problemas digestivos ou dificuldade para mastigar/engolir?",
+   opts:["Diminuição importante","Diminuição moderada","Sem diminuição"]},
+  {text:"Perdeu peso nos últimos 3 meses (sem ter tentado emagrecer)?",
+   opts:["Perda de mais de 3 kg","Não sabe informar","Perda entre 1 e 3 kg","Sem perda de peso"]},
+  {text:"Como está a mobilidade?",
+   opts:["Fica na cama ou na cadeira, sem sair","Sai da cama/cadeira, mas não sai de casa","Sai de casa normalmente"]},
+  {text:"Passou por algum grande estresse psicológico ou doença aguda nos últimos 3 meses?",
+   opts:["Sim","Não"]},
+  {text:"Como estão a memória e o humor?",
+   opts:["Demência ou depressão importante","Alteração leve","Sem alterações perceptíveis"]}
+];
+
+const container = document.getElementById('questions');
+questions.forEach((q, i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  let optsHtml = q.opts.map((label, val) => `
+    <label class="opt" data-q="${i}" data-v="${val}"><input type="radio" name="q${i}" value="${val}">${label}</label>`).join('');
+  optsHtml += `<label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei</label>`;
+  div.innerHTML = `
+    <div class="qnum">Item ${i+1} de 6</div>
+    <p class="qtext">${q.text}</p>
+    <div class="options">${optsHtml}</div>
+  `;
+  container.appendChild(div);
+});
+
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(!opt) return;
+  const q = opt.dataset.q;
+  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+  opt.classList.add('selected');
+});
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+// Pontuação de cada item, seguindo a ordem crescente das opções acima (índice = pontos, exceto item 2 que é reordenado)
+const scoreMaps = [
+  [0,1,2],      // item 1: diminuição importante=0, moderada=1, sem=2
+  [0,1,2,3],    // item 2: >3kg=0, não sabe=1, 1-3kg=2, sem perda=3
+  [0,1,2],      // item 3: restrito=0, sai da cama não de casa=1, normal=2
+  [0,2],        // item 4: sim=0, não=2
+  [0,1,2]       // item 5: demência/depressão=0, leve=1, sem alteração=2
+];
+
+function itemScore(i){
+  const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+  if(!sel || sel.dataset.v === 'blank') return null;
+  const val = parseInt(sel.dataset.v);
+  return scoreMaps[i][val];
+}
+
+function itemLabel(i){
+  const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+  if(!sel || sel.dataset.v === 'blank') return 'Não respondida';
+  return questions[i].opts[parseInt(sel.dataset.v)];
+}
+
+function imcOuCPScore(){
+  const peso = parseFloat(document.getElementById('peso').value);
+  const altura = parseFloat(document.getElementById('altura').value);
+  const cp = parseFloat(document.getElementById('cp').value);
+
+  if(!isNaN(peso) && !isNaN(altura) && altura > 0){
+    const imc = peso / (altura*altura);
+    let pts;
+    if(imc < 19) pts = 0;
+    else if(imc < 21) pts = 1;
+    else if(imc < 23) pts = 2;
+    else pts = 3;
+    return {pts, label:`IMC calculado: ${imc.toFixed(1)}`};
+  }
+  if(!isNaN(cp)){
+    const pts = cp < 31 ? 0 : 3;
+    return {pts, label:`Circunferência da panturrilha: ${cp} cm`};
+  }
+  return {pts:null, label:'Não informado (peso/altura/CP)'};
+}
+
+function calcular(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const preenchidoPor = document.getElementById('filledby').value;
+
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  let total = 0, faltando = [];
+  for(let i=0;i<5;i++){
+    const s = itemScore(i);
+    if(s !== null){ total += s; } else { faltando.push(i+1); }
+  }
+  const imcCp = imcOuCPScore();
+  if(imcCp.pts !== null){ total += imcCp.pts; } else { faltando.push(6); }
+
+  let categoria = '', cor = '';
+  if(total >= 12){ categoria = 'Estado nutricional normal'; cor='var(--ok)'; }
+  else if(total >= 8){ categoria = 'Risco de desnutrição'; cor='var(--warn)'; }
+  else { categoria = 'Desnutrição'; cor='var(--alert)'; }
+
+  document.getElementById('scoreValue').textContent = total + ' / 14';
+  const catEl = document.getElementById('category');
+  catEl.textContent = categoria;
+  catEl.style.color = cor;
+
+  const incompleteNote = document.getElementById('incompleteNote');
+  incompleteNote.textContent = faltando.length > 0
+    ? `Atenção: item(ns) ${faltando.join(', ')} ficaram sem resposta ou dados. A pontuação foi calculada apenas com as informações fornecidas.`
+    : '';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Mini Avaliação Nutricional (MAN)', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Deméter', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+  addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
+
+  addWrapped('Respostas', 13, true, 3, [184,145,90]);
+  for(let i=0;i<5;i++){
+    addWrapped(`${i+1}. ${questions[i].text}`, 10, false, 0.5);
+    addWrapped(`Resposta: ${itemLabel(i)}`, 10, true, 2.5);
+  }
+  const imcCp = imcOuCPScore();
+  addWrapped(`6. Índice de Massa Corporal ou circunferência da panturrilha`, 10, false, 0.5);
+  addWrapped(`Resposta: ${imcCp.label}`, 10, true, 2.5);
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const total = document.getElementById('scoreValue').textContent;
+  const categoria = document.getElementById('category').textContent;
+  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 4);
+
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+
+  addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `MAN_${nome.replace(/\s+/g,'-')}.pdf` : 'MAN.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp() {
+
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Mini Avaliação Nutricional (MAN)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
+  
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Mini Avaliação Nutricional (MAN)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>

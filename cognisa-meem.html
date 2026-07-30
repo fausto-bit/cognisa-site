@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Exame do Estado Mental (MEEM) — Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(26px,5vw,36px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .domain{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .domain .dnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .domain .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 8px;}
+  .domain p.dtext{font-size:14px;margin:0 0 14px;color:#4a4a44;}
+  .scorerow{display:flex;align-items:center;gap:12px;}
+  .scorerow input{width:80px;font-size:16px;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;text-align:center;}
+  .scorerow input:focus{outline:none;border-color:var(--gold);}
+  .scorerow .maxlabel{font-size:13px;color:#7a776a;}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .cutoff{font-size:13px;color:var(--gold-soft);margin-top:6px;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Atena</div>
+  <div class="badge">Uso exclusivo médico</div>
+  <h1>Mini Exame do Estado Mental</h1>
+  <p>MEEM — aplicação e pontuação por domínio, com ponto de corte ajustado pela escolaridade</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento requer aplicação estruturada por profissional de saúde treinado. O escore é um dado de apoio diagnóstico e deve ser interpretado no contexto clínico completo do paciente.
+  </div>
+
+  <div class="blank-note">
+    Aplique o teste normalmente e insira aqui a pontuação obtida em cada domínio. Se algum domínio não foi aplicado, deixe o campo em branco — ele será excluído do total e sinalizado no resultado.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data da aplicação</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="escolaridade">Escolaridade</label>
+      <select id="escolaridade">
+        <option value="">Selecione</option>
+        <option value="analfabeto">Analfabeto(a)</option>
+        <option value="1a4">1 a 4 anos de estudo</option>
+        <option value="5a8">5 a 8 anos de estudo</option>
+        <option value="9a11">9 a 11 anos de estudo</option>
+        <option value="superior">Ensino superior completo</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Pontuação por domínio</div>
+
+  <div id="domains"></div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="category" id="category">–</div>
+    <div class="cutoff" id="cutoffNote"></div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const domains = [
+  {name:"Orientação temporal", max:5, text:"Ano, estação do ano, mês, dia do mês, dia da semana (1 ponto cada)."},
+  {name:"Orientação espacial", max:5, text:"Estado, cidade, bairro/local, andar (se aplicável), local específico (1 ponto cada)."},
+  {name:"Registro", max:3, text:"Repetir 3 palavras não relacionadas (1 ponto por palavra repetida corretamente na primeira tentativa)."},
+  {name:"Atenção e cálculo", max:5, text:"Subtração seriada de 7 a partir de 100 (5 subtrações), ou soletrar 'MUNDO' de trás para frente."},
+  {name:"Evocação", max:3, text:"Recordar as 3 palavras do item de registro, após intervalo com outra tarefa (1 ponto cada)."},
+  {name:"Nomeação", max:2, text:"Nomear dois objetos mostrados (ex.: caneta, relógio)."},
+  {name:"Repetição", max:1, text:"Repetir a frase 'Nem aqui, nem ali, nem lá'."},
+  {name:"Comando de 3 estágios", max:3, text:"Executar comando verbal em 3 etapas (ex.: pegar o papel com a mão direita, dobrá-lo ao meio, colocar no chão)."},
+  {name:"Leitura e execução", max:1, text:"Ler e executar o comando escrito 'FECHE OS OLHOS'."},
+  {name:"Escrita", max:1, text:"Escrever uma frase completa espontaneamente."},
+  {name:"Cópia do desenho", max:1, text:"Copiar o desenho de dois pentágonos sobrepostos."}
+];
+
+const container = document.getElementById('domains');
+domains.forEach((d, i) => {
+  const div = document.createElement('div');
+  div.className = 'domain';
+  div.innerHTML = `
+    <div class="dnum">Domínio ${i+1} de ${domains.length}</div>
+    <div class="dname">${d.name}</div>
+    <p class="dtext">${d.text}</p>
+    <div class="scorerow">
+      <input type="number" id="dom${i}" min="0" max="${d.max}" placeholder="–">
+      <span class="maxlabel">de ${d.max} ponto${d.max > 1 ? 's' : ''}</span>
+    </div>
+  `;
+  container.appendChild(div);
+});
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function cutoffPorEscolaridade(esc){
+  const cutoffs = {
+    'analfabeto': 19,
+    '1a4': 24,
+    '5a8': 26,
+    '9a11': 28,
+    'superior': 29
+  };
+  return cutoffs[esc] || null;
+}
+
+function respostasArray(){
+  return domains.map((d, i) => {
+    const val = document.getElementById(`dom${i}`).value;
+    if(val === '' || val === null) return {nome:d.name, max:d.max, pontos:null};
+    let n = parseInt(val);
+    if(isNaN(n)) return {nome:d.name, max:d.max, pontos:null};
+    if(n > d.max) n = d.max;
+    if(n < 0) n = 0;
+    return {nome:d.name, max:d.max, pontos:n};
+  });
+}
+
+function calcular(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const escolaridade = document.getElementById('escolaridade').value;
+  const escolaridadeLabel = document.getElementById('escolaridade').selectedOptions[0]?.text || '';
+
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(escolaridadeLabel) idParts.push(`Escolaridade: ${escolaridadeLabel}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  const respostas = respostasArray();
+  let total = 0, faltando = [];
+  respostas.forEach((r, i) => {
+    if(r.pontos !== null){ total += r.pontos; } else { faltando.push(i+1); }
+  });
+
+  document.getElementById('scoreValue').textContent = total + ' / 30';
+
+  const cutoff = cutoffPorEscolaridade(escolaridade);
+  const catEl = document.getElementById('category');
+  const cutoffNote = document.getElementById('cutoffNote');
+  if(cutoff !== null){
+    if(total < cutoff){
+      catEl.textContent = 'Abaixo do ponto de corte — sugestivo de déficit cognitivo';
+      catEl.style.color = 'var(--alert)';
+    } else {
+      catEl.textContent = 'Dentro do esperado para a escolaridade';
+      catEl.style.color = 'var(--ok)';
+    }
+    cutoffNote.textContent = `Ponto de corte para "${escolaridadeLabel}": ${cutoff}/30`;
+  } else {
+    catEl.textContent = 'Informe a escolaridade para interpretação';
+    catEl.style.color = 'var(--gold-soft)';
+    cutoffNote.textContent = '';
+  }
+
+  const incompleteNote = document.getElementById('incompleteNote');
+  incompleteNote.textContent = faltando.length > 0
+    ? `Atenção: domínio(s) ${faltando.join(', ')} ficaram sem pontuação. O total foi calculado apenas com os domínios preenchidos.`
+    : '';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Mini Exame do Estado Mental (MEEM)', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Atena · Uso exclusivo médico', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const escolaridadeLabel = document.getElementById('escolaridade').selectedOptions[0]?.text || 'Não informada';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data da aplicação: ${data}`, 11, false, 1);
+  addWrapped(`Escolaridade: ${escolaridadeLabel}`, 11, false, 5);
+
+  addWrapped('Pontuação por domínio', 13, true, 3, [184,145,90]);
+  const respostas = respostasArray();
+  respostas.forEach((r, i) => {
+    const pts = r.pontos !== null ? `${r.pontos} / ${r.max}` : 'Não pontuado';
+    addWrapped(`${i+1}. ${r.nome}: ${pts}`, 10.5, false, 2.5);
+  });
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const total = document.getElementById('scoreValue').textContent;
+  const categoria = document.getElementById('category').textContent;
+  const cutoffTxt = document.getElementById('cutoffNote').textContent;
+  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
+  addWrapped(`Interpretação: ${categoria}`, 12, true, 1);
+  if(cutoffTxt) addWrapped(cutoffTxt, 10, false, 4);
+
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+
+  addWrapped('Aviso: este escore é um dado de apoio diagnóstico e deve ser interpretado no contexto clínico completo do paciente.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `MEEM_${nome.replace(/\s+/g,'-')}.pdf` : 'MEEM.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp() {
+
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const cutoffTxt = document.getElementById('cutoffNote').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Mini Exame do Estado Mental (MEEM)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nInterpretação: ${cat}\n${cutoffTxt}${incomplete ? '\n' + incomplete : ''}`;
+  
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const cutoffTxt = document.getElementById('cutoffNote').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Mini Exame do Estado Mental (MEEM)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nInterpretação: ${cat}\n${cutoffTxt}${incomplete ? '\n' + incomplete : ''}`;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>

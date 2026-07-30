@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escala de Zarit — Sobrecarga do Cuidador — Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question p.qtext{font-size:16px;margin:4px 0 14px;color:var(--ink);}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 6px;text-align:center;font-size:12.5px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  label.opt.blank{border-style:dashed;}
+  label.opt.blank.selected{background:#8a8578;border-color:#8a8578;}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+  .result .care-note{margin-top:16px;font-size:13px;color:var(--gold-soft);max-width:480px;margin-left:auto;margin-right:auto;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Héstia</div>
+  <h1>Escala de Zarit</h1>
+  <p>Avaliação da sobrecarga de quem cuida — um espaço para reconhecer o próprio desgaste, não um teste a ser "aprovado"</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica ou psicológica presencial — leve-o à sua próxima consulta.
+  </div>
+
+  <div class="blank-note">
+    Este formulário é para quem cuida — não para o paciente. Responda com honestidade; não existe resposta "certa". Se não tiver certeza, marque "Não sei".
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome de quem cuida (você)</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Relação com o paciente</label>
+      <select id="filledby">
+        <option value="">Selecione</option>
+        <option value="Cônjuge/companheiro(a)">Cônjuge / companheiro(a)</option>
+        <option value="Filho(a)">Filho(a)</option>
+        <option value="Outro familiar">Outro familiar</option>
+        <option value="Cuidador contratado">Cuidador contratado</option>
+        <option value="Outro">Outro</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Com que frequência você sente que...</div>
+
+  <div id="questions"></div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="category" id="category">–</div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="care-note" id="careNote"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const freq = ["Nunca","Quase nunca","Às vezes","Frequentemente","Quase sempre"];
+const overallFreq = ["Nada","Pouco","Moderadamente","Muito","Extremamente"];
+
+const questions = [
+  {text:"...seu familiar pede mais ajuda do que realmente precisa?"},
+  {text:"...por causa do tempo que dedica ao cuidado, não sobra tempo suficiente para você mesmo(a)?"},
+  {text:"...está sob tensão entre cuidar do seu familiar e dar conta de outras responsabilidades (trabalho, outros familiares)?"},
+  {text:"...sente vergonha do comportamento do seu familiar?"},
+  {text:"...fica irritado(a) quando está perto do seu familiar?"},
+  {text:"...o cuidado prejudicou seu relacionamento com outros familiares ou amigos?"},
+  {text:"...tem medo do que o futuro reserva para o seu familiar?"},
+  {text:"...seu familiar depende de você?"},
+  {text:"...fica tenso(a) quando está perto do seu familiar?"},
+  {text:"...sua própria saúde foi afetada por causa do cuidado?"},
+  {text:"...não tem tanta privacidade quanto gostaria, por causa do cuidado?"},
+  {text:"...sua vida social foi prejudicada por causa do cuidado?"},
+  {text:"...sente-se pouco à vontade para receber visitas em casa, por causa do seu familiar?"},
+  {text:"...seu familiar espera que você seja a única pessoa de quem ele(a) pode depender?"},
+  {text:"...não tem dinheiro suficiente para cuidar do seu familiar, além de outras despesas?"},
+  {text:"...não será capaz de continuar cuidando do seu familiar por muito mais tempo?"},
+  {text:"...perdeu o controle da sua própria vida desde que o cuidado começou?"},
+  {text:"...gostaria de poder deixar o cuidado do seu familiar para outra pessoa?"},
+  {text:"...fica em dúvida sobre o que fazer em relação ao seu familiar?"},
+  {text:"...deveria estar fazendo mais pelo seu familiar?"},
+  {text:"...poderia cuidar melhor do seu familiar?"}
+];
+
+const container = document.getElementById('questions');
+questions.forEach((q, i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  let optsHtml = freq.map((label, val) => `
+    <label class="opt" data-q="${i}" data-v="${val}"><input type="radio" name="q${i}" value="${val}">${label}</label>`).join('');
+  optsHtml += `<label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei</label>`;
+  div.innerHTML = `
+    <div class="qnum">Item ${i+1} de 22</div>
+    <p class="qtext">${q.text}</p>
+    <div class="options">${optsHtml}</div>
+  `;
+  container.appendChild(div);
+});
+
+// Item 22: pergunta geral
+const overallDiv = document.createElement('div');
+overallDiv.className = 'question';
+let overallHtml = overallFreq.map((label, val) => `
+  <label class="opt" data-q="21" data-v="${val}"><input type="radio" name="q21" value="${val}">${label}</label>`).join('');
+overallHtml += `<label class="opt blank" data-q="21" data-v="blank"><input type="radio" name="q21" value="blank">Não sei</label>`;
+overallDiv.innerHTML = `
+  <div class="qnum">Item 22 de 22</div>
+  <p class="qtext">De um modo geral, o quanto você se sente sobrecarregado(a) por cuidar do seu familiar?</p>
+  <div class="options">${overallHtml}</div>
+`;
+container.appendChild(overallDiv);
+
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(!opt) return;
+  const q = opt.dataset.q;
+  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+  opt.classList.add('selected');
+});
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function respostasArray(){
+  const all = [];
+  for(let i=0;i<22;i++){
+    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+    const scale = i === 21 ? overallFreq : freq;
+    const texto = i === 21 ? "De um modo geral, o quanto você se sente sobrecarregado(a)?" : questions[i].text;
+    if(sel && sel.dataset.v !== 'blank'){
+      all.push({texto, valor:parseInt(sel.dataset.v), resposta:scale[parseInt(sel.dataset.v)]});
+    } else {
+      all.push({texto, valor:null, resposta:'Não respondida'});
+    }
+  }
+  return all;
+}
+
+function calcular(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const relacao = document.getElementById('filledby').value;
+
+  let idParts = [];
+  if(nome) idParts.push(`Cuidador(a): ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(relacao) idParts.push(`Relação: ${relacao}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  const respostas = respostasArray();
+  let total = 0, faltando = [];
+  respostas.forEach((r, i) => {
+    if(r.valor !== null){ total += r.valor; } else { faltando.push(i+1); }
+  });
+
+  let categoria = '', cor = '', nota = '';
+  if(total <= 20){ categoria = 'Pouca ou nenhuma sobrecarga'; cor='var(--ok)'; nota='Mesmo assim, cuidar é desgastante — manter pausas e rede de apoio continua sendo importante.'; }
+  else if(total <= 40){ categoria = 'Sobrecarga leve a moderada'; cor='var(--warn)'; nota='Vale a pena conversar com o médico do paciente e buscar formas de dividir o cuidado.'; }
+  else if(total <= 60){ categoria = 'Sobrecarga moderada a severa'; cor='var(--warn)'; nota='Este é um sinal importante — buscar apoio profissional para você (não só para o paciente) é recomendado.'; }
+  else { categoria = 'Sobrecarga severa'; cor='var(--alert)'; nota='Procure apoio o quanto antes — para o médico do paciente e, se possível, para você mesmo(a). Sobrecarga neste nível tem impacto real na sua saúde.'; }
+
+  document.getElementById('scoreValue').textContent = total + ' / 88';
+  const catEl = document.getElementById('category');
+  catEl.textContent = categoria;
+  catEl.style.color = cor;
+  document.getElementById('careNote').textContent = nota;
+
+  const incompleteNote = document.getElementById('incompleteNote');
+  incompleteNote.textContent = faltando.length > 0
+    ? `Atenção: item(ns) ${faltando.join(', ')} ficaram sem resposta. A pontuação foi calculada apenas com as respostas fornecidas.`
+    : '';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Escala de Zarit — Sobrecarga do Cuidador', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Héstia', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const relacao = document.getElementById('filledby').value || 'Não informada';
+  addWrapped(`Cuidador(a): ${nome}`, 11, false, 1);
+  addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+  addWrapped(`Relação com o paciente: ${relacao}`, 11, false, 5);
+
+  addWrapped('Respostas', 13, true, 3, [184,145,90]);
+  const respostas = respostasArray();
+  respostas.forEach((r, i) => {
+    addWrapped(`${i+1}. ${r.texto}`, 10, false, 0.5);
+    addWrapped(`Resposta: ${r.resposta}`, 10, true, 2.5);
+  });
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const total = document.getElementById('scoreValue').textContent;
+  const categoria = document.getElementById('category').textContent;
+  const nota = document.getElementById('careNote').textContent;
+  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
+  addWrapped(nota, 10, false, 4);
+
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+
+  addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica ou psicológica presencial.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `Zarit_${nome.replace(/\s+/g,'-')}.pdf` : 'Zarit.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp() {
+
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const nota = document.getElementById('careNote').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Escala de Zarit — Sobrecarga do Cuidador\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
+  
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const nota = document.getElementById('careNote').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  const texto = `Escala de Zarit — Sobrecarga do Cuidador\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>

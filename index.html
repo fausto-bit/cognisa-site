@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cognisa — Panteão Vital</title>
+<link rel="icon" href="img/selo-panteao.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#1F3B36;
+    --teal-light:#2C5048;
+    --gold:#B8915A;
+    --gold-soft:#D9BD93;
+    --ivory:#F4F1EA;
+    --ink:#1A1A17;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'DM Sans', sans-serif;
+    line-height:1.6;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  /* HERO */
+  .hero{
+    background:radial-gradient(circle at 50% 0%, var(--teal-light) 0%, var(--teal) 55%);
+    color:var(--ivory);
+    text-align:center;
+    padding:56px 24px 64px;
+  }
+  .hero img.selo{
+    width:150px;
+    height:150px;
+    object-fit:contain;
+    margin-bottom:20px;
+    filter:drop-shadow(0 4px 18px rgba(0,0,0,.25));
+  }
+  .hero .eyebrow{
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold-soft);
+    margin-bottom:12px;
+  }
+  .hero h1{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:clamp(32px,6vw,52px);
+    margin-bottom:14px;
+  }
+  .hero .anchor{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:clamp(16px,2.4vw,20px);
+    color:var(--gold-soft);
+    max-width:600px;
+    margin:0 auto;
+  }
+
+  /* VIDEO */
+  .video-section{
+    max-width:820px;
+    margin:-30px auto 0;
+    padding:0 24px;
+    position:relative;
+    z-index:2;
+  }
+  .video-wrap{
+    position:relative;
+    padding-bottom:56.25%;
+    height:0;
+    overflow:hidden;
+    border-radius:14px;
+    box-shadow:0 12px 40px rgba(31,59,54,.25);
+    border:4px solid #fff;
+  }
+  .video-wrap iframe{
+    position:absolute;top:0;left:0;width:100%;height:100%;border:0;
+  }
+
+  /* MOTE */
+  .mote-band{
+    text-align:center;
+    padding:44px 24px 8px;
+  }
+  .mote-band p{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:clamp(19px,3vw,26px);
+    color:var(--teal);
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  /* PANTEAO INTRO */
+  .intro{
+    max-width:700px;
+    margin:36px auto 8px;
+    padding:0 24px;
+    text-align:center;
+    color:#3d3d36;
+    font-size:16px;
+  }
+
+  /* GODS GRID */
+  .gods{
+    max-width:1080px;
+    margin:40px auto 20px;
+    padding:0 24px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+    gap:24px;
+  }
+  .god-card{
+    background:#fff;
+    border-radius:16px;
+    padding:28px 22px 26px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(31,59,54,.08);
+    transition:.2s;
+    border:1.5px solid transparent;
+  }
+  .god-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 14px 30px rgba(31,59,54,.14);
+    border-color:var(--gold-soft);
+  }
+  .god-card img{
+    width:96px;
+    height:96px;
+    object-fit:contain;
+    margin-bottom:14px;
+  }
+  .god-card .name{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:700;
+    font-size:24px;
+    color:var(--teal);
+    margin-bottom:6px;
+  }
+  .god-card .domain{
+    font-size:13.5px;
+    color:#6b6b60;
+    margin-bottom:14px;
+    min-height:40px;
+  }
+  .god-card .enter{
+    display:inline-block;
+    font-size:12.5px;
+    font-weight:700;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--gold);
+    border-bottom:1.5px solid var(--gold);
+    padding-bottom:2px;
+  }
+
+  /* FORMS CTA */
+  .forms-cta{
+    max-width:900px;
+    margin:44px auto;
+    padding:32px 28px;
+    background:var(--teal);
+    color:var(--ivory);
+    border-radius:16px;
+    text-align:center;
+  }
+  .forms-cta h2{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    font-size:26px;
+    margin-bottom:8px;
+  }
+  .forms-cta p{
+    color:var(--gold-soft);
+    font-size:14.5px;
+    max-width:480px;
+    margin:0 auto 20px;
+  }
+  .forms-cta a.btn{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--teal);
+    font-weight:700;
+    font-size:14px;
+    padding:12px 28px;
+    border-radius:8px;
+  }
+  .forms-cta a.btn:hover{background:var(--gold-soft);}
+
+  /* FOOTER */
+  footer{
+    background:#16302B;
+    color:#C9C4B4;
+    padding:44px 24px 30px;
+    margin-top:20px;
+  }
+  .footer-inner{
+    max-width:900px;
+    margin:0 auto;
+    text-align:center;
+  }
+  footer .mote{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:17px;
+    color:var(--gold-soft);
+    margin-bottom:18px;
+  }
+  footer .cols{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:32px;
+    font-size:13.5px;
+    margin-bottom:22px;
+  }
+  footer .cols div{max-width:220px;}
+  footer .cols strong{
+    display:block;
+    color:var(--ivory);
+    font-size:13px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+  footer .links a{
+    display:block;
+    margin-bottom:4px;
+    color:#C9C4B4;
+  }
+  footer .links a:hover{color:var(--gold-soft);}
+  footer .legal{
+    font-size:11.5px;
+    color:#8f8b7c;
+    border-top:1px solid #2A4A43;
+    padding-top:18px;
+    max-width:600px;
+    margin:0 auto;
+  }
+  footer .copyright{
+    font-size:11px;
+    color:#71705f;
+    margin-top:10px;
+  }
+
+  @media (max-width:480px){
+    footer .cols{flex-direction:column;align-items:center;}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <img class="selo" src="img/selo-panteao.png" alt="Selo do Panteão Vital">
+  <div class="eyebrow">Cognisa</div>
+  <h1>Panteão Vital</h1>
+  <p class="anchor">"Ciência sem sabedoria é tecnologia sem direção.<br>Sabedoria sem ciência é intuição sem critério."</p>
+</section>
+
+<div class="video-section">
+  <div class="video-wrap">
+    <iframe src="https://www.youtube.com/embed/4QsxYkRH82I" title="Apresentação do Panteão Vital" allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="mote-band">
+  <p>Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</p>
+</div>
+
+<div class="intro">
+  Seis domínios, um só método. Escolha o tema que você precisa agora — cada deus reúne orientações práticas, sinais de alerta e conteúdo em vídeo para cuidar de si ou de quem você ama.
+</div>
+
+<div class="gods">
+  <a class="god-card" href="apolo.html">
+    <img src="img/apolo.png" alt="Símbolo de Apolo">
+    <div class="name">Apolo</div>
+    <div class="domain">Medicina baseada em evidências, uso correto dos remédios e o seu plano de cuidado</div>
+    <span class="enter">Entrar →</span>
+  </a>
+  <a class="god-card" href="hermes.html">
+    <img src="img/hermes.png" alt="Símbolo de Hermes">
+    <div class="name">Hermes</div>
+    <div class="domain">Tecnologia, comunicação com sua equipe de saúde e diretivas antecipadas</div>
+    <span class="enter">Entrar →</span>
+  </a>
+  <a class="god-card" href="atena.html">
+    <img src="img/atena.png" alt="Símbolo de Atena">
+    <div class="name">Atena</div>
+    <div class="domain">Cognição, reserva cerebral e a mente que dura</div>
+    <span class="enter">Entrar →</span>
+  </a>
+  <a class="god-card" href="hefesto.html">
+    <img src="img/hefesto.png" alt="Símbolo de Hefesto">
+    <div class="name">Hefesto</div>
+    <div class="domain">Músculo, força funcional e prevenção de quedas</div>
+    <span class="enter">Entrar →</span>
+  </a>
+  <a class="god-card" href="demeter.html">
+    <img src="img/demeter.png" alt="Símbolo de Deméter">
+    <div class="name">Deméter</div>
+    <div class="domain">Nutrição, microbioma e o que colocar no prato</div>
+    <span class="enter">Entrar →</span>
+  </a>
+  <a class="god-card" href="hestia.html">
+    <img src="img/hestia.png" alt="Símbolo de Héstia">
+    <div class="name">Héstia</div>
+    <div class="domain">O lar, o cuidador e a sustentabilidade do cuidado</div>
+    <span class="enter">Entrar →</span>
+  </a>
+</div>
+
+<div class="forms-cta">
+  <h2>Formulários e instrumentos clínicos</h2>
+  <p>IVCF-20, GDS-15, escalas de sobrecarga do cuidador e outros instrumentos de apoio — preenchíveis, com opção de baixar em PDF.</p>
+  <a class="btn" href="formularios.html">Acessar formulários</a>
+</div>
+
+<section style="max-width:600px;margin:48px auto;padding:32px;background:#1F3B36;border-radius:12px;text-align:center;">
+  <h3 style="color:#F4F1EA;font-family:'Cormorant Garamond', serif;font-size:1.5rem;margin-bottom:8px;">
+    Receba o Café com o Doutor
+  </h3>
+  <p style="color:#F4F1EA;font-family:'DM Sans', sans-serif;font-size:0.95rem;margin-bottom:20px;">
+    Conteúdo sobre longevidade direto na sua caixa de entrada.
+  </p>
+  <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="cadb95df-4272-4906-9f0a-5b0b27b2505b"></script>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <p class="mote">"Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente."</p>
+    <div class="cols">
+      <div>
+        <strong>Dr. Fausto Azambuja Machado</strong>
+        Geriatra e Clínico Geral<br>
+        CRM-MG 39.242<br>
+        RQE Geriatria 15.603 · RQE Clínica 15.602
+      </div>
+      <div>
+        <strong>Consultórios</strong>
+        Pampulha — Av. Alfredo Camarate, 259<br>
+        Centro — Av. Alfredo Balena, 189
+      </div>
+      <div class="links">
+        <strong>Links</strong>
+        <a href="sobre.html">Sobre</a>
+        <a href="contato.html">Contato</a>
+        <a href="https://youtube.com/@drfaustogeriatra" target="_blank">YouTube</a>
+      </div>
+    </div>
+    <div class="legal">
+      Este conteúdo é educativo e não substitui consulta médica presencial. As orientações e formulários aqui disponíveis são ferramentas de apoio e triagem.
+    </div>
+    <div class="copyright">© Cognisa — Dr. Fausto Azambuja Machado, 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

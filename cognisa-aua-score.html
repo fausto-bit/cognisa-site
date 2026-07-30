@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificação ASA — Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
+  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .asa-option{background:#fff;border-radius:10px;padding:18px 20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(31,59,54,.08);border:1.5px solid transparent;cursor:pointer;transition:.15s;}
+  .asa-option:hover{border-color:var(--gold-soft);}
+  .asa-option.selected{border-color:var(--gold);background:#FBF6ED;}
+  .asa-option .class{font-family:'Cormorant Garamond', serif;font-size:20px;font-weight:700;color:var(--teal);}
+  .asa-option .desc{font-size:14px;color:#4a4a44;margin-top:4px;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .emergency-toggle{background:#fff;border-radius:10px;padding:16px 22px;margin:20px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;align-items:center;gap:12px;}
+  .emergency-toggle input{width:18px;height:18px;}
+  .emergency-toggle label{font-size:14px;color:var(--ink);}
+
+  .result{margin-top:20px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:44px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .desc{font-size:15px;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Apolo</div>
+  <div class="badge">Uso exclusivo médico</div>
+  <h1>Classificação ASA</h1>
+  <p>American Society of Anesthesiologists — classificação de risco anestésico/cirúrgico</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> a classificação ASA é um julgamento clínico do profissional responsável, com base na avaliação global do paciente. Este formulário apenas organiza o registro dessa decisão.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data da avaliação</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Avaliado por</label>
+      <input type="text" id="filledby" placeholder="Nome do profissional">
+    </div>
+  </div>
+
+  <div class="section-title">Selecione a classificação</div>
+
+  <div id="asaOptions"></div>
+
+  <div class="emergency-toggle">
+    <input type="checkbox" id="emergency">
+    <label for="emergency">Procedimento de urgência/emergência (adiciona o sufixo "E")</label>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Classificação</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="desc" id="descText"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const classes = [
+  {code:"ASA I", desc:"Paciente saudável, sem doenças sistêmicas."},
+  {code:"ASA II", desc:"Doença sistêmica leve, sem limitação funcional (ex.: hipertensão controlada, tabagismo, obesidade leve)."},
+  {code:"ASA III", desc:"Doença sistêmica grave, com limitação funcional real (ex.: diabetes com complicações, insuficiência cardíaca compensada)."},
+  {code:"ASA IV", desc:"Doença sistêmica grave que representa ameaça constante à vida (ex.: insuficiência cardíaca descompensada, IAM recente)."},
+  {code:"ASA V", desc:"Paciente moribundo, sem expectativa de sobrevida sem a cirurgia."},
+  {code:"ASA VI", desc:"Paciente com morte encefálica, para doação de órgãos."}
+];
+
+const container = document.getElementById('asaOptions');
+classes.forEach((c, i) => {
+  const div = document.createElement('div');
+  div.className = 'asa-option';
+  div.dataset.i = i;
+  div.innerHTML = `
+    <input type="radio" name="asa" value="${i}">
+    <div class="class">${c.code}</div>
+    <div class="desc">${c.desc}</div>
+  `;
+  container.appendChild(div);
+});
+
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('.asa-option');
+  if(!opt) return;
+  document.querySelectorAll('.asa-option').forEach(o => o.classList.remove('selected'));
+  opt.classList.add('selected');
+  mostrarResultado();
+});
+
+document.getElementById('emergency').addEventListener('change', mostrarResultado);
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function mostrarResultado(){
+  const selected = document.querySelector('.asa-option.selected');
+  if(!selected) return;
+
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const avaliadoPor = document.getElementById('filledby').value.trim();
+
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(avaliadoPor) idParts.push(`Avaliado por: ${avaliadoPor}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  const i = parseInt(selected.dataset.i);
+  const c = classes[i];
+  const emergency = document.getElementById('emergency').checked;
+  const codigo = c.code + (emergency ? 'E' : '');
+
+  document.getElementById('scoreValue').textContent = codigo;
+  document.getElementById('descText').textContent = c.desc + (emergency ? ' Procedimento realizado em caráter de urgência/emergência.' : '');
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Classificação ASA', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Apolo · Uso exclusivo médico', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const avaliadoPor = document.getElementById('filledby').value.trim() || 'Não informado';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data da avaliação: ${data}`, 11, false, 1);
+  addWrapped(`Avaliado por: ${avaliadoPor}`, 11, false, 5);
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const codigo = document.getElementById('scoreValue').textContent;
+  const desc = document.getElementById('descText').textContent;
+  addWrapped(`Classificação: ${codigo}`, 14, true, 2);
+  addWrapped(desc, 11, false, 5);
+
+  addWrapped('Nota: a classificação ASA é um julgamento clínico do profissional responsável, com base na avaliação global do paciente.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `ASA_${nome.replace(/\s+/g,'-')}.pdf` : 'ASA.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp() {
+
+  const idSummary = document.getElementById('idSummary').textContent;
+  const codigo = document.getElementById('scoreValue').textContent;
+  const desc = document.getElementById('descText').textContent;
+  const texto = `Classificação ASA\n${idSummary ? idSummary + '\n' : ''}Classificação: ${codigo}\n${desc}`;
+  
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const codigo = document.getElementById('scoreValue').textContent;
+  const desc = document.getElementById('descText').textContent;
+  const texto = `Classificação ASA\n${idSummary ? idSummary + '\n' : ''}Classificação: ${codigo}\n${desc}`;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>

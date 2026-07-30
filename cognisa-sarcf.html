@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SARC-F | Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36;
+    --teal-soft:#2E5049;
+    --gold:#B8915A;
+    --ivory:#F4F1EA;
+    --card:#FFFFFF;
+    --ink:#26302D;
+    --ink-soft:#5F6B65;
+    --line:#DEDACB;
+    --danger:#A5493A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:36px 22px 70px;}
+
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .brand .name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--teal);
+    letter-spacing:.02em;
+  }
+  .brand .tag{
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  header.hero{
+    background:var(--teal);
+    color:#fff;
+    border-radius:14px;
+    padding:28px 30px;
+    margin-bottom:26px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-40px;
+    width:160px; height:160px;
+    border:1.5px solid rgba(184,145,90,.35);
+    border-radius:50%;
+  }
+  header.hero .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  header.hero h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:32px;
+    margin:0 0 8px;
+    font-weight:700;
+  }
+  header.hero p{
+    margin:0;
+    font-size:13.5px;
+    color:#DCE4E1;
+    max-width:520px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-bottom:20px;
+  }
+
+  .id-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr;
+    gap:14px;
+  }
+  .field label{
+    display:block;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .field input, .field select{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:var(--ivory);
+    font-family:inherit;
+    font-size:13.5px;
+    padding:8px 10px;
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--gold);}
+
+  .q-item{
+    border-top:1px solid var(--line);
+    padding:20px 0;
+  }
+  .q-item:first-child{border-top:none;padding-top:4px;}
+  .q-head{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .q-num{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:20px;
+    color:var(--gold);
+    min-width:26px;
+  }
+  .q-title{
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--teal);
+    margin-bottom:2px;
+  }
+  .q-sub{
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .opts{
+    display:grid;
+    gap:8px;
+    margin-left:36px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:9px 12px;
+    cursor:pointer;
+    font-size:13.5px;
+    transition:.15s;
+  }
+  .opt:hover{border-color:var(--gold);}
+  .opt input{accent-color:var(--teal);width:16px;height:16px;cursor:pointer;}
+  .opt.skip{border-style:dashed;color:var(--ink-soft);}
+
+  .notice{
+    background:#FBF4E9;
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:14px 18px;
+    font-size:12.5px;
+    color:#6B4A20;
+    margin-bottom:20px;
+  }
+
+  .result{
+    background:var(--teal);
+    color:#fff;
+    border-radius:12px;
+    padding:24px 26px;
+    margin-bottom:20px;
+  }
+  .result .label{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:6px;
+  }
+  .result .value{
+    font-family:'Cormorant Garamond',serif;
+    font-size:42px;
+    font-weight:700;
+    line-height:1;
+  }
+  .result .value span{font-size:18px;color:#CFE0DB;font-weight:500;}
+  .result .interp{
+    margin-top:10px;
+    font-size:13.5px;
+    display:inline-block;
+    padding:5px 14px;
+    border-radius:20px;
+    font-weight:700;
+  }
+  .interp.low{background:#DDEAE4;color:var(--teal);}
+  .interp.high{background:#F2DAD1;color:var(--danger);}
+  .interp.pending{background:rgba(255,255,255,.15);color:#EDEDE6;}
+  .result .note{
+    margin-top:12px;
+    font-size:12.5px;
+    color:#DCE4E1;
+    max-width:560px;
+  }
+  .warn-incomplete{
+    margin-top:12px;
+    font-size:12px;
+    color:var(--gold);
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .actions button{
+    font-family:'DM Sans',sans-serif;
+    font-size:13.5px;
+    font-weight:700;
+    padding:11px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    border:1.5px solid var(--teal);
+  }
+  #pdfBtn{background:var(--teal);color:#fff;}
+  #waBtn{background:#25D366;color:#fff;border-color:#25D366;}
+  #copyBtn{background:transparent;color:var(--teal);}
+  #resetBtn{background:transparent;color:var(--ink-soft);border-color:var(--line);}
+
+  footer{
+    margin-top:30px;
+    font-size:11px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:16px;
+    line-height:1.7;
+  }
+  footer strong{color:var(--teal);}
+
+  @media (max-width:640px){
+    .id-grid{grid-template-columns:1fr;}
+    header.hero h1{font-size:26px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="name">COGNISA</div>
+    <div class="tag">Panteão Vital · Hefesto</div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Rastreio de sarcopenia</div>
+    <h1>SARC-F</h1>
+    <p>Cinco perguntas simples sobre força, mobilidade e quedas. Leva menos de 2 minutos e ajuda a identificar precocemente perda de massa e função muscular relacionada à idade.</p>
+  </header>
+
+  <div class="card">
+    <div class="id-grid">
+      <div class="field"><label>Nome do paciente</label><input type="text" id="fName"></div>
+      <div class="field"><label>Data de preenchimento</label><input type="date" id="fDate"></div>
+      <div class="field">
+        <label>Preenchido por</label>
+        <select id="fBy">
+          <option value="">Selecione</option>
+          <option value="Paciente">Paciente</option>
+          <option value="Cuidador">Cuidador</option>
+          <option value="Profissional de saúde">Profissional de saúde</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    Se não souber responder algum item com segurança, use a opção <strong>"Não sei / prefiro não responder"</strong>. O resultado final indicará se o escore ficou incompleto.
+  </div>
+
+  <div class="card" id="qCard"></div>
+
+  <div class="result">
+    <div class="label">Escore total SARC-F</div>
+    <div class="value" id="totalScore">–<span>/10</span></div>
+    <div class="interp pending" id="interpBox">Aguardando respostas</div>
+    <div class="note">Escore ≥ 4 sugere risco de sarcopenia e indica investigação complementar (força de preensão palmar, velocidade de marcha, bioimpedância ou DEXA).</div>
+    <div class="warn-incomplete" id="warnIncomplete" style="display:none;">⚠ Escore incompleto — uma ou mais perguntas não foram respondidas.</div>
+  </div>
+
+  <div class="actions">
+    <button id="pdfBtn" onclick="exportPDF()">Baixar PDF</button>
+    <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button id="copyBtn" onclick="copyResult()">Copiar resultado</button>
+    <button id="resetBtn" onclick="resetAll()">Limpar tudo</button>
+  </div>
+
+  <footer>
+    <strong>Dr. Fausto Azambuja Machado</strong> — Geriatra e Clínico Geral · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602<br>
+    Este formulário é uma ferramenta de triagem e não substitui avaliação médica presencial. Em caso de escore elevado, procure orientação profissional.
+  </footer>
+
+</div>
+
+<script>
+const questions = [
+  {
+    title: "Força (Strength)",
+    sub: "Quanta dificuldade você tem para levantar e carregar 5 kg (por exemplo, uma sacola de compras cheia)?",
+    opts: ["Nenhuma dificuldade", "Alguma dificuldade", "Muita dificuldade ou incapaz"]
+  },
+  {
+    title: "Auxílio para caminhar (Assistance walking)",
+    sub: "Quanta dificuldade você tem para atravessar um cômodo?",
+    opts: ["Nenhuma dificuldade", "Alguma dificuldade", "Muita dificuldade, uso apoio ou sou incapaz"]
+  },
+  {
+    title: "Levantar-se da cadeira (Rise from a chair)",
+    sub: "Quanta dificuldade você tem para se levantar de uma cadeira ou cama?",
+    opts: ["Nenhuma dificuldade", "Alguma dificuldade", "Muita dificuldade ou preciso de ajuda"]
+  },
+  {
+    title: "Subir escadas (Climb stairs)",
+    sub: "Quanta dificuldade você tem para subir um lance de 10 degraus?",
+    opts: ["Nenhuma dificuldade", "Alguma dificuldade", "Muita dificuldade ou incapaz"]
+  },
+  {
+    title: "Quedas (Falls)",
+    sub: "Quantas vezes você caiu no último ano?",
+    opts: ["Nenhuma", "1 a 3 quedas", "4 ou mais quedas"]
+  }
+];
+
+const answers = Array(5).fill(null); // 0,1,2 ou null
+
+const qCard = document.getElementById('qCard');
+
+function render() {
+  qCard.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const div = document.createElement('div');
+    div.className = 'q-item';
+    let optsHtml = q.opts.map((label, val) => `
+      <label class="opt">
+        <input type="radio" name="q${idx}" value="${val}" ${answers[idx]===val?'checked':''} onchange="setAnswer(${idx}, ${val})">
+        ${label} <span style="margin-left:auto;color:#9aa39d;font-size:11.5px;">${val} pt${val===1?'':'s'}</span>
+      </label>`).join('');
+    optsHtml += `
+      <label class="opt skip">
+        <input type="radio" name="q${idx}" value="null" ${answers[idx]===null?'checked':''} onchange="setAnswer(${idx}, null)">
+        Não sei / prefiro não responder
+      </label>`;
+    div.innerHTML = `
+      <div class="q-head">
+        <div class="q-num">${idx+1}</div>
+        <div>
+          <div class="q-title">${q.title}</div>
+          <div class="q-sub">${q.sub}</div>
+        </div>
+      </div>
+      <div class="opts">${optsHtml}</div>
+    `;
+    qCard.appendChild(div);
+  });
+}
+
+function setAnswer(idx, val) {
+  answers[idx] = val;
+  updateScore();
+}
+
+function updateScore() {
+  const answered = answers.filter(v => v !== null);
+  const incomplete = answered.length < answers.length;
+  const total = answered.reduce((a,b) => a+b, 0);
+
+  document.getElementById('totalScore').innerHTML = (answered.length===0 ? '–' : total) + '<span>/10</span>';
+  document.getElementById('warnIncomplete').style.display = incomplete && answered.length>0 ? 'block' : 'none';
+
+  const interpBox = document.getElementById('interpBox');
+  if (answered.length === 0) {
+    interpBox.textContent = 'Aguardando respostas';
+    interpBox.className = 'interp pending';
+  } else if (incomplete) {
+    interpBox.textContent = 'Escore parcial (respostas pendentes)';
+    interpBox.className = 'interp pending';
+  } else if (total >= 4) {
+    interpBox.textContent = 'Risco de sarcopenia (≥ 4)';
+    interpBox.className = 'interp high';
+  } else {
+    interpBox.textContent = 'Baixo risco (< 4)';
+    interpBox.className = 'interp low';
+  }
+}
+
+function getMeta() {
+  return {
+    name: document.getElementById('fName').value || '(não informado)',
+    date: document.getElementById('fDate').value || '(não informado)',
+    by: document.getElementById('fBy').value || '(não informado)'
+  };
+}
+
+function buildResultText() {
+  const meta = getMeta();
+  const answered = answers.filter(v => v !== null);
+  const total = answered.reduce((a,b) => a+b, 0);
+  const incomplete = answered.length < answers.length;
+  let lines = [];
+  lines.push('SARC-F — Rastreio de Sarcopenia');
+  lines.push('Cognisa · Panteão Vital · Hefesto');
+  lines.push('');
+  lines.push(`Paciente: ${meta.name}`);
+  lines.push(`Data: ${meta.date}`);
+  lines.push(`Preenchido por: ${meta.by}`);
+  lines.push('');
+  questions.forEach((q, idx) => {
+    const val = answers[idx];
+    const respTxt = val === null ? 'Não sei / não respondido' : `${q.opts[val]} (${val} pt${val===1?'':'s'})`;
+    lines.push(`${idx+1}. ${q.title}: ${respTxt}`);
+  });
+  lines.push('');
+  lines.push(`Escore total: ${answered.length===0?'–':total}/10${incomplete?' (incompleto)':''}`);
+  if (answered.length>0) {
+    lines.push(total>=4 ? 'Interpretação: Risco de sarcopenia (≥4)' : 'Interpretação: Baixo risco (<4)');
+  }
+  lines.push('');
+  lines.push('Ferramenta de triagem — não substitui avaliação médica presencial.');
+  return lines.join('\n');
+}
+
+function enviarWhatsApp() {
+  const numero = '553125140626'; // WhatsApp do consultório
+  const texto = buildResultText();
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copyResult() {
+  const text = buildResultText();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+}
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const marginX = 48;
+  let y = 56;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(31, 59, 54);
+  doc.text('SARC-F — Rastreio de Sarcopenia', marginX, y);
+  y += 18;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(95, 107, 101);
+  doc.text('Cognisa · Panteão Vital · Hefesto', marginX, y);
+  y += 26;
+
+  const meta = getMeta();
+  doc.setFontSize(11);
+  doc.setTextColor(38, 48, 45);
+  doc.text(`Paciente: ${meta.name}`, marginX, y); y += 16;
+  doc.text(`Data: ${meta.date}`, marginX, y); y += 16;
+  doc.text(`Preenchido por: ${meta.by}`, marginX, y); y += 24;
+
+  doc.setDrawColor(222, 218, 203);
+  doc.line(marginX, y, 548, y);
+  y += 20;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  questions.forEach((q, idx) => {
+    const val = answers[idx];
+    const respTxt = val === null ? 'Não sei / não respondido' : `${q.opts[val]} (${val} pt${val===1?'':'s'})`;
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(31, 59, 54);
+    const titleLines = doc.splitTextToSize(`${idx+1}. ${q.title}`, 500);
+    doc.text(titleLines, marginX, y);
+    y += titleLines.length * 14;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(95, 107, 101);
+    const respLines = doc.splitTextToSize(respTxt, 500);
+    doc.text(respLines, marginX, y);
+    y += respLines.length * 14 + 10;
+
+    if (y > 760) { doc.addPage(); y = 56; }
+  });
+
+  y += 6;
+  doc.setDrawColor(222, 218, 203);
+  doc.line(marginX, y, 548, y);
+  y += 24;
+
+  const answered = answers.filter(v => v !== null);
+  const total = answered.reduce((a,b) => a+b, 0);
+  const incomplete = answered.length < answers.length;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(31, 59, 54);
+  doc.text(`Escore total: ${answered.length===0?'–':total}/10${incomplete?' (incompleto)':''}`, marginX, y);
+  y += 18;
+
+  if (answered.length>0) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.setTextColor(total>=4 ? 165 : 62, total>=4 ? 73 : 80, total>=4 ? 58 : 73);
+    doc.text(total>=4 ? 'Risco de sarcopenia (≥ 4 pontos)' : 'Baixo risco (< 4 pontos)', marginX, y);
+    y += 20;
+  }
+
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(95, 107, 101);
+  const legal = doc.splitTextToSize('Dr. Fausto Azambuja Machado — Geriatra e Clínico Geral · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602. Ferramenta de triagem; não substitui avaliação médica presencial.', 500);
+  doc.text(legal, marginX, 800);
+
+  const fname = (meta.name !== '(não informado)' ? meta.name.replace(/\s+/g,'_') : 'paciente');
+  doc.save(`SARC-F_${fname}.pdf`);
+}
+
+function resetAll() {
+  for (let i=0;i<5;i++) answers[i] = null;
+  document.getElementById('fName').value = '';
+  document.getElementById('fDate').value = '';
+  document.getElementById('fBy').value = '';
+  render();
+  updateScore();
+}
+
+render();
+updateScore();
+</script>
+</body>
+</html>
