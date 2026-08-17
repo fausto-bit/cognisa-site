@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diário de Sono Simplificado | Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36;
+    --gold:#B8915A;
+    --ivory:#F4F1EA;
+    --red:#B44B4B;
+    --amber:#B8863E;
+    --green:#3F6B4F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    font-family:'DM Sans',sans-serif;
+    color:var(--teal);
+    line-height:1.5;
+    padding:24px 16px 64px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{text-align:center;margin-bottom:28px;}
+  header .selo{font-size:13px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:34px;
+    margin:0 0 6px;
+    color:var(--teal);
+  }
+  .subtitulo{font-size:15px;color:#5b6b64;margin-bottom:0;}
+  .card{
+    background:#fff;
+    border:1px solid #e4ddce;
+    border-radius:10px;
+    padding:22px 20px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(31,59,54,0.05);
+  }
+  .card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    color:var(--gold);
+    margin:0 0 14px;
+    border-bottom:1px solid #eee6d6;
+    padding-bottom:8px;
+  }
+  label{display:block;font-weight:500;font-size:14.5px;margin-bottom:6px;margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=date], input[type=number], select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #d8d0bd;
+    border-radius:7px;
+    font-family:'DM Sans',sans-serif;
+    font-size:15px;
+    background:#fdfcf9;
+    color:var(--teal);
+  }
+  textarea{resize:vertical;min-height:60px;}
+  .radio-group{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px;}
+  .radio-group label{
+    display:flex;align-items:center;gap:6px;
+    font-weight:400;font-size:14px;margin:0;
+    background:#fdfcf9;border:1px solid #d8d0bd;border-radius:20px;
+    padding:7px 14px;cursor:pointer;
+  }
+  .radio-group input{margin:0;accent-color:var(--gold);}
+  .radio-group label:has(input:checked){
+    background:var(--teal);color:#fff;border-color:var(--teal);
+  }
+  .naosei{opacity:0.85;font-style:italic;}
+  .hint{font-size:12.5px;color:#7a8a83;margin-top:4px;}
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+  button{
+    flex:1;min-width:150px;
+    border:none;border-radius:8px;
+    padding:13px 16px;
+    font-family:'DM Sans',sans-serif;
+    font-weight:700;font-size:14.5px;
+    cursor:pointer;
+  }
+  #btnCalcular{background:var(--teal);color:#fff;}
+  #btnPdf{background:var(--gold);color:#fff;display:none;}
+  #btnCopiar{background:#fff;color:var(--teal);border:1.5px solid var(--teal);display:none;}
+  #btnWhats{background:#3F6B4F;color:#fff;display:none;}
+  #resultado{display:none;margin-top:20px;}
+  .badge{
+    display:inline-block;padding:5px 14px;border-radius:20px;
+    font-weight:700;font-size:13.5px;color:#fff;margin-bottom:10px;
+  }
+  .badge.ok{background:var(--green);}
+  .badge.alerta{background:var(--amber);}
+  .badge.critico{background:var(--red);}
+  .resumo-item{padding:8px 0;border-bottom:1px solid #eee6d6;font-size:14.5px;}
+  .resumo-item strong{color:var(--gold);}
+  .legal{
+    font-size:12px;color:#7a8a83;text-align:center;margin-top:30px;
+    border-top:1px solid #e4ddce;padding-top:16px;
+  }
+  footer{text-align:center;font-size:12px;color:#8a9a92;margin-top:36px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="selo">☀ Panteão Vital · Domínio Apolo</div>
+    <h1>Diário de Sono Simplificado</h1>
+    <p class="subtitulo">Avaliação rápida da qualidade e higiene do sono</p>
+  </header>
+
+  <div class="card">
+    <h2>Identificação</h2>
+    <label for="nome">Nome do paciente</label>
+    <input type="text" id="nome" placeholder="Nome completo">
+
+    <label for="data">Data de preenchimento</label>
+    <input type="date" id="data">
+
+    <label>Preenchido por</label>
+    <div class="radio-group">
+      <label><input type="radio" name="preenchidoPor" value="Paciente" checked> Paciente</label>
+      <label><input type="radio" name="preenchidoPor" value="Cuidador"> Cuidador</label>
+      <label><input type="radio" name="preenchidoPor" value="Profissional"> Profissional</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>1 · Duração e continuidade do sono</h2>
+
+    <label for="horas">Em média, quantas horas você dorme por noite?</label>
+    <input type="number" id="horas" min="0" max="16" step="0.5" placeholder="Ex: 6.5">
+    <p class="hint">Se não souber precisar, deixe uma estimativa aproximada.</p>
+
+    <label>Quanto tempo demora, em geral, para pegar no sono?</label>
+    <div class="radio-group" id="latencia">
+      <label><input type="radio" name="latencia" value="0"> Até 15 min</label>
+      <label><input type="radio" name="latencia" value="0"> 15–30 min</label>
+      <label><input type="radio" name="latencia" value="1"> 30–60 min</label>
+      <label><input type="radio" name="latencia" value="1"> Mais de 60 min</label>
+      <label class="naosei"><input type="radio" name="latencia" value="ns"> Não sei</label>
+    </div>
+
+    <label for="despertares">Quantas vezes costuma acordar durante a noite?</label>
+    <input type="number" id="despertares" min="0" max="20" placeholder="Número de despertares">
+
+    <label>Ao acordar pela manhã, sente que o sono foi reparador?</label>
+    <div class="radio-group" id="reparador">
+      <label><input type="radio" name="reparador" value="0"> Sim</label>
+      <label><input type="radio" name="reparador" value="1"> Não</label>
+      <label><input type="radio" name="reparador" value="0.5"> Às vezes</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Sonolência e sinais de alerta</h2>
+
+    <label>Sente sonolência excessiva durante o dia?</label>
+    <div class="radio-group" id="sonolencia">
+      <label><input type="radio" name="sonolencia" value="1"> Sim</label>
+      <label><input type="radio" name="sonolencia" value="0"> Não</label>
+    </div>
+
+    <label>Alguém já observou ronco alto ou pausas na respiração enquanto dorme?</label>
+    <div class="radio-group" id="apneia">
+      <label><input type="radio" name="apneia" value="1"> Sim</label>
+      <label><input type="radio" name="apneia" value="0"> Não</label>
+      <label class="naosei"><input type="radio" name="apneia" value="ns"> Não sei / dorme sozinho(a)</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Higiene do sono</h2>
+
+    <label>Usa celular, tablet ou TV na cama antes de dormir?</label>
+    <div class="radio-group" id="telas">
+      <label><input type="radio" name="telas" value="1"> Sim</label>
+      <label><input type="radio" name="telas" value="0"> Não</label>
+    </div>
+
+    <label>Consome café, chá preto/verde ou outra cafeína no fim da tarde ou à noite?</label>
+    <div class="radio-group" id="cafeina">
+      <label><input type="radio" name="cafeina" value="1"> Sim</label>
+      <label><input type="radio" name="cafeina" value="0"> Não</label>
+    </div>
+
+    <label>O quarto costuma estar escuro, silencioso e em temperatura agradável?</label>
+    <div class="radio-group" id="ambiente">
+      <label><input type="radio" name="ambiente" value="0"> Sim</label>
+      <label><input type="radio" name="ambiente" value="1"> Não</label>
+    </div>
+
+    <label>Toma alguma medicação para dormir atualmente?</label>
+    <div class="radio-group" id="medicacaoSono">
+      <label><input type="radio" name="medicacaoSono" value="1"> Sim</label>
+      <label><input type="radio" name="medicacaoSono" value="0"> Não</label>
+    </div>
+    <input type="text" id="qualMedicacao" placeholder="Se sim, qual medicação e dose?" style="margin-top:8px;">
+  </div>
+
+  <div class="card">
+    <h2>Observações livres</h2>
+    <textarea id="observacoes" placeholder="Alguma outra informação relevante sobre o sono do paciente..."></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button id="btnCalcular" onclick="calcular()">Ver resultado</button>
+  </div>
+
+  <div id="resultado" class="card">
+    <h2>Resultado</h2>
+    <div id="badges"></div>
+    <div id="resumoLista"></div>
+    <div class="btn-row">
+      <button id="btnPdf" onclick="gerarPDF()">Baixar PDF</button>
+      <button id="btnCopiar" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="btnWhats" onclick="enviarWhats()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <p class="legal">
+    Este instrumento é uma ferramenta de rastreio e organização clínica e não substitui a avaliação médica presencial.
+    Em caso de dúvida sobre os resultados, procure orientação com seu médico assistente.
+  </p>
+
+  <footer>
+    Dr. Fausto Azambuja Machado · CRM-MG 39242 · RQE 15603 (Geriatria) · RQE 15602 (Clínica Médica)<br>
+    Cognisa · Panteão Vital
+  </footer>
+
+</div>
+
+<script>
+let ultimoResumoTexto = "";
+
+function radioVal(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+function radioLabel(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.parentElement.textContent.trim() : "Não informado";
+}
+
+function calcular(){
+  const nome = document.getElementById('nome').value || "(nome não informado)";
+  const data = document.getElementById('data').value || "(data não informada)";
+  const preenchidoPor = radioVal('preenchidoPor') || "Não informado";
+  const horas = document.getElementById('horas').value;
+  const despertares = document.getElementById('despertares').value;
+  const qualMedicacao = document.getElementById('qualMedicacao').value;
+  const observacoes = document.getElementById('observacoes').value;
+
+  const latencia = radioVal('latencia');
+  const reparador = radioVal('reparador');
+  const sonolencia = radioVal('sonolencia');
+  const apneia = radioVal('apneia');
+  const telas = radioVal('telas');
+  const cafeina = radioVal('cafeina');
+  const ambiente = radioVal('ambiente');
+  const medicacaoSono = radioVal('medicacaoSono');
+
+  // Higiene do sono: inadequada se >=2 dos 3 fatores comportamentais estiverem alterados
+  let fatoresHigiene = 0;
+  if (telas === "1") fatoresHigiene++;
+  if (cafeina === "1") fatoresHigiene++;
+  if (ambiente === "1") fatoresHigiene++;
+  const higieneInadequada = fatoresHigiene >= 2;
+
+  // Insônia clinicamente relevante: latência >=30min E (despertares frequentes OU sono não reparador)
+  const latenciaAlta = (latencia === "1");
+  const despertaresFreq = despertares !== "" && parseInt(despertares) >= 3;
+  const naoReparador = (reparador === "1" || reparador === "0.5");
+  const insoniaRelevante = latenciaAlta && (despertaresFreq || naoReparador);
+
+  const sonolenciaDiurna = (sonolencia === "1");
+  const suspeitaApneia = (apneia === "1");
+
+  // Badges
+  let badgesHtml = "";
+  if (insoniaRelevante) {
+    badgesHtml += `<span class="badge critico">Padrão sugestivo de insônia — avaliar</span> `;
+  } else {
+    badgesHtml += `<span class="badge ok">Sem padrão sugestivo de insônia</span> `;
+  }
+  if (suspeitaApneia) {
+    badgesHtml += `<span class="badge critico">Ronco/pausas respiratórias relatadas — investigar apneia</span> `;
+  }
+  if (sonolenciaDiurna) {
+    badgesHtml += `<span class="badge alerta">Sonolência diurna presente</span> `;
+  }
+  if (higieneInadequada) {
+    badgesHtml += `<span class="badge alerta">Higiene do sono inadequada</span>`;
+  } else {
+    badgesHtml += `<span class="badge ok">Higiene do sono adequada</span>`;
+  }
+
+  const resumoItens = [
+    ["Paciente", nome],
+    ["Data", data],
+    ["Preenchido por", preenchidoPor],
+    ["Horas de sono/noite", horas ? horas + " h" : "Não informado"],
+    ["Latência para dormir", radioLabel('latencia')],
+    ["Despertares noturnos", despertares !== "" ? despertares : "Não informado"],
+    ["Sono reparador", radioLabel('reparador')],
+    ["Sonolência diurna", radioLabel('sonolencia')],
+    ["Ronco/pausas respiratórias", radioLabel('apneia')],
+    ["Uso de telas antes de dormir", radioLabel('telas')],
+    ["Cafeína tarde/noite", radioLabel('cafeina')],
+    ["Ambiente do quarto adequado", radioLabel('ambiente')],
+    ["Medicação para dormir", radioLabel('medicacaoSono') + (qualMedicacao ? " — " + qualMedicacao : "")],
+    ["Higiene do sono", higieneInadequada ? "Inadequada" : "Adequada"],
+    ["Padrão sugestivo de insônia", insoniaRelevante ? "Sim" : "Não"],
+    ["Observações", observacoes || "—"]
+  ];
+
+  document.getElementById('badges').innerHTML = badgesHtml;
+  document.getElementById('resumoLista').innerHTML = resumoItens.map(
+    ([k,v]) => `<div class="resumo-item"><strong>${k}:</strong> ${v}</div>`
+  ).join("");
+
+  ultimoResumoTexto = `DIÁRIO DE SONO SIMPLIFICADO — COGNISA\n` +
+    resumoItens.map(([k,v]) => `${k}: ${v}`).join("\n");
+
+  document.getElementById('resultado').style.display = 'block';
+  document.getElementById('btnPdf').style.display = 'inline-block';
+  document.getElementById('btnCopiar').style.display = 'inline-block';
+  document.getElementById('btnWhats').style.display = 'inline-block';
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+}
+
+function gerarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const linhas = doc.splitTextToSize(ultimoResumoTexto, 180);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(14);
+  doc.text("Diário de Sono Simplificado — Cognisa", 15, 18);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(11);
+  doc.text(linhas, 15, 30);
+  doc.setFontSize(9);
+  doc.text("Dr. Fausto Azambuja Machado - CRM-MG 39242 - RQE 15603 (Geriatria)", 15, 285);
+  doc.save("Diario_Sono_Cognisa.pdf");
+}
+
+function copiarResultado(){
+  navigator.clipboard.writeText(ultimoResumoTexto).then(()=>{
+    alert("Resultado copiado!");
+  });
+}
+
+function enviarWhats(){
+  const texto = encodeURIComponent(ultimoResumoTexto);
+  window.open(`https://wa.me/553125140626?text=${texto}`, "_blank");
+}
+</script>
+</body>
+</html>

@@ -24,9 +24,9 @@ Site estático (HTML/CSS/JS puro), sem build step — pode ser publicado diretam
 
 ## Formulários incluídos
 
-**Acesso paciente/cuidador:** AUA Symptom Score, GDS-15, NPI-Q, Escala de Zarit, IMC, ABVD (Katz), AIVD (Lawton), AUDIT, MAN, SARC-F, CFI.
+**Acesso paciente/cuidador:** AUA Symptom Score, GDS-15, NPI-Q, Escala de Zarit, IMC, ABVD (Katz), AIVD (Lawton), AUDIT, MAN, SARC-F, CFI, Diário de Sono Simplificado.
 
-**Exclusivo médico:** IVCF-20, MEEM, MoCA, Classificação ASA, CURB-65, Escala de Braden, BODE Index.
+**Exclusivo médico:** IVCF-20, MEEM, MoCA, Classificação ASA, CURB-65, Escala de Braden, BODE Index, IVSF-10.
 
 Todos os formulários rodam 100% no navegador (sem backend), com exportação em PDF via [jsPDF](https://github.com/parallax/jsPDF) carregado por CDN, e opção de copiar o resultado para a área de transferência.
 

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IVSF-10 | Cognisa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36;
+    --gold:#B8915A;
+    --ivory:#F4F1EA;
+    --red:#B44B4B;
+    --amber:#B8863E;
+    --green:#3F6B4F;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    font-family:'DM Sans',sans-serif;
+    color:var(--teal);
+    line-height:1.5;
+    padding:24px 16px 64px;
+  }
+  .wrap{max-width:720px;margin:0 auto;}
+  header{text-align:center;margin-bottom:28px;}
+  header .selo{font-size:13px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:6px;}
+  h1{
+    font-family:'Cormorant Garamond',serif;
+    font-weight:700;
+    font-size:34px;
+    margin:0 0 6px;
+    color:var(--teal);
+  }
+  .subtitulo{font-size:15px;color:#5b6b64;margin-bottom:0;}
+  .card{
+    background:#fff;
+    border:1px solid #e4ddce;
+    border-radius:10px;
+    padding:22px 20px;
+    margin-bottom:18px;
+    box-shadow:0 1px 3px rgba(31,59,54,0.05);
+  }
+  .card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    color:var(--gold);
+    margin:0 0 6px;
+    border-bottom:1px solid #eee6d6;
+    padding-bottom:8px;
+  }
+  .card .dimensao{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#8a9a92;margin-bottom:14px;}
+  label{display:block;font-weight:500;font-size:14.5px;margin-bottom:6px;margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  input[type=text], input[type=date]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #d8d0bd;
+    border-radius:7px;
+    font-family:'DM Sans',sans-serif;
+    font-size:15px;
+    background:#fdfcf9;
+    color:var(--teal);
+  }
+  .pergunta{font-size:15px;font-weight:600;margin-bottom:10px;}
+  .opcoes{display:flex;flex-direction:column;gap:8px;}
+  .opcoes label{
+    display:flex;align-items:flex-start;gap:10px;
+    font-weight:400;font-size:14.5px;margin:0;
+    background:#fdfcf9;border:1px solid #d8d0bd;border-radius:8px;
+    padding:10px 12px;cursor:pointer;
+  }
+  .opcoes input{margin-top:3px;accent-color:var(--gold);}
+  .opcoes label:has(input:checked){
+    background:var(--teal);color:#fff;border-color:var(--teal);
+  }
+  .comentario{
+    font-size:12.5px;color:#7a8a83;margin-top:8px;
+    background:#faf8f2;border-left:3px solid var(--gold);
+    padding:8px 10px;border-radius:4px;
+  }
+  .naoinformado{
+    display:flex;align-items:center;gap:10px;
+    font-weight:400;font-size:13.5px;margin:10px 0 0;
+    color:#8a9a92;font-style:italic;cursor:pointer;
+  }
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;}
+  button{
+    flex:1;min-width:150px;
+    border:none;border-radius:8px;
+    padding:13px 16px;
+    font-family:'DM Sans',sans-serif;
+    font-weight:700;font-size:14.5px;
+    cursor:pointer;
+  }
+  #btnCalcular{background:var(--teal);color:#fff;}
+  #btnPdf{background:var(--gold);color:#fff;display:none;}
+  #btnCopiar{background:#fff;color:var(--teal);border:1.5px solid var(--teal);display:none;}
+  #btnWhats{background:#3F6B4F;color:#fff;display:none;}
+  #resultado{display:none;margin-top:20px;}
+  .badge{
+    display:inline-block;padding:6px 16px;border-radius:20px;
+    font-weight:700;font-size:14px;color:#fff;margin-bottom:14px;
+  }
+  .badge.baixa{background:var(--green);}
+  .badge.moderada{background:var(--amber);}
+  .badge.alta{background:var(--red);}
+  .score-total{font-size:15px;margin-bottom:10px;}
+  .score-total strong{font-size:22px;color:var(--gold);}
+  .resumo-item{padding:8px 0;border-bottom:1px solid #eee6d6;font-size:14.5px;}
+  .resumo-item strong{color:var(--gold);}
+  .alerta-incompleto{
+    background:#fbeeee;border:1px solid var(--red);color:#7a2e2e;
+    padding:10px 12px;border-radius:8px;font-size:13.5px;margin-bottom:12px;
+  }
+  .legal{
+    font-size:12px;color:#7a8a83;text-align:center;margin-top:30px;
+    border-top:1px solid #e4ddce;padding-top:16px;
+  }
+  footer{text-align:center;font-size:12px;color:#8a9a92;margin-top:36px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="selo">🔥 Panteão Vital · Domínio Héstia · Exclusivo Médico</div>
+    <h1>IVSF-10</h1>
+    <p class="subtitulo">Avaliação da Vulnerabilidade Social e Familiar</p>
+  </header>
+
+  <div class="card">
+    <h2>Identificação</h2>
+    <label for="nome">Nome do paciente</label>
+    <input type="text" id="nome" placeholder="Nome completo">
+
+    <label for="data">Data de avaliação</label>
+    <input type="date" id="data">
+
+    <label>Preenchido por</label>
+    <div class="opcoes" style="flex-direction:row;flex-wrap:wrap;">
+      <label style="flex:1;min-width:120px;justify-content:center;"><input type="radio" name="preenchidoPor" value="Médico" checked> Médico</label>
+      <label style="flex:1;min-width:120px;justify-content:center;"><input type="radio" name="preenchidoPor" value="Cuidador"> Cuidador</label>
+    </div>
+    <p class="comentario">Aplicação recomendada pelo profissional, dado que várias perguntas exigem julgamento clínico sobre as definições operacionais (ver comentários em cada item).</p>
+  </div>
+
+  <!-- SUPORTE FAMILIAR -->
+
+  <div class="card">
+    <div class="dimensao">Suporte familiar · Moradia</div>
+    <p class="pergunta">1. Com quem você mora?</p>
+    <div class="opcoes" data-q="q1">
+      <label><input type="radio" name="q1" value="6"> Mora em ILPI</label>
+      <label><input type="radio" name="q1" value="2"> Mora sozinho</label>
+      <label><input type="radio" name="q1" value="0"> Mora com familiares ou amigos, na mesma casa ou lote</label>
+    </div>
+    <p class="comentario">Morar sozinho significa que a pessoa idosa é a única ocupante do domicílio. Excluem-se casos em que familiares vivem na vizinhança imediata (andar abaixo, mesmo lote etc.).</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte familiar · Cônjuge ou companheiro</div>
+    <p class="pergunta">2. Você tem cônjuge ou companheiro?</p>
+    <div class="opcoes" data-q="q2">
+      <label><input type="radio" name="q2" value="0"> Sim</label>
+      <label><input type="radio" name="q2" value="2"> Não</label>
+      <label><input type="radio" name="q2" value="4"> Viuvez recente (últimos 12 meses)</label>
+    </div>
+    <p class="comentario">Considera casamento ou união estável vigente. Viuvez recente aplica-se ao falecimento do cônjuge/companheiro nos últimos 12 meses, partindo de união estável ou convívio significativo. Casamento vigente mas com separação de fato prolongada não pontua aqui.</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte familiar · Apoio nas atividades de vida diária</div>
+    <p class="pergunta">3. Você tem familiares e/ou cuidadores para atendê-lo plenamente na realização das tarefas do cotidiano, atualmente ou em caso de necessidade?</p>
+    <div class="opcoes" data-q="q3">
+      <label><input type="radio" name="q3" value="0"> Sim</label>
+      <label><input type="radio" name="q3" value="6"> Não</label>
+    </div>
+    <p class="comentario">Avaliar disponibilidade e capacidade técnica de alguém para auxiliar em AIVD e/ou ABVD, se necessário. Considerar também a sobrecarga do cuidador existente na pontuação.</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte familiar · Interação familiar e comunitária</div>
+    <p class="pergunta">4. Você está satisfeito com o convívio ou frequência de visitas de familiares e/ou amigos?</p>
+    <div class="opcoes" data-q="q4">
+      <label><input type="radio" name="q4" value="0"> Sim</label>
+      <label><input type="radio" name="q4" value="2"> Não</label>
+    </div>
+    <p class="comentario">Frequência percebida como satisfatória pelo próprio paciente — não sente falta de familiares/amigos nem se sente abandonado.</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte familiar · Sobrecarga familiar</div>
+    <p class="pergunta">5. Você é responsável pelo cuidado de pessoas dependentes e/ou reside com pessoas que possam causar desorganização no convívio familiar?</p>
+    <div class="opcoes" data-q="q5">
+      <label><input type="radio" name="q5" value="2"> Sim</label>
+      <label><input type="radio" name="q5" value="0"> Não</label>
+    </div>
+    <p class="comentario">Inclui pessoas com deficiência física/mental ou idosos dependentes sob sua responsabilidade, e/ou pessoas que causem desorganização em casa (ex.: uso de drogas lícitas/ilícitas, envolvimento com criminalidade).</p>
+  </div>
+
+  <!-- SUPORTE SOCIAL -->
+
+  <div class="card">
+    <div class="dimensao">Suporte social · Renda</div>
+    <p class="pergunta">6. Você tem acesso à renda própria?</p>
+    <div class="opcoes" data-q="q6">
+      <label><input type="radio" name="q6" value="0"> Benefício previdenciário (salário, aposentadoria ou outra renda própria suficiente)</label>
+      <label><input type="radio" name="q6" value="2"> Benefício assistencial (BPC, programas de transferência de renda)</label>
+      <label><input type="radio" name="q6" value="4"> Sem benefício previdenciário/assistencial, mas com acesso a renda de terceiros se necessário</label>
+      <label><input type="radio" name="q6" value="5"> Ausência completa de acesso a renda</label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte social · Escolaridade</div>
+    <p class="pergunta">7. Você é capaz de ler e escrever?</p>
+    <div class="opcoes" data-q="q7">
+      <label><input type="radio" name="q7" value="0"> Sim</label>
+      <label><input type="radio" name="q7" value="1"> Não</label>
+    </div>
+    <p class="comentario">Inclui analfabetismo absoluto ou funcional — consegue ler/escrever de forma limitada (o próprio nome, de parentes), mas não compreende textos curtos ou instruções (ex.: uma prescrição médica).</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte social · Condições da moradia</div>
+    <p class="pergunta">8. Você tem moradia própria?</p>
+    <div class="opcoes" data-q="q8">
+      <label><input type="radio" name="q8" value="0"> Sim</label>
+      <label><input type="radio" name="q8" value="1"> Não</label>
+    </div>
+    <p class="pergunta" style="margin-top:16px;">9. A moradia está em boas condições de organização, segurança e higiene?</p>
+    <div class="opcoes" data-q="q9">
+      <label><input type="radio" name="q9" value="0"> Sim</label>
+      <label><input type="radio" name="q9" value="2"> Não</label>
+    </div>
+    <p class="comentario">Considerar saneamento inadequado (lixo a céu aberto, água sem tratamento, esgoto a céu aberto), relação morador/cômodo ≥1, ou percepção subjetiva do paciente/acompanhante sobre higiene e organização do domicílio.</p>
+  </div>
+
+  <div class="card">
+    <div class="dimensao">Suporte social · Participação social</div>
+    <p class="pergunta">10. Você participa de eventos ou atividades extradomiciliares, comunitárias ou de rede social (trabalho, família, igreja, grupo de convivência, lazer etc.)?</p>
+    <div class="opcoes" data-q="q10">
+      <label><input type="radio" name="q10" value="0"> Sim</label>
+      <label><input type="radio" name="q10" value="1"> Não</label>
+    </div>
+    <p class="comentario">Deve ser extradomiciliar e com participação de terceiros — atividades religiosas, acadêmicas, encontros com amigos/familiares, projetos sociais, etc.</p>
+  </div>
+
+  <div class="card">
+    <h2>Observações</h2>
+    <textarea id="observacoes" style="width:100%;min-height:60px;padding:10px 12px;border:1px solid #d8d0bd;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:15px;background:#fdfcf9;color:var(--teal);" placeholder="Notas adicionais sobre a situação sociofamiliar..."></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button id="btnCalcular" onclick="calcular()">Ver resultado</button>
+  </div>
+
+  <div id="resultado" class="card">
+    <h2>Resultado</h2>
+    <div id="alertaIncompleto"></div>
+    <div id="badges"></div>
+    <div id="resumoLista"></div>
+    <div class="btn-row">
+      <button id="btnPdf" onclick="gerarPDF()">Baixar PDF</button>
+      <button id="btnCopiar" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="btnWhats" onclick="enviarWhats()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <p class="legal">
+    Este instrumento é uma ferramenta de rastreio e organização clínica e não substitui a avaliação médica presencial.
+    A interpretação do escore deve sempre considerar o contexto clínico e social completo do paciente.
+  </p>
+
+  <footer>
+    Dr. Fausto Azambuja Machado · CRM-MG 39242 · RQE 15603 (Geriatria) · RQE 15602 (Clínica Médica)<br>
+    Cognisa · Panteão Vital
+  </footer>
+
+</div>
+
+<script>
+let ultimoResumoTexto = "";
+
+const perguntas = [
+  {id:"q1", texto:"1. Com quem você mora?"},
+  {id:"q2", texto:"2. Tem cônjuge/companheiro?"},
+  {id:"q3", texto:"3. Tem apoio para AVD (familiar/cuidador)?"},
+  {id:"q4", texto:"4. Satisfeito com convívio familiar/social?"},
+  {id:"q5", texto:"5. Sobrecarga familiar (cuida de dependente/convive com desorganização)?"},
+  {id:"q6", texto:"6. Acesso a renda própria"},
+  {id:"q7", texto:"7. Capaz de ler e escrever?"},
+  {id:"q8", texto:"8. Tem moradia própria?"},
+  {id:"q9", texto:"9. Moradia em boas condições?"},
+  {id:"q10", texto:"10. Participa de atividades sociais/comunitárias?"}
+];
+
+function radioInfo(name){
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  if(!el) return null;
+  return { valor: parseInt(el.value), texto: el.parentElement.textContent.trim() };
+}
+
+function calcular(){
+  const nome = document.getElementById('nome').value || "(nome não informado)";
+  const data = document.getElementById('data').value || "(data não informada)";
+  const preenchidoPor = document.querySelector('input[name="preenchidoPor"]:checked').value;
+  const observacoes = document.getElementById('observacoes').value;
+
+  let total = 0;
+  let faltando = 0;
+  let resumoItens = [];
+
+  perguntas.forEach(p => {
+    const info = radioInfo(p.id);
+    if (info) {
+      total += info.valor;
+      resumoItens.push([p.texto, info.texto + ` (${info.valor} pts)`]);
+    } else {
+      faltando++;
+      resumoItens.push([p.texto, "Não respondido"]);
+    }
+  });
+
+  document.getElementById('alertaIncompleto').innerHTML = faltando > 0
+    ? `<div class="alerta-incompleto">⚠ ${faltando} pergunta(s) não respondida(s). A pontuação total abaixo está incompleta — complete o quanto antes para uma classificação confiável.</div>`
+    : "";
+
+  let classe, label;
+  if (total <= 4) { classe = "baixa"; label = "Baixa vulnerabilidade sociofamiliar"; }
+  else if (total <= 9) { classe = "moderada"; label = "Moderada vulnerabilidade sociofamiliar"; }
+  else { classe = "alta"; label = "Alta vulnerabilidade sociofamiliar"; }
+
+  const badgesHtml = `
+    <div class="score-total">Pontuação total: <strong>${total}</strong> / 30 ${faltando>0 ? "(parcial)" : ""}</div>
+    <span class="badge ${classe}">${label}</span>
+  `;
+
+  document.getElementById('badges').innerHTML = badgesHtml;
+
+  const cabecalho = [
+    ["Paciente", nome],
+    ["Data da avaliação", data],
+    ["Preenchido por", preenchidoPor]
+  ];
+
+  document.getElementById('resumoLista').innerHTML =
+    cabecalho.concat(resumoItens).map(
+      ([k,v]) => `<div class="resumo-item"><strong>${k}:</strong> ${v}</div>`
+    ).join("") +
+    `<div class="resumo-item"><strong>Observações:</strong> ${observacoes || "—"}</div>`;
+
+  ultimoResumoTexto = `IVSF-10 — ÍNDICE DE VULNERABILIDADE SOCIAL E FAMILIAR — COGNISA\n` +
+    cabecalho.map(([k,v]) => `${k}: ${v}`).join("\n") + "\n" +
+    resumoItens.map(([k,v]) => `${k}: ${v}`).join("\n") +
+    `\nPontuação total: ${total}/30 ${faltando>0 ? "(parcial — " + faltando + " item(ns) não respondido(s))" : ""}\n` +
+    `Classificação: ${label}\n` +
+    `Observações: ${observacoes || "—"}`;
+
+  document.getElementById('resultado').style.display = 'block';
+  document.getElementById('btnPdf').style.display = 'inline-block';
+  document.getElementById('btnCopiar').style.display = 'inline-block';
+  document.getElementById('btnWhats').style.display = 'inline-block';
+  document.getElementById('resultado').scrollIntoView({behavior:'smooth'});
+}
+
+function gerarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const linhas = doc.splitTextToSize(ultimoResumoTexto, 180);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(14);
+  doc.text("IVSF-10 — Vulnerabilidade Social e Familiar — Cognisa", 15, 18);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(10.5);
+  doc.text(linhas, 15, 30);
+  doc.setFontSize(9);
+  doc.text("Dr. Fausto Azambuja Machado - CRM-MG 39242 - RQE 15603 (Geriatria)", 15, 285);
+  doc.save("IVSF10_Cognisa.pdf");
+}
+
+function copiarResultado(){
+  navigator.clipboard.writeText(ultimoResumoTexto).then(()=>{
+    alert("Resultado copiado!");
+  });
+}
+
+function enviarWhats(){
+  const texto = encodeURIComponent(ultimoResumoTexto);
+  window.open(`https://wa.me/553125140626?text=${texto}`, "_blank");
+}
+</script>
+</body>
+</html>
