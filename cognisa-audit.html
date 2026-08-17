@@ -3,230 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escore de Sintomas Urinários (AUA / IPSS) — Cognisa</title>
+<title>Teste AUDIT — Cognisa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
-    --teal:#1F3B36;
-    --teal-light:#2C5048;
-    --gold:#B8915A;
-    --gold-soft:#D9BD93;
-    --ivory:#F4F1EA;
-    --ink:#1A1A17;
-    --ok:#5B7A5B;
-    --warn:#B8863A;
-    --alert:#A84B3A;
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--ivory);
-    color:var(--ink);
-    font-family:'DM Sans', sans-serif;
-    line-height:1.5;
-  }
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
   .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
 
-  header.top{
-    background:var(--teal);
-    color:var(--ivory);
-    padding:36px 24px 30px;
-    text-align:center;
-  }
-  header.top .eyebrow{
-    font-size:12px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--gold-soft);
-    margin-bottom:10px;
-  }
-  header.top h1{
-    font-family:'Cormorant Garamond', serif;
-    font-weight:600;
-    font-size:clamp(28px,5vw,38px);
-    margin:0 0 8px;
-  }
-  header.top p{
-    margin:0;
-    color:var(--gold-soft);
-    font-size:15px;
-    max-width:520px;
-    margin:0 auto;
-  }
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
 
-  .disclaimer{
-    background:#fff;
-    border:1.5px solid var(--gold);
-    border-left:6px solid var(--gold);
-    border-radius:6px;
-    padding:16px 18px;
-    margin:28px 0;
-    font-size:14px;
-    color:var(--teal);
-  }
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
   .disclaimer strong{color:var(--alert);}
 
-  .blank-note{
-    font-size:13px;
-    color:#5c5c56;
-    background:#EFEAE0;
-    border-radius:6px;
-    padding:10px 14px;
-    margin-bottom:28px;
-  }
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
 
-  .idfields{
-    background:#fff;
-    border-radius:10px;
-    padding:20px 22px;
-    margin-bottom:28px;
-    box-shadow:0 1px 3px rgba(31,59,54,.08);
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-  }
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .idfields .full{grid-column:1/-1;}
-  .idfields label{
-    display:block;
-    font-size:12px;
-    letter-spacing:.04em;
-    text-transform:uppercase;
-    color:var(--gold);
-    font-weight:700;
-    margin-bottom:6px;
-  }
-  .idfields input, .idfields select{
-    width:100%;
-    font-family:'DM Sans',sans-serif;
-    font-size:15px;
-    padding:9px 10px;
-    border:1.5px solid #DDD6C7;
-    border-radius:6px;
-    background:#FBFAF7;
-    color:var(--ink);
-  }
-  .idfields input:focus, .idfields select:focus{
-    outline:none;
-    border-color:var(--gold);
-  }
-  @media (max-width:480px){
-    .idfields{grid-template-columns:1fr;}
-  }
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
 
-  .question{
-    background:#fff;
-    border-radius:10px;
-    padding:20px 22px;
-    margin-bottom:16px;
-    box-shadow:0 1px 3px rgba(31,59,54,.08);
-  }
-  .question .qnum{
-    font-family:'Cormorant Garamond', serif;
-    font-size:14px;
-    font-weight:700;
-    color:var(--gold);
-    letter-spacing:.05em;
-  }
-  .question p.qtext{
-    font-size:16.5px;
-    margin:4px 0 14px;
-    color:var(--ink);
-  }
-  .options{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(90px,1fr));
-    gap:8px;
-  }
-  label.opt{
-    border:1.5px solid #DDD6C7;
-    border-radius:8px;
-    padding:10px 8px;
-    text-align:center;
-    font-size:13px;
-    cursor:pointer;
-    transition:.15s;
-    display:block;
-    background:#FBFAF7;
-  }
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question p.qtext{font-size:16px;margin:4px 0 14px;color:var(--ink);}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:12.5px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
   label.opt:hover{border-color:var(--gold);}
   input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
-  label.opt.selected{
-    background:var(--teal);
-    border-color:var(--teal);
-    color:var(--ivory);
-    font-weight:500;
-  }
-  label.opt.blank{
-    border-style:dashed;
-  }
-  label.opt.blank.selected{
-    background:#8a8578;
-    border-color:#8a8578;
-  }
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  label.opt.blank{border-style:dashed;}
+  label.opt.blank.selected{background:#8a8578;border-color:#8a8578;}
 
-  .section-title{
-    font-family:'Cormorant Garamond', serif;
-    font-size:22px;
-    font-weight:600;
-    color:var(--teal);
-    margin:36px 0 14px;
-    border-bottom:2px solid var(--gold-soft);
-    padding-bottom:6px;
-  }
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
 
-  .result{
-    margin-top:32px;
-    padding:26px;
-    border-radius:12px;
-    background:var(--teal);
-    color:var(--ivory);
-    text-align:center;
-    display:none;
-  }
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
   .result.show{display:block;}
-  .result .score{
-    font-family:'Cormorant Garamond', serif;
-    font-size:56px;
-    font-weight:700;
-    line-height:1;
-    color:var(--gold-soft);
-  }
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
   .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
-  .result .category{
-    font-size:19px;
-    font-weight:700;
-    margin:12px 0 4px;
-  }
-  .result .qol{
-    margin-top:14px;
-    font-size:14px;
-    color:var(--gold-soft);
-  }
-  .result .incomplete{
-    margin-top:14px;
-    font-size:13px;
-    color:#F0D9B8;
-  }
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:460px;margin-left:auto;margin-right:auto;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
 
-  .actions{
-    display:flex;
-    gap:12px;
-    justify-content:center;
-    margin-top:24px;
-    flex-wrap:wrap;
-  }
-  button{
-    font-family:'DM Sans',sans-serif;
-    font-size:14px;
-    font-weight:700;
-    padding:12px 24px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    transition:.15s;
-  }
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
   #calcBtn{background:var(--gold);color:var(--teal);}
   #calcBtn:hover{background:var(--gold-soft);}
   #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
@@ -234,35 +63,16 @@
   #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
   #waBtn:hover{background:#1EBE5A;}
 
-  footer{
-    text-align:center;
-    font-size:12px;
-    color:#7a776a;
-    margin-top:48px;
-    padding-top:20px;
-    border-top:1px solid #DDD6C7;
-  }
-  footer .mote{
-    font-family:'Cormorant Garamond', serif;
-    font-style:italic;
-    font-size:15px;
-    color:var(--teal);
-    margin-bottom:8px;
-  }
-
-  @media print{
-    button, .blank-note{display:none;}
-    body{background:#fff;}
-    header.top{background:var(--teal) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
-  }
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
 </style>
 </head>
 <body>
 
 <header class="top">
   <div class="eyebrow">Cognisa · Panteão Vital · Apolo</div>
-  <h1>Escore de Sintomas Urinários</h1>
-  <p>AUA Symptom Score (equivalente ao IPSS) — avaliação de sintomas prostáticos e do trato urinário inferior</p>
+  <h1>Teste AUDIT</h1>
+  <p>Identificação de problemas relacionados ao uso de álcool — 10 perguntas, sem julgamento</p>
 </header>
 
 <div class="wrap">
@@ -272,7 +82,7 @@
   </div>
 
   <div class="blank-note">
-    Se não tiver certeza sobre alguma resposta, é melhor deixar em branco (opção "não sei") do que arriscar uma resposta incorreta. O resultado indicará se alguma pergunta ficou sem resposta.
+    Responda com honestidade, pensando no último ano (a menos que a pergunta indique outro período). Uma "dose" equivale, em média, a uma lata de cerveja (350ml), uma taça de vinho (150ml) ou uma dose de destilado (40ml). Se não tiver certeza, deixe em branco.
   </div>
 
   <div class="idfields">
@@ -295,12 +105,9 @@
     </div>
   </div>
 
-  <div class="section-title">Nos últimos 30 dias, com que frequência você...</div>
+  <div class="section-title">Sobre o consumo de álcool</div>
 
   <div id="questions"></div>
-
-  <div class="section-title">Qualidade de vida</div>
-  <div id="qol-question"></div>
 
   <div class="actions">
     <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
@@ -311,7 +118,7 @@
     <div class="score-label">Pontuação total</div>
     <div class="score" id="scoreValue">–</div>
     <div class="category" id="category">–</div>
-    <div class="qol" id="qolResult"></div>
+    <div class="note" id="note"></div>
     <div class="incomplete" id="incompleteNote"></div>
     <div class="actions">
       <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
@@ -327,51 +134,55 @@
 </div>
 
 <script>
-const freqOptions = ["Nunca","Menos de 1 vez em 5","Menos da metade das vezes","Cerca da metade das vezes","Mais da metade das vezes","Quase sempre"];
-const nocturiaOptions = ["Nenhuma vez","1 vez","2 vezes","3 vezes","4 vezes","5 vezes ou mais"];
-const qolOptions = ["Ótimo","Muito bom","Satisfeito","Indiferente","Insatisfeito","Ruim","Muito ruim"];
-
 const questions = [
-  {text:"Teve sensação de que a bexiga não esvaziou completamente após urinar?", opts:freqOptions},
-  {text:"Precisou urinar novamente em menos de 2 horas após ter urinado?", opts:freqOptions},
-  {text:"Parou e recomeçou o jato urinário várias vezes ao urinar?", opts:freqOptions},
-  {text:"Teve dificuldade para adiar a vontade de urinar?", opts:freqOptions},
-  {text:"Teve um jato urinário fraco?", opts:freqOptions},
-  {text:"Precisou fazer força para começar a urinar?", opts:freqOptions},
-  {text:"Quantas vezes, em média, levantou-se à noite para urinar, desde a hora de deitar até a hora de levantar pela manhã?", opts:nocturiaOptions}
+  {text:"Com que frequência você consome bebidas alcoólicas?", opts:["Nunca","Mensalmente ou menos","2 a 4 vezes por mês","2 a 3 vezes por semana","4 ou mais vezes por semana"]},
+  {text:"Quantas doses de álcool você consome num dia típico em que bebe?", opts:["1 ou 2","3 ou 4","5 ou 6","7 a 9","10 ou mais"]},
+  {text:"Com que frequência você toma 6 ou mais doses em uma única ocasião?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]},
+  {text:"No último ano, com que frequência você percebeu que não conseguia parar de beber depois de ter começado?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]},
+  {text:"No último ano, com que frequência você deixou de fazer algo que era esperado de você por causa da bebida?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]},
+  {text:"No último ano, com que frequência você precisou beber logo pela manhã para se sentir melhor após ter bebido bastante no dia anterior?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]},
+  {text:"No último ano, com que frequência você sentiu culpa ou remorso depois de beber?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]},
+  {text:"No último ano, com que frequência você foi incapaz de lembrar o que aconteceu na noite anterior por causa da bebida?", opts:["Nunca","Menos que mensalmente","Mensalmente","Semanalmente","Diariamente ou quase todos os dias"]}
 ];
+
+const q9Opts = ["Não","Sim, mas não no último ano","Sim, no último ano"];
+const q9Points = [0,2,4];
+const q10Opts = ["Não","Sim, mas não no último ano","Sim, no último ano"];
+const q10Points = [0,2,4];
 
 const container = document.getElementById('questions');
 questions.forEach((q, i) => {
   const div = document.createElement('div');
   div.className = 'question';
   let optsHtml = q.opts.map((label, val) => `
-    <label class="opt" data-q="${i}" data-v="${val}">
-      <input type="radio" name="q${i}" value="${val}">${label}
-    </label>`).join('');
-  optsHtml += `
-    <label class="opt blank" data-q="${i}" data-v="blank">
-      <input type="radio" name="q${i}" value="blank">Não sei / prefiro não responder
-    </label>`;
+    <label class="opt" data-q="${i}" data-v="${val}"><input type="radio" name="q${i}" value="${val}">${label}</label>`).join('');
+  optsHtml += `<label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei</label>`;
   div.innerHTML = `
-    <div class="qnum">Pergunta ${i+1} de 7</div>
+    <div class="qnum">Pergunta ${i+1} de 10</div>
     <p class="qtext">${q.text}</p>
     <div class="options">${optsHtml}</div>
   `;
   container.appendChild(div);
 });
 
-const qolDiv = document.createElement('div');
-qolDiv.className = 'question';
-let qolHtml = qolOptions.map((label, val) => `
-  <label class="opt" data-q="qol" data-v="${val}">
-    <input type="radio" name="qol" value="${val}">${label}
-  </label>`).join('');
-qolDiv.innerHTML = `
-  <p class="qtext">Se tivesse que passar o resto da vida urinando exatamente como faz agora, como se sentiria?</p>
-  <div class="options">${qolHtml}</div>
-`;
-document.getElementById('qol-question').appendChild(qolDiv);
+// Perguntas 9 e 10
+const specialQs = [
+  {text:"Você já se machucou, ou alguém se machucou, por causa da bebida?", opts:q9Opts, points:q9Points, idx:8},
+  {text:"Algum parente, amigo, médico ou outro profissional de saúde já demonstrou preocupação com sua forma de beber, ou sugeriu que você parasse?", opts:q10Opts, points:q10Points, idx:9}
+];
+specialQs.forEach(sq => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  let optsHtml = sq.opts.map((label, val) => `
+    <label class="opt" data-q="${sq.idx}" data-v="${val}"><input type="radio" name="q${sq.idx}" value="${val}">${label}</label>`).join('');
+  optsHtml += `<label class="opt blank" data-q="${sq.idx}" data-v="blank"><input type="radio" name="q${sq.idx}" value="blank">Não sei</label>`;
+  div.innerHTML = `
+    <div class="qnum">Pergunta ${sq.idx+1} de 10</div>
+    <p class="qtext">${sq.text}</p>
+    <div class="options">${optsHtml}</div>
+  `;
+  container.appendChild(div);
+});
 
 document.addEventListener('click', (e) => {
   const opt = e.target.closest('label.opt');
@@ -380,6 +191,73 @@ document.addEventListener('click', (e) => {
   document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
   opt.classList.add('selected');
 });
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function respostasArray(){
+  const all = [];
+  questions.forEach((q, i) => {
+    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+    if(sel && sel.dataset.v !== 'blank'){
+      const val = parseInt(sel.dataset.v);
+      all.push({texto:q.text, resposta:q.opts[val], ponto:val});
+    } else {
+      all.push({texto:q.text, resposta:'Não respondida', ponto:null});
+    }
+  });
+  specialQs.forEach(sq => {
+    const sel = document.querySelector(`label.opt[data-q="${sq.idx}"].selected`);
+    if(sel && sel.dataset.v !== 'blank'){
+      const val = parseInt(sel.dataset.v);
+      all.push({texto:sq.text, resposta:sq.opts[val], ponto:sq.points[val]});
+    } else {
+      all.push({texto:sq.text, resposta:'Não respondida', ponto:null});
+    }
+  });
+  return all;
+}
+
+function calcular(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const preenchidoPor = document.getElementById('filledby').value;
+
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  const respostas = respostasArray();
+  let total = 0, faltando = [];
+  respostas.forEach((r, i) => {
+    if(r.ponto !== null){ total += r.ponto; } else { faltando.push(i+1); }
+  });
+
+  let categoria = '', cor = '', nota = '';
+  if(total <= 7){ categoria = 'Baixo risco'; cor='var(--ok)'; nota='Padrão de consumo dentro do que se considera de baixo risco.'; }
+  else if(total <= 15){ categoria = 'Uso de risco'; cor='var(--warn)'; nota='Vale conversar com seu médico sobre o padrão de consumo — orientação simples costuma ser suficiente nesta faixa.'; }
+  else if(total <= 19){ categoria = 'Uso nocivo'; cor='var(--warn)'; nota='Este padrão de consumo já está associado a danos à saúde — uma avaliação médica mais detalhada é recomendada.'; }
+  else { categoria = 'Possível dependência'; cor='var(--alert)'; nota='Este resultado sugere um padrão compatível com dependência — procure avaliação médica especializada.'; }
+
+  document.getElementById('scoreValue').textContent = total + ' / 40';
+  const catEl = document.getElementById('category');
+  catEl.textContent = categoria;
+  catEl.style.color = cor;
+  document.getElementById('note').textContent = nota;
+
+  const incompleteNote = document.getElementById('incompleteNote');
+  incompleteNote.textContent = faltando.length > 0
+    ? `Atenção: pergunta(s) ${faltando.join(', ')} ficaram sem resposta. A pontuação foi calculada apenas com as respostas fornecidas e pode não refletir o escore completo — informe isso ao seu médico.`
+    : '';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
 
 function baixarPDF(){
   const { jsPDF } = window.jspdf;
@@ -402,19 +280,17 @@ function baixarPDF(){
     y += gap;
   }
 
-  // Cabeçalho
   doc.setFillColor(31,59,54);
   doc.rect(0,0,pageWidth,26,'F');
   doc.setTextColor(244,241,234);
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
-  doc.text('Escore de Sintomas Urinários (AUA / IPSS)', marginL, 13);
+  doc.text('Teste AUDIT', marginL, 13);
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
   doc.text('Cognisa · Panteão Vital · Apolo', marginL, 20);
   y = 36;
 
-  // Identificação
   const nome = document.getElementById('pname').value.trim() || 'Não informado';
   const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
   const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
@@ -422,100 +298,29 @@ function baixarPDF(){
   addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
   addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
 
-  // Respostas
   addWrapped('Respostas', 13, true, 3, [184,145,90]);
-  questions.forEach((q, i) => {
-    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
-    const resposta = sel ? (sel.dataset.v === 'blank' ? 'Não respondida' : q.opts[parseInt(sel.dataset.v)]) : 'Não respondida';
-    addWrapped(`${i+1}. ${q.text}`, 10.5, false, 0.5);
-    addWrapped(`Resposta: ${resposta}`, 10.5, true, 3);
+  const respostas = respostasArray();
+  respostas.forEach((r, i) => {
+    addWrapped(`${i+1}. ${r.texto}`, 10, false, 0.5);
+    addWrapped(`Resposta: ${r.resposta}`, 10, true, 2.5);
   });
 
-  const qolSel = document.querySelector('label.opt[data-q="qol"].selected');
-  const qolResposta = qolSel && qolSel.dataset.v !== 'blank' ? qolOptions[parseInt(qolSel.dataset.v)] : 'Não respondida';
-  addWrapped('Se tivesse que passar o resto da vida urinando exatamente como faz agora, como se sentiria?', 10.5, false, 0.5);
-  addWrapped(`Resposta: ${qolResposta}`, 10.5, true, 5);
-
-  // Resultado
   addWrapped('Resultado', 13, true, 3, [184,145,90]);
   const total = document.getElementById('scoreValue').textContent;
   const categoria = document.getElementById('category').textContent;
+  const nota = document.getElementById('note').textContent;
   addWrapped(`Pontuação total: ${total}`, 12, true, 1);
-  addWrapped(`Classificação: ${categoria}`, 12, true, 4);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
+  addWrapped(nota, 10, false, 4);
 
   const incomplete = document.getElementById('incompleteNote').textContent;
-  if(incomplete){
-    addWrapped(incomplete, 10, false, 4, [168,75,58]);
-  }
+  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
 
-  // Aviso legal
   addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.', 9.5, false, 4, [90,90,80]);
-
-  // Rodapé
   addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
 
-  const nomeArquivo = nome !== 'Não informado' ? `AUA-Score_${nome.replace(/\s+/g,'-')}.pdf` : 'AUA-Score.pdf';
+  const nomeArquivo = nome !== 'Não informado' ? `AUDIT_${nome.replace(/\s+/g,'-')}.pdf` : 'AUDIT.pdf';
   doc.save(nomeArquivo);
-}
-
-function formatarData(iso){
-  if(!iso) return '';
-  const [ano, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${ano}`;
-}
-
-function calcular(){
-  const nome = document.getElementById('pname').value.trim();
-  const data = formatarData(document.getElementById('pdate').value);
-  const preenchidoPor = document.getElementById('filledby').value;
-
-  let idParts = [];
-  if(nome) idParts.push(`Paciente: ${nome}`);
-  if(data) idParts.push(`Data: ${data}`);
-  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
-  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
-
-  let total = 0;
-  let respondidas = 0;
-  let faltando = [];
-
-  questions.forEach((q, i) => {
-    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
-    if(sel && sel.dataset.v !== 'blank'){
-      total += parseInt(sel.dataset.v);
-      respondidas++;
-    } else {
-      faltando.push(i+1);
-    }
-  });
-
-  const qolSel = document.querySelector('label.opt[data-q="qol"].selected');
-  const qolVal = qolSel && qolSel.dataset.v !== 'blank' ? parseInt(qolSel.dataset.v) : null;
-
-  let categoria = '';
-  let cor = '';
-  if(total <= 7){ categoria = 'Sintomas leves'; cor='var(--ok)'; }
-  else if(total <= 19){ categoria = 'Sintomas moderados'; cor='var(--warn)'; }
-  else { categoria = 'Sintomas severos'; cor='var(--alert)'; }
-
-  document.getElementById('scoreValue').textContent = total + ' / 35';
-  const catEl = document.getElementById('category');
-  catEl.textContent = categoria;
-  catEl.style.color = cor;
-
-  document.getElementById('qolResult').textContent = qolVal !== null
-    ? `Qualidade de vida percebida: ${qolOptions[qolVal]}`
-    : 'Qualidade de vida: não respondida';
-
-  const incompleteNote = document.getElementById('incompleteNote');
-  if(faltando.length > 0){
-    incompleteNote.textContent = `Atenção: pergunta(s) ${faltando.join(', ')} ficaram sem resposta. A pontuação foi calculada apenas com as respostas fornecidas e pode não refletir o escore completo — informe isso ao seu médico.`;
-  } else {
-    incompleteNote.textContent = '';
-  }
-
-  document.getElementById('result').classList.add('show');
-  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
 }
 
 function enviarWhatsApp() {
@@ -523,9 +328,9 @@ function enviarWhatsApp() {
   const idSummary = document.getElementById('idSummary').textContent;
   const total = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
-  const qol = document.getElementById('qolResult').textContent;
+  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escore de Sintomas Urinários (AUA/IPSS)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${qol}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Teste AUDIT\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
   
   const numero = '553125140626';
   const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
@@ -536,9 +341,9 @@ function copiarResultado(){
   const idSummary = document.getElementById('idSummary').textContent;
   const total = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
-  const qol = document.getElementById('qolResult').textContent;
+  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escore de Sintomas Urinários (AUA/IPSS)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${qol}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Teste AUDIT\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
   navigator.clipboard.writeText(texto).then(() => {
     alert('Resultado copiado para a área de transferência.');
   });

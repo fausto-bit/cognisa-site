@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escala de Braden — Cognisa</title>
+<title>CFI — Cognisa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -14,54 +14,60 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
-  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+  .wrap{max-width:840px;margin:0 auto;padding:0 24px 80px;}
 
   header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
   header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
   header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
-  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
-  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:14.5px;max-width:560px;margin:0 auto;}
 
-  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
-  .disclaimer strong{color:var(--alert);}
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0 20px;font-size:14px;color:var(--teal);}
 
-  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
-
-  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .idfields .full{grid-column:1/-1;}
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:24px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:16px;}
   .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
-  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
-  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
-  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:640px){.idfields{grid-template-columns:1fr 1fr;}}
 
-  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
-  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
-  .question .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 12px;}
-  .options{display:flex;flex-direction:column;gap:8px;}
-  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 14px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  .mode-toggle{display:flex;gap:0;margin-bottom:8px;border:1.5px solid var(--teal);border-radius:8px;overflow:hidden;width:fit-content;}
+  .mode-toggle button{border:none;background:#fff;color:var(--teal);padding:11px 22px;font-size:13.5px;cursor:pointer;font-weight:700;font-family:'DM Sans',sans-serif;}
+  .mode-toggle button.active{background:var(--teal);color:var(--gold-soft);}
+  .mode-note{font-size:13px;color:#6b6b60;margin-bottom:24px;}
+
+  .question{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:12px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .qtext{font-size:15px;font-weight:600;color:var(--teal);margin:2px 0 12px;}
+  .options{display:flex;gap:10px;flex-wrap:wrap;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;cursor:pointer;transition:.15s;background:#FBFAF7;font-size:13.5px;flex:1;text-align:center;min-width:90px;}
   label.opt:hover{border-color:var(--gold);}
-  label.opt .pts{font-weight:700;color:var(--gold);margin-right:8px;}
   input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
   label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);}
-  label.opt.selected .pts{color:var(--gold-soft);}
 
-  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:20px;font-weight:600;color:var(--teal);margin:32px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
 
-  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
-  .result.show{display:block;}
-  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
-  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
-  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
-  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+  .score-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+  .score-card{background:var(--teal);color:var(--ivory);border-radius:12px;padding:20px 22px;text-align:center;}
+  .score-card .label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:6px;}
+  .score-card .value{font-family:'Cormorant Garamond', serif;font-size:38px;font-weight:700;line-height:1;}
+  .score-card .value span{font-size:15px;color:var(--gold-soft);font-weight:500;}
+  .interp{margin-top:10px;font-size:12.5px;display:inline-block;padding:5px 14px;border-radius:20px;font-weight:700;}
+  .interp.low{background:#DDEAE4;color:var(--teal);}
+  .interp.high{background:#F2DAD1;color:var(--alert);}
+  .interp.pending{background:rgba(255,255,255,.15);color:var(--gold-soft);}
 
-  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
-  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
-  #calcBtn{background:var(--gold);color:var(--teal);}
-  #calcBtn:hover{background:var(--gold-soft);}
-  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
-  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
-  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
-  #waBtn:hover{background:#1EBE5A;}
+  .diff-card{grid-column:1/-1;background:#fff;border:1.5px solid var(--line, #DDD6C7);border-radius:12px;padding:20px 22px;text-align:center;}
+  .diff-card .value{font-family:'Cormorant Garamond', serif;font-size:32px;font-weight:700;color:var(--teal);}
+
+  .discrepancy{margin-top:14px;background:#FBF4E9;border:1px solid var(--warn);border-radius:10px;padding:14px 18px;font-size:13px;color:#6B4A20;text-align:left;display:none;}
+  .discrepancy.show{display:block;}
+  .discrepancy strong{display:block;font-size:13.5px;margin-bottom:4px;color:#8A5A16;}
+
+  .actions{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button.act{font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:700;padding:11px 22px;border-radius:8px;cursor:pointer;border:1.5px solid var(--teal);}
+  #pdfBtn{background:var(--teal);color:var(--ivory);}
+  #copyBtn{background:transparent;color:var(--teal);}
+  #waBtn{background:#25D366;color:#fff;border-color:#25D366;}
+  #resetBtn{background:transparent;color:#8a8778;border-color:#DDD6C7;}
 
   footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
   footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
@@ -70,181 +76,246 @@
 <body>
 
 <header class="top">
-  <div class="eyebrow">Cognisa · Panteão Vital · Héstia</div>
-  <div class="badge">Uso exclusivo médico</div>
-  <h1>Escala de Braden</h1>
-  <p>Avaliação de risco de lesão por pressão (úlcera de decúbito)</p>
+  <div class="eyebrow">Cognisa · Panteão Vital · Atena</div>
+  <h1>CFI — Cognitive Function Instrument</h1>
+  <p>14 itens sobre mudanças cognitivas percebidas no último ano — aplicação dupla, paciente e informante, para comparar as duas percepções</p>
 </header>
 
 <div class="wrap">
 
   <div class="disclaimer">
-    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio à decisão clínica para prevenção de lesão por pressão. Não substitui a avaliação direta da pele do paciente.
-  </div>
-
-  <div class="blank-note">
-    Avalie cada subescala com base na observação direta do paciente. Se algum item não puder ser avaliado no momento, deixe em branco.
+    <strong>Como usar:</strong> preencha primeiro a versão Paciente, depois troque para a versão Informante (alguém próximo que convive com o paciente) e responda de novo. Os dois totais são comparados automaticamente ao final.
   </div>
 
   <div class="idfields">
-    <div class="full">
-      <label for="pname">Nome do paciente</label>
-      <input type="text" id="pname" placeholder="Nome completo">
-    </div>
-    <div>
-      <label for="pdate">Data da avaliação</label>
-      <input type="date" id="pdate">
-    </div>
-    <div>
-      <label for="filledby">Avaliado por</label>
-      <input type="text" id="filledby" placeholder="Nome do profissional">
-    </div>
+    <div><label for="fName">Nome do paciente</label><input type="text" id="fName"></div>
+    <div><label for="fDate">Data</label><input type="date" id="fDate"></div>
+    <div><label for="fAge">Idade</label><input type="text" id="fAge"></div>
+    <div><label for="fEdu">Escolaridade</label><input type="text" id="fEdu"></div>
   </div>
 
-  <div class="section-title">Subescalas</div>
+  <div class="mode-toggle">
+    <button id="btnPaciente" class="active" onclick="setMode('paciente')">Versão Paciente</button>
+    <button id="btnInformante" onclick="setMode('informante')">Versão Informante</button>
+  </div>
+  <div class="mode-note">Se não souber responder algum item com segurança, pode pular — o cálculo aguarda todas as respostas de cada versão para fechar o total.</div>
 
-  <div id="questions"></div>
+  <div id="qContainer"></div>
+
+  <div class="section-title">Resultado</div>
+  <div class="score-panel">
+    <div class="score-card">
+      <div class="label">Total · Paciente</div>
+      <div class="value" id="scorePaciente">–<span>/14</span></div>
+      <div class="interp pending" id="interpPaciente">Aguardando</div>
+    </div>
+    <div class="score-card">
+      <div class="label">Total · Informante</div>
+      <div class="value" id="scoreInformante">–<span>/14</span></div>
+      <div class="interp pending" id="interpInformante">Aguardando</div>
+    </div>
+    <div class="diff-card">
+      <div class="label" style="color:var(--gold);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;">Diferença (Informante − Paciente)</div>
+      <div class="value" id="scoreDiff">–</div>
+      <div class="interp pending" id="interpDiff">Aguardando ambas as versões</div>
+      <div class="discrepancy" id="discBox">
+        <strong id="discTitle"></strong>
+        <span id="discText"></span>
+      </div>
+    </div>
+  </div>
 
   <div class="actions">
-    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
-  </div>
-
-  <div class="result" id="result">
-    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
-    <div class="score-label">Pontuação total</div>
-    <div class="score" id="scoreValue">–</div>
-    <div class="category" id="category">–</div>
-    <div class="incomplete" id="incompleteNote"></div>
-    <div class="actions">
-      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
-      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
-      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
-    </div>
+    <button class="act" id="pdfBtn" onclick="exportPDF()">Baixar PDF</button>
+    <button class="act" id="copyBtn" onclick="copyResult()">Copiar resultado</button>
+    <button class="act" id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button class="act" id="resetBtn" onclick="resetAll()">Limpar tudo</button>
   </div>
 
   <footer>
     <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
-    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602<br>
+    Pontuação: Sim = 1 · Talvez = 0,5 · Não = 0. Total 0–2: função percebida estável. Total ≥3: declínio percebido relevante — considerar investigação complementar. Ferramenta de triagem; não substitui avaliação médica presencial.
   </footer>
 </div>
 
 <script>
-const domains = [
-  {name:"Percepção sensorial", opts:[
-    "Completamente limitada — não reage a estímulos dolorosos",
-    "Muito limitada — reage apenas a estímulos dolorosos",
-    "Levemente limitada — reage a comandos verbais, mas nem sempre comunica desconforto",
-    "Nenhuma limitação — responde bem a comandos verbais, sem déficit sensorial"
-  ]},
-  {name:"Umidade", opts:[
-    "Completamente molhada — pele quase sempre úmida",
-    "Muito molhada — pele frequentemente úmida",
-    "Ocasionalmente molhada",
-    "Raramente molhada"
-  ]},
-  {name:"Atividade", opts:[
-    "Acamado",
-    "Restrito à cadeira",
-    "Anda ocasionalmente",
-    "Anda frequentemente"
-  ]},
-  {name:"Mobilidade", opts:[
-    "Completamente imóvel",
-    "Muito limitada",
-    "Levemente limitada",
-    "Sem limitações"
-  ]},
-  {name:"Nutrição", opts:[
-    "Muito pobre",
-    "Provavelmente inadequada",
-    "Adequada",
-    "Excelente"
-  ]},
-  {name:"Fricção e cisalhamento", opts:[
-    "Problema",
-    "Problema em potencial",
-    "Nenhum problema"
-  ]}
+const questions = [
+  { p:"Você tem mais dificuldade para lembrar a data de hoje, o dia da semana ou o mês em comparação a 1 ano atrás?", i:"Ele(a) tem mais dificuldade para lembrar a data de hoje, o dia da semana ou o mês em comparação a 1 ano atrás?" },
+  { p:"Você tem mais dificuldade em lembrar o local onde guardou seus objetos em comparação a 1 ano atrás?", i:"Ele(a) tem mais dificuldade em lembrar o local onde guardou objetos em comparação a 1 ano atrás?" },
+  { p:"Você se esquece mais frequentemente de compromissos ou eventos sociais?", i:"Ele(a) se esquece mais frequentemente de compromissos ou eventos sociais?" },
+  { p:"Você repete as mesmas perguntas ou histórias com mais frequência na mesma conversa?", i:"Ele(a) repete as mesmas perguntas ou histórias com mais frequência na mesma conversa?" },
+  { p:"Você tem mais dificuldade para lembrar de tomar seus remédios no horário correto?", i:"Ele(a) tem mais dificuldade para lembrar de tomar os remédios no horário correto?" },
+  { p:"Você tem mais dificuldade para se orientar ao dirigir ou andar em locais não muito familiares?", i:"Ele(a) tem mais dificuldade para se orientar ao dirigir ou andar em locais não muito familiares?" },
+  { p:"Você tem mais dificuldade para lidar com dinheiro (fazer troco, pagar contas, gerenciar extratos)?", i:"Ele(a) tem mais dificuldade para lidar com dinheiro (fazer troco, pagar contas, gerenciar extratos)?" },
+  { p:"Você sente mais dificuldade em acompanhar finanças complexas ou preencher documentos?", i:"Ele(a) sente mais dificuldade em acompanhar finanças complexas ou preencher documentos?" },
+  { p:"Você tem mais dificuldade em usar aparelhos eletrônicos ou eletrodomésticos (celular, controle remoto, fogão)?", i:"Ele(a) tem mais dificuldade em usar aparelhos eletrônicos ou eletrodomésticos?" },
+  { p:"Você tem mais dificuldade para aprender a usar um novo dispositivo ou aplicativo?", i:"Ele(a) tem mais dificuldade para aprender a usar um novo dispositivo ou aplicativo?" },
+  { p:"Você tem mais dificuldade para encontrar as palavras certas ao falar?", i:"Ele(a) tem mais dificuldade para encontrar as palavras certas ao falar?" },
+  { p:"Você tem mais dificuldade para acompanhar o raciocínio em conversas em grupo ou filmes?", i:"Ele(a) tem mais dificuldade para acompanhar o raciocínio em conversas em grupo ou filmes?" },
+  { p:"Você percebeu diminuição na sua capacidade de realizar suas atividades de lazer ou hobbies?", i:"Você percebeu diminuição na capacidade dele(a) de realizar atividades de lazer ou hobbies?" },
+  { p:"Em geral, você sente que sua memória ou raciocínio estão piores do que há 1 ano?", i:"Em geral, você sente que a memória ou raciocínio dele(a) estão piores do que há 1 ano?" }
 ];
 
-const container = document.getElementById('questions');
-domains.forEach((d, i) => {
-  const div = document.createElement('div');
-  div.className = 'question';
-  let optsHtml = d.opts.map((label, idx) => {
-    const pts = idx + 1;
-    return `<label class="opt" data-q="${i}" data-v="${pts}"><input type="radio" name="q${i}" value="${pts}"><span class="pts">${pts}</span>${label}</label>`;
-  }).join('');
-  div.innerHTML = `
-    <div class="qnum">Subescala ${i+1} de 6</div>
-    <div class="dname">${d.name}</div>
-    <div class="options">${optsHtml}</div>
-  `;
-  container.appendChild(div);
-});
+let mode = 'paciente';
+const answers = { paciente: Array(14).fill(null), informante: Array(14).fill(null) };
+const qContainer = document.getElementById('qContainer');
 
-document.addEventListener('click', (e) => {
+function render() {
+  qContainer.innerHTML = '';
+  questions.forEach((q, idx) => {
+    const text = mode === 'paciente' ? q.p : q.i;
+    const current = answers[mode][idx];
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.innerHTML = `
+      <div class="qnum">Pergunta ${idx+1} de 14</div>
+      <div class="qtext">${text}</div>
+      <div class="options">
+        <label class="opt ${current===0?'selected':''}" data-idx="${idx}" data-v="0">Não</label>
+        <label class="opt ${current===0.5?'selected':''}" data-idx="${idx}" data-v="0.5">Talvez</label>
+        <label class="opt ${current===1?'selected':''}" data-idx="${idx}" data-v="1">Sim</label>
+      </div>
+    `;
+    qContainer.appendChild(div);
+  });
+}
+
+qContainer.addEventListener('click', (e) => {
   const opt = e.target.closest('label.opt');
   if(!opt) return;
-  const q = opt.dataset.q;
-  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
-  opt.classList.add('selected');
+  const idx = parseInt(opt.dataset.idx);
+  const val = parseFloat(opt.dataset.v);
+  answers[mode][idx] = val;
+  render();
+  updateScores();
 });
 
-function formatarData(iso){
-  if(!iso) return '';
-  const [ano, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${ano}`;
+function setMode(m) {
+  mode = m;
+  document.getElementById('btnPaciente').classList.toggle('active', m==='paciente');
+  document.getElementById('btnInformante').classList.toggle('active', m==='informante');
+  render();
 }
 
-function respostasArray(){
-  return domains.map((d, i) => {
-    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
-    if(!sel) return {nome:d.name, pontos:null, label:'Não avaliado'};
-    const pts = parseInt(sel.dataset.v);
-    return {nome:d.name, pontos:pts, label:d.opts[pts-1]};
+function computeTotal(arr) {
+  if (arr.some(v => v === null)) return null;
+  return arr.reduce((a,b) => a+b, 0);
+}
+
+function interpFor(total) {
+  if (total === null) return { text:'Aguardando', cls:'pending' };
+  if (total <= 2) return { text:'Estável (0–2)', cls:'low' };
+  return { text:'Declínio percebido relevante (≥3)', cls:'high' };
+}
+
+function getMeta(){
+  return {
+    name: document.getElementById('fName').value || '(não informado)',
+    date: document.getElementById('fDate').value || '(não informada)',
+    age: document.getElementById('fAge').value || '(não informada)',
+    edu: document.getElementById('fEdu').value || '(não informada)'
+  };
+}
+
+function updateScores() {
+  const tp = computeTotal(answers.paciente);
+  const ti = computeTotal(answers.informante);
+
+  document.getElementById('scorePaciente').innerHTML = (tp===null?'–':tp) + '<span>/14</span>';
+  document.getElementById('scoreInformante').innerHTML = (ti===null?'–':ti) + '<span>/14</span>';
+
+  const ip = interpFor(tp);
+  const ii = interpFor(ti);
+  const elIp = document.getElementById('interpPaciente');
+  elIp.textContent = ip.text; elIp.className = 'interp ' + ip.cls;
+  const elIi = document.getElementById('interpInformante');
+  elIi.textContent = ii.text; elIi.className = 'interp ' + ii.cls;
+
+  const diffEl = document.getElementById('scoreDiff');
+  const diffInterp = document.getElementById('interpDiff');
+  const discBox = document.getElementById('discBox');
+  const discTitle = document.getElementById('discTitle');
+  const discText = document.getElementById('discText');
+
+  if (tp === null || ti === null) {
+    diffEl.textContent = '–';
+    diffInterp.textContent = 'Aguardando ambas as versões';
+    diffInterp.className = 'interp pending';
+    discBox.classList.remove('show');
+    return;
+  }
+
+  const diff = ti - tp;
+  diffEl.textContent = (diff > 0 ? '+' : '') + diff;
+
+  if (Math.abs(diff) < 2) {
+    diffInterp.textContent = 'Concordância entre as versões';
+    diffInterp.className = 'interp low';
+    discBox.classList.remove('show');
+  } else if (diff >= 2) {
+    diffInterp.textContent = 'Informante pontua mais alto';
+    diffInterp.className = 'interp high';
+    discTitle.textContent = 'Possível perda de crítica (anosognosia)';
+    discText.textContent = 'O informante percebe declínio bem maior do que o próprio paciente relata. Esse padrão é comum em CCL e demência inicial e reforça a indicação de investigação complementar (neuroimagem, avaliação neuropsicológica).';
+    discBox.classList.add('show');
+  } else {
+    diffInterp.textContent = 'Paciente pontua mais alto';
+    diffInterp.className = 'interp high';
+    discTitle.textContent = 'Possível Queixa Cognitiva Subjetiva (QCS)';
+    discText.textContent = 'O paciente percebe declínio bem maior do que o informante relata. Considerar ansiedade, depressão ou queixa subjetiva com função diária preservada — vale investigar humor e sono junto com a cognição.';
+    discBox.classList.add('show');
+  }
+}
+
+function enviarWhatsApp() {
+  const meta = getMeta();
+  const tp = computeTotal(answers.paciente);
+  const ti = computeTotal(answers.informante);
+  let lines = [];
+  lines.push('CFI — Cognitive Function Instrument');
+  lines.push('Cognisa · Panteão Vital · Atena');
+  lines.push('');
+  lines.push(`Paciente: ${meta.name}  ·  Data: ${meta.date}  ·  Idade: ${meta.age}  ·  Escolaridade: ${meta.edu}`);
+  lines.push('');
+  lines.push(`Total Paciente: ${tp===null?'incompleto':tp+'/14'}`);
+  lines.push(`Total Informante: ${ti===null?'incompleto':ti+'/14'}`);
+  if(tp!==null && ti!==null){
+    lines.push(`Diferença (Informante - Paciente): ${ti-tp>0?'+':''}${ti-tp}`);
+  }
+  lines.push('');
+  lines.push('Ferramenta de triagem — não substitui avaliação médica presencial.');
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(lines.join('\n'));
+  window.open(url, '_blank');
+}
+
+function copyResult() {
+  const meta = getMeta();
+  const tp = computeTotal(answers.paciente);
+  const ti = computeTotal(answers.informante);
+  let lines = [];
+  lines.push('CFI — Cognitive Function Instrument');
+  lines.push('Cognisa · Panteão Vital · Atena');
+  lines.push('');
+  lines.push(`Paciente: ${meta.name}  ·  Data: ${meta.date}  ·  Idade: ${meta.age}  ·  Escolaridade: ${meta.edu}`);
+  lines.push('');
+  lines.push(`Total Paciente: ${tp===null?'incompleto':tp+'/14'}`);
+  lines.push(`Total Informante: ${ti===null?'incompleto':ti+'/14'}`);
+  if(tp!==null && ti!==null){
+    lines.push(`Diferença (Informante - Paciente): ${ti-tp>0?'+':''}${ti-tp}`);
+  }
+  lines.push('');
+  lines.push('Ferramenta de triagem — não substitui avaliação médica presencial.');
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = original, 1500);
   });
 }
 
-function calcular(){
-  const nome = document.getElementById('pname').value.trim();
-  const data = formatarData(document.getElementById('pdate').value);
-  const avaliadoPor = document.getElementById('filledby').value.trim();
-
-  let idParts = [];
-  if(nome) idParts.push(`Paciente: ${nome}`);
-  if(data) idParts.push(`Data: ${data}`);
-  if(avaliadoPor) idParts.push(`Avaliado por: ${avaliadoPor}`);
-  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
-
-  const respostas = respostasArray();
-  let total = 0, faltando = [];
-  respostas.forEach((r, i) => {
-    if(r.pontos !== null){ total += r.pontos; } else { faltando.push(i+1); }
-  });
-
-  let categoria = '', cor = '';
-  if(total <= 9){ categoria = 'Risco muito alto'; cor='var(--alert)'; }
-  else if(total <= 12){ categoria = 'Risco alto'; cor='var(--alert)'; }
-  else if(total <= 14){ categoria = 'Risco moderado'; cor='var(--warn)'; }
-  else if(total <= 18){ categoria = 'Risco leve'; cor='var(--warn)'; }
-  else { categoria = 'Sem risco significativo'; cor='var(--ok)'; }
-
-  document.getElementById('scoreValue').textContent = total + ' / 23';
-  const catEl = document.getElementById('category');
-  catEl.textContent = categoria;
-  catEl.style.color = cor;
-
-  const incompleteNote = document.getElementById('incompleteNote');
-  incompleteNote.textContent = faltando.length > 0
-    ? `Atenção: subescala(s) ${faltando.join(', ')} ficaram sem avaliação. A pontuação foi calculada apenas com as subescalas preenchidas.`
-    : '';
-
-  document.getElementById('result').classList.add('show');
-  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-function baixarPDF(){
+function exportPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const marginL = 18;
@@ -270,65 +341,69 @@ function baixarPDF(){
   doc.setTextColor(244,241,234);
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
-  doc.text('Escala de Braden', marginL, 13);
+  doc.text('CFI — Cognitive Function Instrument', marginL, 13);
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
-  doc.text('Cognisa · Panteão Vital · Héstia · Uso exclusivo médico', marginL, 20);
+  doc.text('Cognisa · Panteão Vital · Atena', marginL, 20);
   y = 36;
 
-  const nome = document.getElementById('pname').value.trim() || 'Não informado';
-  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
-  const avaliadoPor = document.getElementById('filledby').value.trim() || 'Não informado';
-  addWrapped(`Paciente: ${nome}`, 11, false, 1);
-  addWrapped(`Data da avaliação: ${data}`, 11, false, 1);
-  addWrapped(`Avaliado por: ${avaliadoPor}`, 11, false, 5);
+  const meta = getMeta();
+  addWrapped(`Paciente: ${meta.name}`, 11, false, 1);
+  addWrapped(`Data: ${meta.date}  ·  Idade: ${meta.age}  ·  Escolaridade: ${meta.edu}`, 11, false, 5);
 
-  addWrapped('Subescalas', 13, true, 3, [184,145,90]);
-  const respostas = respostasArray();
-  respostas.forEach((r, i) => {
-    const pts = r.pontos !== null ? `${r.pontos} — ${r.label}` : 'Não avaliado';
-    addWrapped(`${i+1}. ${r.nome}: ${pts}`, 10, false, 2.5);
+  const tp = computeTotal(answers.paciente);
+  const ti = computeTotal(answers.informante);
+
+  addWrapped('Versão Paciente', 13, true, 3, [184,145,90]);
+  questions.forEach((q, idx) => {
+    const v = answers.paciente[idx];
+    const txt = v===null ? 'Não respondido' : (v===0?'Não':v===0.5?'Talvez':'Sim');
+    addWrapped(`${idx+1}. ${q.p} — ${txt}`, 9.5, false, 2);
   });
+  addWrapped(`Total Paciente: ${tp===null?'incompleto':tp+'/14'}`, 11, true, 5);
 
-  addWrapped('Resultado', 13, true, 3, [184,145,90]);
-  const total = document.getElementById('scoreValue').textContent;
-  const categoria = document.getElementById('category').textContent;
-  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
-  addWrapped(`Classificação: ${categoria}`, 12, true, 4);
+  addWrapped('Versão Informante', 13, true, 3, [184,145,90]);
+  questions.forEach((q, idx) => {
+    const v = answers.informante[idx];
+    const txt = v===null ? 'Não respondido' : (v===0?'Não':v===0.5?'Talvez':'Sim');
+    addWrapped(`${idx+1}. ${q.i} — ${txt}`, 9.5, false, 2);
+  });
+  addWrapped(`Total Informante: ${ti===null?'incompleto':ti+'/14'}`, 11, true, 5);
 
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+  addWrapped('Resultado comparativo', 13, true, 3, [184,145,90]);
+  if(tp!==null && ti!==null){
+    const diff = ti - tp;
+    addWrapped(`Diferença (Informante - Paciente): ${diff>0?'+':''}${diff}`, 11, true, 3);
+    if(Math.abs(diff) >= 2){
+      const nota = diff >= 2
+        ? 'Informante pontua mais alto: possível perda de crítica (anosognosia). Reforça indicação de investigação complementar.'
+        : 'Paciente pontua mais alto: possível Queixa Cognitiva Subjetiva (QCS). Considerar avaliação de humor e sono junto com a cognição.';
+      addWrapped(nota, 10, false, 4);
+    }
+  } else {
+    addWrapped('Comparação pendente — uma das versões está incompleta.', 10, false, 4);
+  }
 
-  addWrapped('Nota: este instrumento é uma ferramenta de apoio à decisão clínica e não substitui a avaliação direta da pele do paciente.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Pontuação: Sim = 1 · Talvez = 0,5 · Não = 0. Total 0–2: estável. Total ≥3: declínio percebido relevante. Ferramenta de triagem; não substitui avaliação médica presencial.', 9.5, false, 4, [90,90,80]);
   addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
 
-  const nomeArquivo = nome !== 'Não informado' ? `Braden_${nome.replace(/\s+/g,'-')}.pdf` : 'Braden.pdf';
+  const nomeArquivo = meta.name !== '(não informado)' ? `CFI_${meta.name.replace(/\s+/g,'-')}.pdf` : 'CFI.pdf';
   doc.save(nomeArquivo);
 }
 
-function enviarWhatsApp() {
-
-  const idSummary = document.getElementById('idSummary').textContent;
-  const total = document.getElementById('scoreValue').textContent;
-  const cat = document.getElementById('category').textContent;
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escala de Braden\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
-  
-  const numero = '553125140626';
-  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
+function resetAll() {
+  answers.paciente = Array(14).fill(null);
+  answers.informante = Array(14).fill(null);
+  document.getElementById('fName').value = '';
+  document.getElementById('fDate').value = '';
+  document.getElementById('fAge').value = '';
+  document.getElementById('fEdu').value = '';
+  render();
+  updateScores();
 }
 
-function copiarResultado(){
-  const idSummary = document.getElementById('idSummary').textContent;
-  const total = document.getElementById('scoreValue').textContent;
-  const cat = document.getElementById('category').textContent;
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escala de Braden\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
-  navigator.clipboard.writeText(texto).then(() => {
-    alert('Resultado copiado para a área de transferência.');
-  });
-}
+render();
+updateScores();
 </script>
 
 </body>

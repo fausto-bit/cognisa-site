@@ -3,24 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GDS-15 — Cognisa</title>
+<title>Escala de Depressão Geriátrica (GDS-15) — Cognisa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
-    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
-    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+    --teal:#1F3B36;
+    --teal-light:#2C5048;
+    --gold:#B8915A;
+    --gold-soft:#D9BD93;
+    --ivory:#F4F1EA;
+    --ink:#1A1A17;
+    --ok:#5B7A5B;
+    --warn:#B8863A;
+    --alert:#A84B3A;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
-  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
 
   header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
   header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
   header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
-  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:500px;margin:0 auto;}
-  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
 
   .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
   .disclaimer strong{color:var(--alert);}
@@ -36,8 +42,7 @@
 
   .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
   .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
-  .question .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
-  .question p.qtext{font-size:14.5px;margin:0 0 14px;color:#4a4a44;}
+  .question p.qtext{font-size:16.5px;margin:4px 0 14px;color:var(--ink);}
   .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
   label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
   label.opt:hover{border-color:var(--gold);}
@@ -53,7 +58,6 @@
   .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
   .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
   .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
-  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:460px;margin-left:auto;margin-right:auto;}
   .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
 
   .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
@@ -72,20 +76,19 @@
 <body>
 
 <header class="top">
-  <div class="eyebrow">Cognisa · Panteão Vital · Apolo</div>
-  <div class="badge">Uso exclusivo médico</div>
-  <h1>CURB-65</h1>
-  <p>Escore de gravidade em pneumonia adquirida na comunidade</p>
+  <div class="eyebrow">Cognisa · Panteão Vital · Atena</div>
+  <h1>Escala de Depressão Geriátrica</h1>
+  <p>GDS-15 — rastreio de sintomas depressivos em 15 perguntas simples</p>
 </header>
 
 <div class="wrap">
 
   <div class="disclaimer">
-    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio à decisão clínica. O resultado deve ser interpretado junto ao julgamento clínico completo, incluindo comorbidades e contexto social do paciente.
+    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.
   </div>
 
   <div class="blank-note">
-    Cada critério vale 1 ponto se presente. Se algum dado não estiver disponível no momento (ex.: ureia ainda não coletada), deixe em branco — o resultado indicará que o escore está incompleto.
+    Responda pensando em como você se sentiu na última semana. Se não tiver certeza sobre alguma resposta, é melhor deixar em branco (opção "não sei") do que arriscar uma resposta incorreta.
   </div>
 
   <div class="idfields">
@@ -94,16 +97,21 @@
       <input type="text" id="pname" placeholder="Nome completo">
     </div>
     <div>
-      <label for="pdate">Data da avaliação</label>
+      <label for="pdate">Data do preenchimento</label>
       <input type="date" id="pdate">
     </div>
     <div>
-      <label for="filledby">Avaliado por</label>
-      <input type="text" id="filledby" placeholder="Nome do profissional">
+      <label for="filledby">Preenchido por</label>
+      <select id="filledby">
+        <option value="">Selecione</option>
+        <option value="Paciente">O próprio paciente</option>
+        <option value="Cuidador/familiar">Cuidador ou familiar</option>
+        <option value="Profissional de saúde">Profissional de saúde</option>
+      </select>
     </div>
   </div>
 
-  <div class="section-title">Critérios (1 ponto cada)</div>
+  <div class="section-title">Na última semana, você...</div>
 
   <div id="questions"></div>
 
@@ -113,10 +121,9 @@
 
   <div class="result" id="result">
     <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
-    <div class="score-label">Pontuação CURB-65</div>
+    <div class="score-label">Pontuação total</div>
     <div class="score" id="scoreValue">–</div>
     <div class="category" id="category">–</div>
-    <div class="note" id="note"></div>
     <div class="incomplete" id="incompleteNote"></div>
     <div class="actions">
       <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
@@ -132,12 +139,23 @@
 </div>
 
 <script>
+// Cada item: texto + valor da resposta "Sim" que conta ponto (1 = Sim pontua, 0 = Não pontua)
 const questions = [
-  {name:"C — Confusão mental", text:"Confusão mental de início recente (desorientação em tempo, espaço ou pessoa)?"},
-  {name:"U — Ureia elevada", text:"Ureia sérica maior que 43 mg/dL (ou acima de 7 mmol/L)?"},
-  {name:"R — Frequência respiratória", text:"Frequência respiratória ≥ 30 incursões por minuto?"},
-  {name:"B — Pressão arterial", text:"Pressão arterial sistólica < 90 mmHg ou diastólica ≤ 60 mmHg?"},
-  {name:"65 — Idade", text:"Idade ≥ 65 anos?"}
+  {text:"Está, no fundo, satisfeito(a) com sua vida?", simPontua:0},
+  {text:"Interrompeu muitas de suas atividades e interesses?", simPontua:1},
+  {text:"Sente que sua vida está vazia?", simPontua:1},
+  {text:"Se aborrece com frequência?", simPontua:1},
+  {text:"Sente-se de bom humor a maior parte do tempo?", simPontua:0},
+  {text:"Tem medo de que algo ruim vá lhe acontecer?", simPontua:1},
+  {text:"Sente-se feliz a maior parte do tempo?", simPontua:0},
+  {text:"Sente-se desamparado(a) com frequência?", simPontua:1},
+  {text:"Prefere ficar em casa a sair e fazer coisas novas?", simPontua:1},
+  {text:"Sente que tem mais problemas de memória do que a maioria das pessoas?", simPontua:1},
+  {text:"Acha que é maravilhoso estar vivo(a) agora?", simPontua:0},
+  {text:"Sente-se um(a) inútil, do jeito que está agora?", simPontua:1},
+  {text:"Sente-se cheio(a) de energia?", simPontua:0},
+  {text:"Sente que sua situação é sem esperança?", simPontua:1},
+  {text:"Acha que a maioria das pessoas está em melhor situação do que você?", simPontua:1}
 ];
 
 const container = document.getElementById('questions');
@@ -145,13 +163,12 @@ questions.forEach((q, i) => {
   const div = document.createElement('div');
   div.className = 'question';
   div.innerHTML = `
-    <div class="qnum">Critério ${i+1} de 5</div>
-    <div class="dname">${q.name}</div>
+    <div class="qnum">Pergunta ${i+1} de 15</div>
     <p class="qtext">${q.text}</p>
     <div class="options">
-      <label class="opt" data-q="${i}" data-v="sim"><input type="radio" name="q${i}" value="sim">Sim (1 ponto)</label>
-      <label class="opt" data-q="${i}" data-v="nao"><input type="radio" name="q${i}" value="nao">Não (0 ponto)</label>
-      <label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei / não disponível</label>
+      <label class="opt" data-q="${i}" data-v="sim"><input type="radio" name="q${i}" value="sim">Sim</label>
+      <label class="opt" data-q="${i}" data-v="nao"><input type="radio" name="q${i}" value="nao">Não</label>
+      <label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei</label>
     </div>
   `;
   container.appendChild(div);
@@ -175,45 +192,49 @@ function respostasArray(){
   return questions.map((q, i) => {
     const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
     const v = sel ? sel.dataset.v : 'blank';
-    return {
-      nome: q.name,
-      resposta: v === 'blank' ? 'Não avaliado' : (v === 'sim' ? 'Presente' : 'Ausente'),
-      ponto: v === 'blank' ? null : (v === 'sim' ? 1 : 0)
-    };
+    let ponto = null;
+    if(v !== 'blank'){
+      const simMarcado = v === 'sim';
+      ponto = (simMarcado === (q.simPontua === 1)) ? 1 : 0;
+    }
+    return { texto: q.text, resposta: v === 'blank' ? 'Não respondida' : (v === 'sim' ? 'Sim' : 'Não'), ponto };
   });
 }
 
 function calcular(){
   const nome = document.getElementById('pname').value.trim();
   const data = formatarData(document.getElementById('pdate').value);
-  const avaliadoPor = document.getElementById('filledby').value.trim();
+  const preenchidoPor = document.getElementById('filledby').value;
 
   let idParts = [];
   if(nome) idParts.push(`Paciente: ${nome}`);
   if(data) idParts.push(`Data: ${data}`);
-  if(avaliadoPor) idParts.push(`Avaliado por: ${avaliadoPor}`);
+  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
   document.getElementById('idSummary').textContent = idParts.join('  ·  ');
 
   const respostas = respostasArray();
-  let total = 0, faltando = [];
+  let total = 0;
+  let faltando = [];
   respostas.forEach((r, i) => {
-    if(r.ponto !== null){ total += r.ponto; } else { faltando.push(i+1); }
+    if(r.ponto !== null){ total += r.ponto; }
+    else { faltando.push(i+1); }
   });
 
-  let categoria = '', cor = '', nota = '';
-  if(total <= 1){ categoria = 'Baixo risco'; cor='var(--ok)'; nota='Tratamento ambulatorial geralmente apropriado.'; }
-  else if(total === 2){ categoria = 'Risco intermediário'; cor='var(--warn)'; nota='Considerar internação para observação de curta permanência.'; }
-  else { categoria = 'Alto risco'; cor='var(--alert)'; nota='Internação recomendada; considerar UTI se pontuação 4 ou 5.'; }
+  let categoria = '';
+  let cor = '';
+  if(total <= 4){ categoria = 'Sem sinais sugestivos de depressão'; cor='var(--ok)'; }
+  else if(total <= 8){ categoria = 'Sinais leves de depressão'; cor='var(--warn)'; }
+  else if(total <= 11){ categoria = 'Sinais moderados de depressão'; cor='var(--warn)'; }
+  else { categoria = 'Sinais importantes de depressão'; cor='var(--alert)'; }
 
-  document.getElementById('scoreValue').textContent = total + ' / 5';
+  document.getElementById('scoreValue').textContent = total + ' / 15';
   const catEl = document.getElementById('category');
   catEl.textContent = categoria;
   catEl.style.color = cor;
-  document.getElementById('note').textContent = nota;
 
   const incompleteNote = document.getElementById('incompleteNote');
   incompleteNote.textContent = faltando.length > 0
-    ? `Atenção: critério(s) ${faltando.join(', ')} ficaram sem avaliação. A pontuação foi calculada apenas com os critérios disponíveis e pode subestimar o risco real.`
+    ? `Atenção: pergunta(s) ${faltando.join(', ')} ficaram sem resposta. A pontuação foi calculada apenas com as respostas fornecidas e pode não refletir o escore completo — informe isso ao seu médico.`
     : '';
 
   document.getElementById('result').classList.add('show');
@@ -246,40 +267,39 @@ function baixarPDF(){
   doc.setTextColor(244,241,234);
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
-  doc.text('CURB-65', marginL, 13);
+  doc.text('Escala de Depressão Geriátrica (GDS-15)', marginL, 13);
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
-  doc.text('Cognisa · Panteão Vital · Apolo · Uso exclusivo médico', marginL, 20);
+  doc.text('Cognisa · Panteão Vital · Atena', marginL, 20);
   y = 36;
 
   const nome = document.getElementById('pname').value.trim() || 'Não informado';
   const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
-  const avaliadoPor = document.getElementById('filledby').value.trim() || 'Não informado';
+  const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
   addWrapped(`Paciente: ${nome}`, 11, false, 1);
-  addWrapped(`Data da avaliação: ${data}`, 11, false, 1);
-  addWrapped(`Avaliado por: ${avaliadoPor}`, 11, false, 5);
+  addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+  addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
 
-  addWrapped('Critérios', 13, true, 3, [184,145,90]);
+  addWrapped('Respostas', 13, true, 3, [184,145,90]);
   const respostas = respostasArray();
   respostas.forEach((r, i) => {
-    addWrapped(`${i+1}. ${r.nome}: ${r.resposta}`, 10.5, false, 2.5);
+    addWrapped(`${i+1}. ${r.texto}`, 10.5, false, 0.5);
+    addWrapped(`Resposta: ${r.resposta}`, 10.5, true, 3);
   });
 
   addWrapped('Resultado', 13, true, 3, [184,145,90]);
   const total = document.getElementById('scoreValue').textContent;
   const categoria = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
-  addWrapped(`Pontuação: ${total}`, 12, true, 1);
-  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
-  addWrapped(nota, 10, false, 4);
+  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 4);
 
   const incomplete = document.getElementById('incompleteNote').textContent;
   if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
 
-  addWrapped('Nota: este instrumento é uma ferramenta de apoio à decisão clínica e deve ser interpretado junto ao julgamento clínico completo.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.', 9.5, false, 4, [90,90,80]);
   addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
 
-  const nomeArquivo = nome !== 'Não informado' ? `CURB65_${nome.replace(/\s+/g,'-')}.pdf` : 'CURB65.pdf';
+  const nomeArquivo = nome !== 'Não informado' ? `GDS-15_${nome.replace(/\s+/g,'-')}.pdf` : 'GDS-15.pdf';
   doc.save(nomeArquivo);
 }
 
@@ -288,9 +308,8 @@ function enviarWhatsApp() {
   const idSummary = document.getElementById('idSummary').textContent;
   const total = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `CURB-65\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Escala de Depressão Geriátrica (GDS-15)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
   
   const numero = '553125140626';
   const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
@@ -301,9 +320,8 @@ function copiarResultado(){
   const idSummary = document.getElementById('idSummary').textContent;
   const total = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `CURB-65\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Escala de Depressão Geriátrica (GDS-15)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
   navigator.clipboard.writeText(texto).then(() => {
     alert('Resultado copiado para a área de transferência.');
   });

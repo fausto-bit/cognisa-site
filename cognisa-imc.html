@@ -3,61 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escala de Depressão Geriátrica (GDS-15) — Cognisa</title>
+<title>Calculadora de IMC — Cognisa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
-    --teal:#1F3B36;
-    --teal-light:#2C5048;
-    --gold:#B8915A;
-    --gold-soft:#D9BD93;
-    --ivory:#F4F1EA;
-    --ink:#1A1A17;
-    --ok:#5B7A5B;
-    --warn:#B8863A;
-    --alert:#A84B3A;
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
   }
   *{box-sizing:border-box;}
   body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
-  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+  .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
 
   header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
   header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
   header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
-  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:520px;margin:0 auto;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:480px;margin:0 auto;}
 
   .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
   .disclaimer strong{color:var(--alert);}
 
   .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
 
-  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
   .idfields .full{grid-column:1/-1;}
   .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
   .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
   .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
   @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
 
-  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
-  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
-  .question p.qtext{font-size:16.5px;margin:4px 0 14px;color:var(--ink);}
-  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
-  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
-  label.opt:hover{border-color:var(--gold);}
-  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
-  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
-  label.opt.blank{border-style:dashed;}
-  label.opt.blank.selected{background:#8a8578;border-color:#8a8578;}
+  .measures{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .measures label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .measures input{width:100%;font-family:'DM Sans',sans-serif;font-size:16px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .measures input:focus{outline:none;border-color:var(--gold);}
+  .measures .hint{font-size:11.5px;color:#8a8778;margin-top:4px;font-weight:400;text-transform:none;letter-spacing:0;}
+  @media (max-width:480px){.measures{grid-template-columns:1fr;}}
 
-  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
-
-  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result{margin-top:24px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
   .result.show{display:block;}
   .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
   .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
   .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:440px;margin-left:auto;margin-right:auto;}
   .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
 
   .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
@@ -76,9 +64,9 @@
 <body>
 
 <header class="top">
-  <div class="eyebrow">Cognisa · Panteão Vital · Atena</div>
-  <h1>Escala de Depressão Geriátrica</h1>
-  <p>GDS-15 — rastreio de sintomas depressivos em 15 perguntas simples</p>
+  <div class="eyebrow">Cognisa · Panteão Vital · Deméter</div>
+  <h1>Calculadora de IMC</h1>
+  <p>Índice de Massa Corporal — uma referência inicial de peso, não uma medida completa de saúde nutricional</p>
 </header>
 
 <div class="wrap">
@@ -88,7 +76,7 @@
   </div>
 
   <div class="blank-note">
-    Responda pensando em como você se sentiu na última semana. Se não tiver certeza sobre alguma resposta, é melhor deixar em branco (opção "não sei") do que arriscar uma resposta incorreta.
+    O IMC tem limitações no adulto mais velho — não distingue massa muscular de gordura, e uma faixa "normal" para adultos jovens pode não ser a ideal na terceira idade. Se não souber o peso ou a altura com precisão, deixe em branco.
   </div>
 
   <div class="idfields">
@@ -111,9 +99,18 @@
     </div>
   </div>
 
-  <div class="section-title">Na última semana, você...</div>
-
-  <div id="questions"></div>
+  <div class="measures">
+    <div>
+      <label for="peso">Peso (kg)</label>
+      <input type="number" id="peso" step="0.1" placeholder="Ex.: 68.5">
+      <div class="hint">Deixe em branco se não souber</div>
+    </div>
+    <div>
+      <label for="altura">Altura (m)</label>
+      <input type="number" id="altura" step="0.01" placeholder="Ex.: 1.65">
+      <div class="hint">Deixe em branco se não souber</div>
+    </div>
+  </div>
 
   <div class="actions">
     <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
@@ -121,9 +118,10 @@
 
   <div class="result" id="result">
     <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
-    <div class="score-label">Pontuação total</div>
+    <div class="score-label">IMC</div>
     <div class="score" id="scoreValue">–</div>
     <div class="category" id="category">–</div>
+    <div class="note" id="note"></div>
     <div class="incomplete" id="incompleteNote"></div>
     <div class="actions">
       <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
@@ -139,66 +137,18 @@
 </div>
 
 <script>
-// Cada item: texto + valor da resposta "Sim" que conta ponto (1 = Sim pontua, 0 = Não pontua)
-const questions = [
-  {text:"Está, no fundo, satisfeito(a) com sua vida?", simPontua:0},
-  {text:"Interrompeu muitas de suas atividades e interesses?", simPontua:1},
-  {text:"Sente que sua vida está vazia?", simPontua:1},
-  {text:"Se aborrece com frequência?", simPontua:1},
-  {text:"Sente-se de bom humor a maior parte do tempo?", simPontua:0},
-  {text:"Tem medo de que algo ruim vá lhe acontecer?", simPontua:1},
-  {text:"Sente-se feliz a maior parte do tempo?", simPontua:0},
-  {text:"Sente-se desamparado(a) com frequência?", simPontua:1},
-  {text:"Prefere ficar em casa a sair e fazer coisas novas?", simPontua:1},
-  {text:"Sente que tem mais problemas de memória do que a maioria das pessoas?", simPontua:1},
-  {text:"Acha que é maravilhoso estar vivo(a) agora?", simPontua:0},
-  {text:"Sente-se um(a) inútil, do jeito que está agora?", simPontua:1},
-  {text:"Sente-se cheio(a) de energia?", simPontua:0},
-  {text:"Sente que sua situação é sem esperança?", simPontua:1},
-  {text:"Acha que a maioria das pessoas está em melhor situação do que você?", simPontua:1}
-];
-
-const container = document.getElementById('questions');
-questions.forEach((q, i) => {
-  const div = document.createElement('div');
-  div.className = 'question';
-  div.innerHTML = `
-    <div class="qnum">Pergunta ${i+1} de 15</div>
-    <p class="qtext">${q.text}</p>
-    <div class="options">
-      <label class="opt" data-q="${i}" data-v="sim"><input type="radio" name="q${i}" value="sim">Sim</label>
-      <label class="opt" data-q="${i}" data-v="nao"><input type="radio" name="q${i}" value="nao">Não</label>
-      <label class="opt blank" data-q="${i}" data-v="blank"><input type="radio" name="q${i}" value="blank">Não sei</label>
-    </div>
-  `;
-  container.appendChild(div);
-});
-
-document.addEventListener('click', (e) => {
-  const opt = e.target.closest('label.opt');
-  if(!opt) return;
-  const q = opt.dataset.q;
-  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
-  opt.classList.add('selected');
-});
-
 function formatarData(iso){
   if(!iso) return '';
   const [ano, mes, dia] = iso.split('-');
   return `${dia}/${mes}/${ano}`;
 }
 
-function respostasArray(){
-  return questions.map((q, i) => {
-    const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
-    const v = sel ? sel.dataset.v : 'blank';
-    let ponto = null;
-    if(v !== 'blank'){
-      const simMarcado = v === 'sim';
-      ponto = (simMarcado === (q.simPontua === 1)) ? 1 : 0;
-    }
-    return { texto: q.text, resposta: v === 'blank' ? 'Não respondida' : (v === 'sim' ? 'Sim' : 'Não'), ponto };
-  });
+function classificarIMC(imc){
+  // Faixas adaptadas para o adulto mais velho (60+), mais tolerantes que a classificação padrão da OMS
+  if(imc < 22) return {cat:'Abaixo do peso', cor:'var(--warn)', nota:'Em pessoas mais velhas, baixo peso está associado a maior risco de fragilidade e sarcopenia. Vale investigar apetite, ingestão alimentar e perda de peso recente.'};
+  if(imc < 27) return {cat:'Peso adequado', cor:'var(--ok)', nota:'Nesta faixa, o IMC está dentro do que costuma ser considerado protetor para o adulto mais velho.'};
+  if(imc < 30) return {cat:'Sobrepeso', cor:'var(--warn)', nota:'Vale conversar com seu médico sobre hábitos alimentares e atividade física, sem urgência — nesta faixa etária, sobrepeso leve nem sempre exige ação imediata.'};
+  return {cat:'Obesidade', cor:'var(--alert)', nota:'Vale conversar com seu médico sobre acompanhamento nutricional e funcional — combinar controle de peso com preservação de força muscular é o mais importante nessa fase da vida.'};
 }
 
 function calcular(){
@@ -212,30 +162,32 @@ function calcular(){
   if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
   document.getElementById('idSummary').textContent = idParts.join('  ·  ');
 
-  const respostas = respostasArray();
-  let total = 0;
-  let faltando = [];
-  respostas.forEach((r, i) => {
-    if(r.ponto !== null){ total += r.ponto; }
-    else { faltando.push(i+1); }
-  });
-
-  let categoria = '';
-  let cor = '';
-  if(total <= 4){ categoria = 'Sem sinais sugestivos de depressão'; cor='var(--ok)'; }
-  else if(total <= 8){ categoria = 'Sinais leves de depressão'; cor='var(--warn)'; }
-  else if(total <= 11){ categoria = 'Sinais moderados de depressão'; cor='var(--warn)'; }
-  else { categoria = 'Sinais importantes de depressão'; cor='var(--alert)'; }
-
-  document.getElementById('scoreValue').textContent = total + ' / 15';
-  const catEl = document.getElementById('category');
-  catEl.textContent = categoria;
-  catEl.style.color = cor;
-
+  const pesoVal = document.getElementById('peso').value;
+  const alturaVal = document.getElementById('altura').value;
   const incompleteNote = document.getElementById('incompleteNote');
-  incompleteNote.textContent = faltando.length > 0
-    ? `Atenção: pergunta(s) ${faltando.join(', ')} ficaram sem resposta. A pontuação foi calculada apenas com as respostas fornecidas e pode não refletir o escore completo — informe isso ao seu médico.`
-    : '';
+
+  if(!pesoVal || !alturaVal){
+    document.getElementById('scoreValue').textContent = '–';
+    document.getElementById('category').textContent = 'Dados incompletos';
+    document.getElementById('category').style.color = 'var(--gold-soft)';
+    document.getElementById('note').textContent = '';
+    incompleteNote.textContent = 'Peso e altura são necessários para calcular o IMC. Preencha os dois campos, ou deixe para depois se ainda não souber.';
+    document.getElementById('result').classList.add('show');
+    document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const peso = parseFloat(pesoVal);
+  const altura = parseFloat(alturaVal);
+  const imc = peso / (altura * altura);
+  const {cat, cor, nota} = classificarIMC(imc);
+
+  document.getElementById('scoreValue').textContent = imc.toFixed(1);
+  const catEl = document.getElementById('category');
+  catEl.textContent = cat;
+  catEl.style.color = cor;
+  document.getElementById('note').textContent = nota;
+  incompleteNote.textContent = '';
 
   document.getElementById('result').classList.add('show');
   document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
@@ -267,31 +219,33 @@ function baixarPDF(){
   doc.setTextColor(244,241,234);
   doc.setFont('helvetica','bold');
   doc.setFontSize(16);
-  doc.text('Escala de Depressão Geriátrica (GDS-15)', marginL, 13);
+  doc.text('Calculadora de IMC', marginL, 13);
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
-  doc.text('Cognisa · Panteão Vital · Atena', marginL, 20);
+  doc.text('Cognisa · Panteão Vital · Deméter', marginL, 20);
   y = 36;
 
   const nome = document.getElementById('pname').value.trim() || 'Não informado';
   const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
   const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
+  const peso = document.getElementById('peso').value || 'Não informado';
+  const altura = document.getElementById('altura').value || 'Não informada';
+
   addWrapped(`Paciente: ${nome}`, 11, false, 1);
   addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
   addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
 
-  addWrapped('Respostas', 13, true, 3, [184,145,90]);
-  const respostas = respostasArray();
-  respostas.forEach((r, i) => {
-    addWrapped(`${i+1}. ${r.texto}`, 10.5, false, 0.5);
-    addWrapped(`Resposta: ${r.resposta}`, 10.5, true, 3);
-  });
+  addWrapped('Medidas', 13, true, 3, [184,145,90]);
+  addWrapped(`Peso: ${peso} kg`, 11, false, 1);
+  addWrapped(`Altura: ${altura} m`, 11, false, 4);
 
   addWrapped('Resultado', 13, true, 3, [184,145,90]);
-  const total = document.getElementById('scoreValue').textContent;
+  const imc = document.getElementById('scoreValue').textContent;
   const categoria = document.getElementById('category').textContent;
-  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
-  addWrapped(`Classificação: ${categoria}`, 12, true, 4);
+  const nota = document.getElementById('note').textContent;
+  addWrapped(`IMC: ${imc}`, 12, true, 1);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
+  if(nota) addWrapped(nota, 10, false, 4);
 
   const incomplete = document.getElementById('incompleteNote').textContent;
   if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
@@ -299,17 +253,18 @@ function baixarPDF(){
   addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.', 9.5, false, 4, [90,90,80]);
   addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
 
-  const nomeArquivo = nome !== 'Não informado' ? `GDS-15_${nome.replace(/\s+/g,'-')}.pdf` : 'GDS-15.pdf';
+  const nomeArquivo = nome !== 'Não informado' ? `IMC_${nome.replace(/\s+/g,'-')}.pdf` : 'IMC.pdf';
   doc.save(nomeArquivo);
 }
 
 function enviarWhatsApp() {
 
   const idSummary = document.getElementById('idSummary').textContent;
-  const total = document.getElementById('scoreValue').textContent;
+  const imc = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
+  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escala de Depressão Geriátrica (GDS-15)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Calculadora de IMC\n${idSummary ? idSummary + '\n' : ''}IMC: ${imc}\nClassificação: ${cat}${nota ? '\n' + nota : ''}${incomplete ? '\n' + incomplete : ''}`;
   
   const numero = '553125140626';
   const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
@@ -318,10 +273,11 @@ function enviarWhatsApp() {
 
 function copiarResultado(){
   const idSummary = document.getElementById('idSummary').textContent;
-  const total = document.getElementById('scoreValue').textContent;
+  const imc = document.getElementById('scoreValue').textContent;
   const cat = document.getElementById('category').textContent;
+  const nota = document.getElementById('note').textContent;
   const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Escala de Depressão Geriátrica (GDS-15)\n${idSummary ? idSummary + '\n' : ''}Pontuação: ${total}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
+  const texto = `Calculadora de IMC\n${idSummary ? idSummary + '\n' : ''}IMC: ${imc}\nClassificação: ${cat}${nota ? '\n' + nota : ''}${incomplete ? '\n' + incomplete : ''}`;
   navigator.clipboard.writeText(texto).then(() => {
     alert('Resultado copiado para a área de transferência.');
   });

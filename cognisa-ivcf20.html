@@ -3,286 +3,814 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de IMC — Cognisa</title>
+<title>IVCF-20 · Cognisa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   :root{
-    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
-    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+    --teal:#1F3B36;
+    --teal-soft:#2E524B;
+    --gold:#B8915A;
+    --gold-soft:#D8BC93;
+    --ivory:#F7F4EC;
+    --paper:#FFFFFF;
+    --ink:#22302D;
+    --line:#E3DCCB;
+    --risk-low:#3E6B5C;
+    --risk-mid:#B8915A;
+    --risk-high:#9C4A38;
+    --radius:14px;
+    font-size:16px;
   }
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
-  .wrap{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"DM Sans",system-ui,sans-serif;
+    background:var(--ivory);
+    color:var(--ink);
+    line-height:1.55;
+    padding-bottom:120px;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px}
 
-  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
-  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
-  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
-  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:480px;margin:0 auto;}
+  /* ---------- Cabeçalho ---------- */
+  header{
+    background:var(--teal);
+    color:var(--ivory);
+    padding:44px 0 36px;
+    border-bottom:4px solid var(--gold);
+  }
+  .brand{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:600;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    font-size:.85rem;
+    color:var(--gold-soft);
+  }
+  header h1{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:700;
+    font-size:clamp(1.9rem,4vw,2.7rem);
+    margin-top:10px;
+    line-height:1.15;
+  }
+  header p.sub{
+    margin-top:10px;
+    max-width:640px;
+    font-size:.95rem;
+    color:#DDE5E0;
+  }
+  header p.ref{
+    margin-top:14px;
+    font-size:.8rem;
+    color:var(--gold-soft);
+    font-style:italic;
+  }
 
-  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
-  .disclaimer strong{color:var(--alert);}
+  /* ---------- Identificação ---------- */
+  .id-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px;
+    margin-top:-28px;
+    box-shadow:0 8px 24px rgba(31,59,54,.10);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .id-card .full{grid-column:1/-1}
+  label.f-label{
+    display:block;
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal);
+    margin-bottom:6px;
+  }
+  input[type="text"],input[type="date"]{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:var(--ivory);
+    padding:11px 13px;
+    font:inherit;
+    color:var(--ink);
+  }
+  input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
 
-  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+  /* ---------- Seções ---------- */
+  main{margin-top:38px}
+  section.dim{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    margin-bottom:26px;
+    overflow:hidden;
+  }
+  .dim-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    padding:20px 26px 0;
+  }
+  .dim-num{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:700;
+    font-size:1.6rem;
+    color:var(--gold);
+    min-width:2ch;
+  }
+  .dim-title{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:700;
+    font-size:1.45rem;
+    color:var(--teal);
+    flex:1;
+  }
+  .dim-score{
+    font-size:.78rem;
+    font-weight:700;
+    color:var(--teal);
+    background:var(--ivory);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:4px 12px;
+    white-space:nowrap;
+  }
+  .dim-desc{
+    padding:10px 26px 6px;
+    font-size:.9rem;
+    color:#4A5A55;
+    border-bottom:1px dashed var(--line);
+    margin-bottom:6px;
+  }
+  .q{
+    padding:16px 26px;
+    border-bottom:1px solid #F0EBDD;
+  }
+  .q:last-child{border-bottom:none}
+  .q-text{font-weight:500;margin-bottom:10px}
+  .q-text .pts{color:var(--gold);font-size:.78rem;font-weight:700;margin-left:6px;white-space:nowrap}
+  .q-note{font-size:.8rem;color:#6B7A74;margin:-6px 0 10px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opts label{
+    cursor:pointer;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 18px;
+    font-size:.88rem;
+    background:var(--ivory);
+    transition:all .15s ease;
+    user-select:none;
+  }
+  .opts input{position:absolute;opacity:0;pointer-events:none}
+  .opts label:hover{border-color:var(--gold)}
+  .opts label:has(input:checked){
+    background:var(--teal);
+    color:var(--ivory);
+    border-color:var(--teal);
+  }
+  .opts label:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
 
-  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .idfields .full{grid-column:1/-1;}
-  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
-  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
-  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
-  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+  /* ---------- Resultado ---------- */
+  .result{
+    background:var(--teal);
+    color:var(--ivory);
+    border-radius:var(--radius);
+    padding:30px 26px;
+    margin-top:6px;
+  }
+  .result h2{
+    font-family:"Cormorant Garamond",serif;
+    font-weight:700;
+    font-size:1.6rem;
+    color:var(--gold-soft);
+  }
+  .score-line{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-top:12px;
+    flex-wrap:wrap;
+  }
+  #totalScore{
+    font-family:"Cormorant Garamond",serif;
+    font-size:3.4rem;
+    font-weight:700;
+    line-height:1;
+  }
+  .of40{color:#9FB4AC;font-size:1rem}
+  #classif{
+    font-weight:700;
+    font-size:1.05rem;
+    padding:8px 18px;
+    border-radius:999px;
+    background:var(--ivory);
+    color:var(--teal);
+  }
+  .gauge{
+    margin-top:20px;
+    height:14px;
+    border-radius:999px;
+    display:flex;
+    overflow:hidden;
+    position:relative;
+  }
+  .gauge .seg1{flex:7;background:var(--risk-low)}
+  .gauge .seg2{flex:8;background:var(--risk-mid)}
+  .gauge .seg3{flex:26;background:var(--risk-high)}
+  .gauge-marker{
+    position:absolute;
+    top:-5px;
+    width:4px;height:24px;
+    background:var(--ivory);
+    border-radius:2px;
+    transition:left .3s ease;
+    box-shadow:0 0 0 1px var(--teal);
+  }
+  .gauge-legend{
+    display:flex;
+    justify-content:space-between;
+    font-size:.72rem;
+    color:#C9D4CF;
+    margin-top:8px;
+  }
+  .interpret{margin-top:16px;font-size:.88rem;color:#DDE5E0;max-width:660px}
+  .pend{margin-top:10px;font-size:.82rem;color:var(--gold-soft)}
 
-  .measures{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .measures label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
-  .measures input{width:100%;font-family:'DM Sans',sans-serif;font-size:16px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
-  .measures input:focus{outline:none;border-color:var(--gold);}
-  .measures .hint{font-size:11.5px;color:#8a8778;margin-top:4px;font-weight:400;text-transform:none;letter-spacing:0;}
-  @media (max-width:480px){.measures{grid-template-columns:1fr;}}
+  /* ---------- Barra de ações ---------- */
+  .actions{
+    position:fixed;
+    bottom:0;left:0;right:0;
+    background:rgba(247,244,236,.96);
+    backdrop-filter:blur(6px);
+    border-top:1px solid var(--line);
+    padding:14px 20px;
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    z-index:50;
+  }
+  button{
+    font:inherit;
+    font-weight:700;
+    border-radius:999px;
+    padding:12px 26px;
+    cursor:pointer;
+    border:1px solid var(--teal);
+    transition:all .15s ease;
+  }
+  .btn-primary{background:var(--teal);color:var(--ivory)}
+  .btn-primary:hover{background:var(--teal-soft)}
+  .btn-ghost{background:transparent;color:var(--teal)}
+  .btn-ghost:hover{background:var(--gold-soft);border-color:var(--gold)}
+  button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 
-  .result{margin-top:24px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
-  .result.show{display:block;}
-  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
-  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
-  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
-  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:440px;margin-left:auto;margin-right:auto;}
-  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+  .toast{
+    position:fixed;
+    bottom:86px;left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--teal);
+    color:var(--ivory);
+    padding:10px 22px;
+    border-radius:999px;
+    font-size:.85rem;
+    opacity:0;
+    pointer-events:none;
+    transition:all .25s ease;
+    z-index:60;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
-  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
-  #calcBtn{background:var(--gold);color:var(--teal);}
-  #calcBtn:hover{background:var(--gold-soft);}
-  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
-  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
-  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
-  #waBtn:hover{background:#1EBE5A;}
+  footer{
+    margin-top:40px;
+    text-align:center;
+    font-size:.78rem;
+    color:#7C8A84;
+    padding:0 20px;
+  }
 
-  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
-  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+  /* ---------- Relatório PDF (oculto) ---------- */
+  #pdfReport{display:none}
+
+  @media(max-width:640px){
+    .id-card{grid-template-columns:1fr}
+    .dim-head{flex-wrap:wrap}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <div class="eyebrow">Cognisa · Panteão Vital · Deméter</div>
-  <h1>Calculadora de IMC</h1>
-  <p>Índice de Massa Corporal — uma referência inicial de peso, não uma medida completa de saúde nutricional</p>
+<header>
+  <div class="wrap">
+    <div class="brand">Cognisa · Avaliação Clínico-Funcional</div>
+    <h1>IVCF-20 — Índice de Vulnerabilidade Clínico-Funcional</h1>
+    <p class="sub">Instrumento de triagem rápida da vulnerabilidade da pessoa idosa, avaliando oito dimensões da saúde em 20 questões. Pontuação máxima: 40 pontos — quanto maior o escore, maior o risco de declínio funcional.</p>
+    <p class="ref">Moraes EN et al., Universidade Federal de Minas Gerais (UFMG).</p>
+  </div>
 </header>
 
 <div class="wrap">
-
-  <div class="disclaimer">
-    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.
-  </div>
-
-  <div class="blank-note">
-    O IMC tem limitações no adulto mais velho — não distingue massa muscular de gordura, e uma faixa "normal" para adultos jovens pode não ser a ideal na terceira idade. Se não souber o peso ou a altura com precisão, deixe em branco.
-  </div>
-
-  <div class="idfields">
+  <div class="id-card">
     <div class="full">
-      <label for="pname">Nome do paciente</label>
-      <input type="text" id="pname" placeholder="Nome completo">
+      <label class="f-label" for="pName">Nome do paciente</label>
+      <input type="text" id="pName" placeholder="Nome completo do paciente" autocomplete="off">
     </div>
     <div>
-      <label for="pdate">Data do preenchimento</label>
-      <input type="date" id="pdate">
+      <label class="f-label" for="cName">Nome do cuidador / acompanhante</label>
+      <input type="text" id="cName" placeholder="Nome do cuidador" autocomplete="off">
     </div>
     <div>
-      <label for="filledby">Preenchido por</label>
-      <select id="filledby">
-        <option value="">Selecione</option>
-        <option value="Paciente">O próprio paciente</option>
-        <option value="Cuidador/familiar">Cuidador ou familiar</option>
-        <option value="Profissional de saúde">Profissional de saúde</option>
-      </select>
+      <label class="f-label" for="aDate">Data da avaliação</label>
+      <input type="date" id="aDate">
     </div>
   </div>
+</div>
 
-  <div class="measures">
-    <div>
-      <label for="peso">Peso (kg)</label>
-      <input type="number" id="peso" step="0.1" placeholder="Ex.: 68.5">
-      <div class="hint">Deixe em branco se não souber</div>
-    </div>
-    <div>
-      <label for="altura">Altura (m)</label>
-      <input type="number" id="altura" step="0.01" placeholder="Ex.: 1.65">
-      <div class="hint">Deixe em branco se não souber</div>
-    </div>
-  </div>
+<main class="wrap">
 
-  <div class="actions">
-    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
-  </div>
-
-  <div class="result" id="result">
-    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
-    <div class="score-label">IMC</div>
-    <div class="score" id="scoreValue">–</div>
-    <div class="category" id="category">–</div>
-    <div class="note" id="note"></div>
-    <div class="incomplete" id="incompleteNote"></div>
-    <div class="actions">
-      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
-      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
-      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+  <!-- 1. IDADE -->
+  <section class="dim" data-dim="idade">
+    <div class="dim-head">
+      <span class="dim-num">1</span>
+      <span class="dim-title">Idade</span>
+      <span class="dim-score" data-score="idade">0 / 3 pts</span>
     </div>
+    <p class="dim-desc">A idade cronológica é um marcador independente de vulnerabilidade: a prevalência de fragilidade, multimorbidade e declínio funcional aumenta progressivamente após os 75 anos, e de forma acentuada a partir dos 85 anos.</p>
+    <div class="q">
+      <p class="q-text">Q1. Qual é a sua idade?<span class="pts">até 3 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q1" value="0">60 a 74 anos (0)</label>
+        <label><input type="radio" name="q1" value="1">75 a 84 anos (1)</label>
+        <label><input type="radio" name="q1" value="3">85 anos ou mais (3)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. AUTOPERCEPÇÃO -->
+  <section class="dim" data-dim="percepcao">
+    <div class="dim-head">
+      <span class="dim-num">2</span>
+      <span class="dim-title">Autopercepção da saúde</span>
+      <span class="dim-score" data-score="percepcao">0 / 1 pt</span>
+    </div>
+    <p class="dim-desc">A autoavaliação da saúde é um preditor robusto de mortalidade, hospitalização e declínio funcional, integrando dimensões físicas, psíquicas e sociais que escapam aos exames convencionais.</p>
+    <div class="q">
+      <p class="q-text">Q2. Em geral, comparando com outras pessoas de sua idade, você diria que sua saúde é:<span class="pts">até 1 pt</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q2" value="0">Excelente, muito boa ou boa (0)</label>
+        <label><input type="radio" name="q2" value="1">Regular ou ruim (1)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. AVD -->
+  <section class="dim" data-dim="avd">
+    <div class="dim-head">
+      <span class="dim-num">3</span>
+      <span class="dim-title">Atividades de vida diária (AVD)</span>
+      <span class="dim-score" data-score="avd">0 / 10 pts</span>
+    </div>
+    <p class="dim-desc">Núcleo da avaliação funcional: investiga a independência nas AVD instrumentais (compras, finanças, trabalho doméstico — máximo de 4 pontos, mesmo com múltiplas respostas positivas) e na AVD básica (banho), cuja perda indica dependência funcional estabelecida.</p>
+    <p class="q-note" style="padding:0 26px">Responda considerando incapacidade por problema de saúde. "Não faço" por opção ou hábito conta como resposta "Não".</p>
+    <div class="q">
+      <p class="q-text">Q3. Por causa de sua saúde ou condição física, você deixou de fazer compras?<span class="pts">4 pts · AVD instrumental</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q3" value="4">Sim (4)</label>
+        <label><input type="radio" name="q3" value="0">Não / Não faz compras por outros motivos (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q4. Por causa de sua saúde ou condição física, você deixou de controlar seu dinheiro, gastos ou pagar as contas de sua casa?<span class="pts">4 pts · AVD instrumental</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q4" value="4">Sim (4)</label>
+        <label><input type="radio" name="q4" value="0">Não / Não controla por outros motivos (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q5. Por causa de sua saúde ou condição física, você deixou de realizar pequenos trabalhos domésticos, como lavar louça, arrumar a casa ou fazer limpeza leve?<span class="pts">4 pts · AVD instrumental</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q5" value="4">Sim (4)</label>
+        <label><input type="radio" name="q5" value="0">Não / Não faz por outros motivos (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q6. Por causa de sua saúde ou condição física, você deixou de tomar banho sozinho?<span class="pts">6 pts · AVD básica</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q6" value="6">Sim (6)</label>
+        <label><input type="radio" name="q6" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. COGNIÇÃO -->
+  <section class="dim" data-dim="cognicao">
+    <div class="dim-head">
+      <span class="dim-num">4</span>
+      <span class="dim-title">Cognição</span>
+      <span class="dim-score" data-score="cognicao">0 / 4 pts</span>
+    </div>
+    <p class="dim-desc">Rastreio de declínio cognitivo a partir da queixa de esquecimento percebida por familiares, sua progressão recente e, sobretudo, seu impacto funcional — o elemento que diferencia o comprometimento cognitivo leve da demência.</p>
+    <div class="q">
+      <p class="q-text">Q7. Algum familiar ou amigo falou que você está ficando esquecido?<span class="pts">1 pt</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q7" value="1">Sim (1)</label>
+        <label><input type="radio" name="q7" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q8. Este esquecimento está piorando nos últimos meses?<span class="pts">1 pt</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q8" value="1">Sim (1)</label>
+        <label><input type="radio" name="q8" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q9. Este esquecimento está impedindo a realização de alguma atividade do cotidiano?<span class="pts">2 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q9" value="2">Sim (2)</label>
+        <label><input type="radio" name="q9" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. HUMOR -->
+  <section class="dim" data-dim="humor">
+    <div class="dim-head">
+      <span class="dim-num">5</span>
+      <span class="dim-title">Humor</span>
+      <span class="dim-score" data-score="humor">0 / 4 pts</span>
+    </div>
+    <p class="dim-desc">Rastreio de sintomas depressivos pelos dois itens cardinais — humor deprimido e anedonia — no último mês. A depressão no idoso é subdiagnosticada e associa-se a declínio funcional, cognitivo e maior mortalidade.</p>
+    <div class="q">
+      <p class="q-text">Q10. No último mês, você ficou com desânimo, tristeza ou desesperança?<span class="pts">2 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q10" value="2">Sim (2)</label>
+        <label><input type="radio" name="q10" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q11. No último mês, você perdeu o interesse ou o prazer em atividades anteriormente prazerosas?<span class="pts">2 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q11" value="2">Sim (2)</label>
+        <label><input type="radio" name="q11" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. MOBILIDADE -->
+  <section class="dim" data-dim="mobilidade">
+    <div class="dim-head">
+      <span class="dim-num">6</span>
+      <span class="dim-title">Mobilidade</span>
+      <span class="dim-score" data-score="mobilidade">0 / 10 pts</span>
+    </div>
+    <p class="dim-desc">Dimensão mais ampla do instrumento, avaliando quatro subdomínios: alcance, preensão e pinça (membros superiores); capacidade aeróbica e muscular (rastreio de sarcopenia e desnutrição); marcha (dificuldade de caminhar e quedas); e continência esfincteriana.</p>
+
+    <div class="q">
+      <p class="q-text">Q12. Você é incapaz de elevar os braços acima do nível do ombro?<span class="pts">1 pt · alcance</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q12" value="1">Sim (1)</label>
+        <label><input type="radio" name="q12" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q13. Você é incapaz de manusear ou segurar pequenos objetos?<span class="pts">1 pt · preensão e pinça</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q13" value="1">Sim (1)</label>
+        <label><input type="radio" name="q13" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q14. Você apresenta alguma das quatro condições abaixo?<span class="pts">2 pts · capacidade aeróbica e muscular</span></p>
+      <p class="q-note">• Perda de peso não intencional de 4,5 kg ou 5% do peso corporal no último ano; • IMC menor que 22 kg/m²; • Circunferência da panturrilha menor que 31 cm; • Tempo gasto no teste de velocidade da marcha (4 m) maior que 5 segundos.</p>
+      <div class="opts">
+        <label><input type="radio" name="q14" value="2">Sim (2)</label>
+        <label><input type="radio" name="q14" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q15. Você tem dificuldade para caminhar capaz de impedir a realização de alguma atividade do cotidiano?<span class="pts">2 pts · marcha</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q15" value="2">Sim (2)</label>
+        <label><input type="radio" name="q15" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q16. Você teve duas ou mais quedas no último ano?<span class="pts">2 pts · quedas</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q16" value="2">Sim (2)</label>
+        <label><input type="radio" name="q16" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q17. Você perde urina ou fezes, sem querer, em algum momento?<span class="pts">2 pts · continência</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q17" value="2">Sim (2)</label>
+        <label><input type="radio" name="q17" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. COMUNICAÇÃO -->
+  <section class="dim" data-dim="comunicacao">
+    <div class="dim-head">
+      <span class="dim-num">7</span>
+      <span class="dim-title">Comunicação</span>
+      <span class="dim-score" data-score="comunicacao">0 / 4 pts</span>
+    </div>
+    <p class="dim-desc">Avalia os domínios sensoriais — visão e audição — considerando o uso de órteses (óculos e aparelho auditivo). Déficits sensoriais não corrigidos comprometem a funcionalidade, a cognição e a interação social do idoso.</p>
+    <div class="q">
+      <p class="q-text">Q18. Você tem problemas de visão capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de óculos ou lentes de contato.<span class="pts">2 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q18" value="2">Sim (2)</label>
+        <label><input type="radio" name="q18" value="0">Não (0)</label>
+      </div>
+    </div>
+    <div class="q">
+      <p class="q-text">Q19. Você tem problemas de audição capazes de impedir a realização de alguma atividade do cotidiano? É permitido o uso de aparelho de audição.<span class="pts">2 pts</span></p>
+      <div class="opts">
+        <label><input type="radio" name="q19" value="2">Sim (2)</label>
+        <label><input type="radio" name="q19" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. COMORBIDADES -->
+  <section class="dim" data-dim="comorbidades">
+    <div class="dim-head">
+      <span class="dim-num">8</span>
+      <span class="dim-title">Comorbidades múltiplas</span>
+      <span class="dim-score" data-score="comorbidades">0 / 4 pts</span>
+    </div>
+    <p class="dim-desc">Marcadores de complexidade clínica: polipatologia (cinco ou mais doenças crônicas), polifarmácia (uso regular de cinco ou mais medicamentos) e internação recente (últimos seis meses) — condições fortemente associadas a desfechos adversos e iatrogenia.</p>
+    <div class="q">
+      <p class="q-text">Q20. Você apresenta alguma das três condições abaixo?<span class="pts">4 pts</span></p>
+      <p class="q-note">• Cinco ou mais doenças crônicas; • Uso regular de cinco ou mais medicamentos diferentes, todos os dias; • Internação recente, nos últimos seis meses.</p>
+      <div class="opts">
+        <label><input type="radio" name="q20" value="4">Sim (4)</label>
+        <label><input type="radio" name="q20" value="0">Não (0)</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTADO -->
+  <div class="result">
+    <h2>Resultado da avaliação</h2>
+    <div class="score-line">
+      <span id="totalScore">0</span>
+      <span class="of40">/ 40 pontos</span>
+      <span id="classif">Aguardando preenchimento</span>
+    </div>
+    <div class="gauge" aria-hidden="true">
+      <div class="seg1"></div><div class="seg2"></div><div class="seg3"></div>
+      <div class="gauge-marker" id="gaugeMarker" style="left:0%"></div>
+    </div>
+    <div class="gauge-legend">
+      <span>0–6 · Baixo risco (idoso robusto)</span>
+      <span>7–14 · Risco moderado</span>
+      <span>≥15 · Alto risco (idoso frágil)</span>
+    </div>
+    <p class="interpret" id="interpretText">Preencha as 20 questões para obter o escore total e a estratificação de risco de vulnerabilidade clínico-funcional.</p>
+    <p class="pend" id="pendText"></p>
   </div>
 
   <footer>
-    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
-    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+    <p>Cognisa — Método de avaliação e acompanhamento da pessoa idosa · Dr. Fausto Azambuja Machado, CRM-MG 39.242</p>
+    <p>IVCF-20: instrumento desenvolvido por Moraes EN e colaboradores (UFMG). Uso clínico e educacional.</p>
   </footer>
+</main>
+
+<div class="actions">
+  <button class="btn-primary" id="btnPdf">Baixar PDF</button>
+  <button class="btn-ghost" id="btnCopy">Copiar respostas</button>
 </div>
 
+<div class="toast" id="toast"></div>
+
+<div id="pdfReport"></div>
+
 <script>
-function formatarData(iso){
-  if(!iso) return '';
-  const [ano, mes, dia] = iso.split('-');
-  return `${dia}/${mes}/${ano}`;
-}
+(function(){
+  const DIMS = {
+    idade:{label:"1. Idade", max:3, qs:["q1"]},
+    percepcao:{label:"2. Autopercepção da saúde", max:1, qs:["q2"]},
+    avd:{label:"3. Atividades de vida diária", max:10, qs:["q3","q4","q5","q6"]},
+    cognicao:{label:"4. Cognição", max:4, qs:["q7","q8","q9"]},
+    humor:{label:"5. Humor", max:4, qs:["q10","q11"]},
+    mobilidade:{label:"6. Mobilidade", max:10, qs:["q12","q13","q14","q15","q16","q17"]},
+    comunicacao:{label:"7. Comunicação", max:4, qs:["q18","q19"]},
+    comorbidades:{label:"8. Comorbidades múltiplas", max:4, qs:["q20"]}
+  };
+  const QTEXT = {
+    q1:"Idade", q2:"Autopercepção da saúde",
+    q3:"Deixou de fazer compras", q4:"Deixou de controlar dinheiro/gastos/contas",
+    q5:"Deixou de realizar pequenos trabalhos domésticos", q6:"Deixou de tomar banho sozinho",
+    q7:"Familiar/amigo relatou esquecimento", q8:"Esquecimento piorando nos últimos meses",
+    q9:"Esquecimento impede atividades do cotidiano",
+    q10:"Desânimo, tristeza ou desesperança no último mês", q11:"Perda de interesse/prazer no último mês",
+    q12:"Incapaz de elevar os braços acima do ombro", q13:"Incapaz de manusear/segurar pequenos objetos",
+    q14:"Perda de peso / IMC<22 / panturrilha<31cm / marcha lenta",
+    q15:"Dificuldade de caminhar que impede atividades", q16:"Duas ou mais quedas no último ano",
+    q17:"Incontinência urinária ou fecal",
+    q18:"Problema de visão que impede atividades", q19:"Problema de audição que impede atividades",
+    q20:"Polipatologia / polifarmácia / internação recente"
+  };
 
-function classificarIMC(imc){
-  // Faixas adaptadas para o adulto mais velho (60+), mais tolerantes que a classificação padrão da OMS
-  if(imc < 22) return {cat:'Abaixo do peso', cor:'var(--warn)', nota:'Em pessoas mais velhas, baixo peso está associado a maior risco de fragilidade e sarcopenia. Vale investigar apetite, ingestão alimentar e perda de peso recente.'};
-  if(imc < 27) return {cat:'Peso adequado', cor:'var(--ok)', nota:'Nesta faixa, o IMC está dentro do que costuma ser considerado protetor para o adulto mais velho.'};
-  if(imc < 30) return {cat:'Sobrepeso', cor:'var(--warn)', nota:'Vale conversar com seu médico sobre hábitos alimentares e atividade física, sem urgência — nesta faixa etária, sobrepeso leve nem sempre exige ação imediata.'};
-  return {cat:'Obesidade', cor:'var(--alert)', nota:'Vale conversar com seu médico sobre acompanhamento nutricional e funcional — combinar controle de peso com preservação de força muscular é o mais importante nessa fase da vida.'};
-}
+  function val(name){
+    const el = document.querySelector('input[name="'+name+'"]:checked');
+    return el ? parseInt(el.value,10) : null;
+  }
+  function answered(name){ return val(name) !== null; }
 
-function calcular(){
-  const nome = document.getElementById('pname').value.trim();
-  const data = formatarData(document.getElementById('pdate').value);
-  const preenchidoPor = document.getElementById('filledby').value;
-
-  let idParts = [];
-  if(nome) idParts.push(`Paciente: ${nome}`);
-  if(data) idParts.push(`Data: ${data}`);
-  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
-  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
-
-  const pesoVal = document.getElementById('peso').value;
-  const alturaVal = document.getElementById('altura').value;
-  const incompleteNote = document.getElementById('incompleteNote');
-
-  if(!pesoVal || !alturaVal){
-    document.getElementById('scoreValue').textContent = '–';
-    document.getElementById('category').textContent = 'Dados incompletos';
-    document.getElementById('category').style.color = 'var(--gold-soft)';
-    document.getElementById('note').textContent = '';
-    incompleteNote.textContent = 'Peso e altura são necessários para calcular o IMC. Preencha os dois campos, ou deixe para depois se ainda não souber.';
-    document.getElementById('result').classList.add('show');
-    document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
-    return;
+  function sectionScore(key){
+    const d = DIMS[key];
+    if(key === "avd"){
+      const avdi = Math.min(4, ["q3","q4","q5"].reduce((s,q)=>s+(val(q)||0),0));
+      const avdb = val("q6")||0;
+      return avdi + avdb;
+    }
+    return d.qs.reduce((s,q)=>s+(val(q)||0),0);
   }
 
-  const peso = parseFloat(pesoVal);
-  const altura = parseFloat(alturaVal);
-  const imc = peso / (altura * altura);
-  const {cat, cor, nota} = classificarIMC(imc);
-
-  document.getElementById('scoreValue').textContent = imc.toFixed(1);
-  const catEl = document.getElementById('category');
-  catEl.textContent = cat;
-  catEl.style.color = cor;
-  document.getElementById('note').textContent = nota;
-  incompleteNote.textContent = '';
-
-  document.getElementById('result').classList.add('show');
-  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-function baixarPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  const marginL = 18;
-  let y = 20;
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const maxWidth = pageWidth - marginL * 2;
-
-  function addWrapped(text, size, bold, gap, color){
-    doc.setFontSize(size);
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
-    const lines = doc.splitTextToSize(text, maxWidth);
-    lines.forEach(line => {
-      if(y > 280){ doc.addPage(); y = 20; }
-      doc.text(line, marginL, y);
-      y += size * 0.5;
-    });
-    y += gap;
+  function classify(total){
+    if(total <= 6) return {t:"Baixo risco de vulnerabilidade — idoso robusto", c:"var(--risk-low)",
+      i:"Idoso com boa reserva funcional. Conduta: promoção da saúde, estímulo à atividade física, vacinação e reavaliação periódica."};
+    if(total <= 14) return {t:"Risco moderado de vulnerabilidade — idoso em risco de fragilização", c:"var(--risk-mid)",
+      i:"Presença de condições que ameaçam a independência. Conduta: aprofundar a avaliação nos domínios alterados e instituir intervenções preventivas dirigidas."};
+    return {t:"Alto risco de vulnerabilidade — idoso frágil", c:"var(--risk-high)",
+      i:"Alta probabilidade de declínio funcional estabelecido. Conduta: Avaliação Geriátrica Ampla (AGA) e plano de cuidados individualizado, com atenção à polifarmácia e ao suporte do cuidador."};
   }
 
-  doc.setFillColor(31,59,54);
-  doc.rect(0,0,pageWidth,26,'F');
-  doc.setTextColor(244,241,234);
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(16);
-  doc.text('Calculadora de IMC', marginL, 13);
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(10);
-  doc.text('Cognisa · Panteão Vital · Deméter', marginL, 20);
-  y = 36;
+  function update(){
+    let total = 0, pend = [];
+    for(const key in DIMS){
+      const s = sectionScore(key);
+      total += s;
+      const chip = document.querySelector('[data-score="'+key+'"]');
+      chip.textContent = s + " / " + DIMS[key].max + (DIMS[key].max===1?" pt":" pts");
+      DIMS[key].qs.forEach(q=>{ if(!answered(q)) pend.push(q.replace("q","Q")); });
+    }
+    document.getElementById("totalScore").textContent = total;
 
-  const nome = document.getElementById('pname').value.trim() || 'Não informado';
-  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
-  const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
-  const peso = document.getElementById('peso').value || 'Não informado';
-  const altura = document.getElementById('altura').value || 'Não informada';
+    const cl = document.getElementById("classif");
+    const it = document.getElementById("interpretText");
+    const pd = document.getElementById("pendText");
+    const marker = document.getElementById("gaugeMarker");
+    marker.style.left = "calc(" + Math.min(100, total/40*100) + "% - 2px)";
 
-  addWrapped(`Paciente: ${nome}`, 11, false, 1);
-  addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
-  addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
+    if(pend.length === 0){
+      const c = classify(total);
+      cl.textContent = c.t;
+      cl.style.background = c.c;
+      cl.style.color = "#F7F4EC";
+      it.textContent = c.i;
+      pd.textContent = "";
+    } else {
+      cl.textContent = "Escore parcial";
+      cl.style.background = "var(--ivory)";
+      cl.style.color = "var(--teal)";
+      it.textContent = "Preencha as 20 questões para obter a estratificação de risco.";
+      pd.textContent = "Questões pendentes: " + pend.join(", ");
+    }
+    return {total, pend};
+  }
 
-  addWrapped('Medidas', 13, true, 3, [184,145,90]);
-  addWrapped(`Peso: ${peso} kg`, 11, false, 1);
-  addWrapped(`Altura: ${altura} m`, 11, false, 4);
+  document.querySelectorAll('input[type="radio"]').forEach(r=>r.addEventListener("change", update));
+  document.getElementById("aDate").valueAsDate = new Date();
 
-  addWrapped('Resultado', 13, true, 3, [184,145,90]);
-  const imc = document.getElementById('scoreValue').textContent;
-  const categoria = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
-  addWrapped(`IMC: ${imc}`, 12, true, 1);
-  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
-  if(nota) addWrapped(nota, 10, false, 4);
+  function meta(){
+    const d = document.getElementById("aDate").value;
+    const dt = d ? d.split("-").reverse().join("/") : "—";
+    return {
+      p: document.getElementById("pName").value.trim() || "—",
+      c: document.getElementById("cName").value.trim() || "—",
+      d: dt
+    };
+  }
 
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 2600);
+  }
 
-  addWrapped('Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.', 9.5, false, 4, [90,90,80]);
-  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
-
-  const nomeArquivo = nome !== 'Não informado' ? `IMC_${nome.replace(/\s+/g,'-')}.pdf` : 'IMC.pdf';
-  doc.save(nomeArquivo);
-}
-
-function enviarWhatsApp() {
-
-  const idSummary = document.getElementById('idSummary').textContent;
-  const imc = document.getElementById('scoreValue').textContent;
-  const cat = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Calculadora de IMC\n${idSummary ? idSummary + '\n' : ''}IMC: ${imc}\nClassificação: ${cat}${nota ? '\n' + nota : ''}${incomplete ? '\n' + incomplete : ''}`;
-  
-  const numero = '553125140626';
-  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
-  window.open(url, '_blank');
-}
-
-function copiarResultado(){
-  const idSummary = document.getElementById('idSummary').textContent;
-  const imc = document.getElementById('scoreValue').textContent;
-  const cat = document.getElementById('category').textContent;
-  const nota = document.getElementById('note').textContent;
-  const incomplete = document.getElementById('incompleteNote').textContent;
-  const texto = `Calculadora de IMC\n${idSummary ? idSummary + '\n' : ''}IMC: ${imc}\nClassificação: ${cat}${nota ? '\n' + nota : ''}${incomplete ? '\n' + incomplete : ''}`;
-  navigator.clipboard.writeText(texto).then(() => {
-    alert('Resultado copiado para a área de transferência.');
+  /* ---------- Copiar respostas ---------- */
+  document.getElementById("btnCopy").addEventListener("click", async ()=>{
+    const {total, pend} = update();
+    const m = meta();
+    let out = "IVCF-20 — ÍNDICE DE VULNERABILIDADE CLÍNICO-FUNCIONAL (Moraes EN, UFMG)\n";
+    out += "Cognisa · Dr. Fausto Azambuja Machado — CRM-MG 39.242\n";
+    out += "────────────────────────────────────────\n";
+    out += "Paciente: " + m.p + "\nCuidador: " + m.c + "\nData: " + m.d + "\n";
+    out += "────────────────────────────────────────\n";
+    for(const key in DIMS){
+      out += "\n" + DIMS[key].label.toUpperCase() + " — " + sectionScore(key) + "/" + DIMS[key].max + " pts\n";
+      DIMS[key].qs.forEach(q=>{
+        const v = val(q);
+        const resp = v===null ? "não respondida" : (v>0 ? "Sim ("+v+")" : "Não (0)");
+        out += "  " + q.toUpperCase() + ". " + QTEXT[q] + ": " + resp + "\n";
+      });
+    }
+    out += "\n────────────────────────────────────────\n";
+    out += "ESCORE TOTAL: " + total + " / 40 pontos\n";
+    if(pend.length===0){
+      out += "CLASSIFICAÇÃO: " + classify(total).t + "\n";
+    } else {
+      out += "CLASSIFICAÇÃO: escore parcial (pendentes: " + pend.join(", ") + ")\n";
+    }
+    try{
+      await navigator.clipboard.writeText(out);
+      toast("Respostas copiadas para a área de transferência");
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = out; document.body.appendChild(ta);
+      ta.select(); document.execCommand("copy"); ta.remove();
+      toast("Respostas copiadas para a área de transferência");
+    }
   });
-}
-</script>
 
+  /* ---------- Baixar PDF ---------- */
+  document.getElementById("btnPdf").addEventListener("click", ()=>{
+    const {total, pend} = update();
+    const m = meta();
+    const cls = pend.length===0 ? classify(total) : null;
+
+    let rows = "";
+    for(const key in DIMS){
+      rows += '<tr class="sec"><td colspan="2">'+DIMS[key].label+'</td><td>'+sectionScore(key)+' / '+DIMS[key].max+'</td></tr>';
+      DIMS[key].qs.forEach(q=>{
+        const v = val(q);
+        const resp = v===null ? "—" : (v>0 ? "Sim ("+v+")" : "Não (0)");
+        rows += "<tr><td>"+q.toUpperCase()+"</td><td>"+QTEXT[q]+"</td><td>"+resp+"</td></tr>";
+      });
+    }
+
+    const html = `
+    <div style="font-family:'DM Sans',Arial,sans-serif;color:#22302D;padding:28px;width:700px">
+      <div style="border-bottom:3px solid #B8915A;padding-bottom:14px;margin-bottom:16px">
+        <div style="letter-spacing:.3em;text-transform:uppercase;font-size:10px;color:#B8915A;font-weight:700">Cognisa · Avaliação Clínico-Funcional</div>
+        <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:24px;font-weight:700;color:#1F3B36;margin-top:4px">IVCF-20 — Índice de Vulnerabilidade Clínico-Funcional</div>
+        <div style="font-size:10px;font-style:italic;color:#6B7A74;margin-top:2px">Moraes EN et al., UFMG</div>
+      </div>
+      <table style="width:100%;font-size:11px;margin-bottom:14px">
+        <tr><td style="padding:2px 0"><b>Paciente:</b> ${m.p}</td><td><b>Data:</b> ${m.d}</td></tr>
+        <tr><td style="padding:2px 0"><b>Cuidador:</b> ${m.c}</td><td></td></tr>
+      </table>
+      <table style="width:100%;border-collapse:collapse;font-size:10.5px">
+        <tr style="background:#1F3B36;color:#F7F4EC"><th style="padding:6px;text-align:left;width:40px">Item</th><th style="padding:6px;text-align:left">Questão</th><th style="padding:6px;text-align:left;width:80px">Resposta</th></tr>
+        ${rows}
+      </table>
+      <div style="margin-top:18px;background:#1F3B36;color:#F7F4EC;border-radius:10px;padding:16px">
+        <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:#D8BC93">Resultado</div>
+        <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:28px;font-weight:700;margin-top:4px">${total} / 40 pontos</div>
+        <div style="font-size:12px;font-weight:700;margin-top:4px">${cls ? cls.t : "Escore parcial — questões pendentes: "+pend.join(", ")}</div>
+        ${cls ? '<div style="font-size:10.5px;margin-top:6px;color:#DDE5E0">'+cls.i+'</div>' : ''}
+      </div>
+      <div style="margin-top:14px;font-size:9px;color:#6B7A74;text-align:center">
+        Cognisa — Dr. Fausto Azambuja Machado · CRM-MG 39.242 · Estratificação: 0–6 baixo risco (robusto) · 7–14 risco moderado · ≥15 alto risco (frágil)
+      </div>
+      <style>
+        table tr td{border-bottom:1px solid #E3DCCB;padding:5px 6px;vertical-align:top}
+        tr.sec td{background:#F7F4EC;font-weight:700;color:#1F3B36;border-bottom:1px solid #B8915A}
+      </style>
+    </div>`;
+
+    const rep = document.getElementById("pdfReport");
+    rep.innerHTML = html;
+    rep.style.display = "block";
+    const fname = "IVCF20_" + (m.p !== "—" ? m.p.replace(/\s+/g,"_") : "paciente") + ".pdf";
+
+    if(typeof html2pdf !== "undefined"){
+      html2pdf().set({
+        margin:[8,8,8,8],
+        filename:fname,
+        image:{type:"jpeg",quality:0.98},
+        html2canvas:{scale:2,useCORS:true},
+        jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},
+        pagebreak:{mode:["avoid-all","css","legacy"]}
+      }).from(rep.firstElementChild).save().then(()=>{
+        rep.style.display="none";
+        toast("PDF gerado com sucesso");
+      }).catch(()=>{
+        rep.style.display="none";
+        window.print();
+      });
+    } else {
+      rep.style.display="none";
+      window.print();
+    }
+  });
+
+  update();
+})();
+</script>
 </body>
 </html>
