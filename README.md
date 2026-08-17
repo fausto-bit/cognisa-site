@@ -43,7 +43,6 @@ Todos os formulários rodam 100% no navegador (sem backend), com exportação em
 ## Pendências conhecidas
 
 - Calculadora **AHA PREVENT 2026** (risco cardiovascular): ainda não implementada — depende dos coeficientes oficiais da equação ou de decisão por linkar para a calculadora oficial (`professional.heart.org/prevent`).
-- Página de Contato: campos de Instagram e WhatsApp/telefone ainda como placeholder.
 
 ## Aviso legal
 
