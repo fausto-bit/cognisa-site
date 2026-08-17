@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel — Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --alert:#A84B3A;
+    --st-agendado:#8a8578; --st-atendimento:#B8863A; --st-revisao:#A84B3A; --st-enviadas:#3F6B4F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  #logoutBtn{
+    background:transparent;border:1.5px solid var(--gold-soft);color:var(--ivory);
+    padding:8px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;
+    cursor:pointer;
+  }
+  #logoutBtn:hover{background:rgba(255,255,255,.08);}
+
+  .card{
+    background:#fff;border-radius:12px;padding:24px 26px;margin-top:24px;
+    box-shadow:0 1px 3px rgba(31,59,54,.08);
+  }
+  .card h2{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:var(--teal);margin-bottom:16px;}
+
+  .formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;align-items:end;}
+  label{display:block;font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:5px;}
+  input,select{
+    width:100%;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;
+    font-family:'DM Sans',sans-serif;font-size:14px;background:#FBFAF7;color:var(--ink);
+  }
+  input:focus,select:focus{outline:none;border-color:var(--gold);}
+  #addBtn{
+    background:var(--gold);color:var(--teal);border:none;border-radius:7px;
+    padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer;height:40px;
+  }
+  #addBtn:hover{background:var(--gold-soft);}
+  #addBtn:disabled{opacity:.6;cursor:default;}
+
+  .formmsg{margin-top:12px;font-size:13.5px;}
+  .formmsg.error{color:var(--alert);}
+  .formmsg.ok{color:#3F6B4F;}
+
+  table{width:100%;border-collapse:collapse;margin-top:8px;}
+  th{
+    text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    color:#8a8578;padding:8px 10px;border-bottom:2px solid #eee6d6;
+  }
+  td{padding:12px 10px;border-bottom:1px solid #eee6d6;font-size:14.5px;}
+  tr:last-child td{border-bottom:none;}
+
+  .badge{
+    display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;color:#fff;
+  }
+  .badge.agendado{background:var(--st-agendado);}
+  .badge.em_atendimento{background:var(--st-atendimento);}
+  .badge.revisao_pendente{background:var(--st-revisao);}
+  .badge.orientacoes_enviadas{background:var(--st-enviadas);}
+
+  select.statusSelect{width:auto;padding:6px 8px;font-size:13px;}
+
+  .empty{color:#8a8578;font-size:14px;padding:20px 0;text-align:center;}
+  .loading{color:#8a8578;font-size:14px;padding:20px 0;text-align:center;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Área privada</div>
+    <h1>Painel</h1>
+  </div>
+  <button id="logoutBtn">Sair</button>
+</header>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>Novo paciente / nova consulta</h2>
+    <form id="addForm" class="formgrid">
+      <div>
+        <label for="initials">Iniciais</label>
+        <input type="text" id="initials" placeholder="Ex: MAS" required maxlength="10">
+      </div>
+      <div>
+        <label for="birthDate">Data de nascimento</label>
+        <input type="date" id="birthDate" required>
+      </div>
+      <div>
+        <label for="mrn">Nº prontuário (opcional)</label>
+        <input type="text" id="mrn" placeholder="Desempate">
+      </div>
+      <div>
+        <label for="track">Trilha</label>
+        <select id="track" required>
+          <option value="particular_condensado">Particular condensado</option>
+          <option value="cognisa_ciclo">Ciclo Cognisa (6+1)</option>
+          <option value="unimed">Unimed / convênio</option>
+        </select>
+      </div>
+      <div>
+        <label for="visitDate">Data da consulta</label>
+        <input type="date" id="visitDate" required>
+      </div>
+      <div>
+        <button type="submit" id="addBtn">Adicionar</button>
+      </div>
+    </form>
+    <div class="formmsg" id="formMsg"></div>
+  </div>
+
+  <div class="card">
+    <h2>Consultas</h2>
+    <div id="tableWrap"><div class="loading">Carregando...</div></div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const trackLabels = {
+    cognisa_ciclo: 'Ciclo Cognisa',
+    unimed: 'Unimed',
+    particular_condensado: 'Particular condensado'
+  };
+  const statusLabels = {
+    agendado: 'Agendado',
+    em_atendimento: 'Em atendimento',
+    revisao_pendente: 'Revisão pendente',
+    orientacoes_enviadas: 'Orientações enviadas'
+  };
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) {
+      window.location.href = "login.html";
+      return null;
+    }
+    return data.session;
+  }
+
+  async function loadVisits(){
+    const tableWrap = document.getElementById('tableWrap');
+    const { data, error } = await client
+      .from('visits')
+      .select('id, visit_date, track, status, patients ( initials, birth_date, medical_record_number )')
+      .order('visit_date', { ascending: false });
+
+    if (error) {
+      tableWrap.innerHTML = `<div class="empty">Erro ao carregar: ${error.message}</div>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      tableWrap.innerHTML = `<div class="empty">Nenhuma consulta cadastrada ainda.</div>`;
+      return;
+    }
+
+    let html = `<table><thead><tr>
+      <th>Paciente</th><th>Data</th><th>Trilha</th><th>Status</th>
+    </tr></thead><tbody>`;
+
+    data.forEach(v => {
+      const p = v.patients;
+      const idLabel = p ? `${p.initials}-${(p.birth_date || '').replace(/-/g,'').slice(2)}` : '—';
+      html += `<tr>
+        <td>${idLabel}</td>
+        <td>${formatDate(v.visit_date)}</td>
+        <td>${trackLabels[v.track] || v.track}</td>
+        <td>
+          <select class="statusSelect" data-visit-id="${v.id}">
+            ${Object.entries(statusLabels).map(([val, label]) =>
+              `<option value="${val}" ${val === v.status ? 'selected' : ''}>${label}</option>`
+            ).join('')}
+          </select>
+        </td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    tableWrap.innerHTML = html;
+
+    document.querySelectorAll('.statusSelect').forEach(sel => {
+      sel.addEventListener('change', async (e) => {
+        const visitId = e.target.dataset.visitId;
+        const newStatus = e.target.value;
+        const { error } = await client.from('visits').update({ status: newStatus }).eq('id', visitId);
+        if (error) alert('Erro ao atualizar status: ' + error.message);
+      });
+    });
+  }
+
+  document.getElementById('addForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const addBtn = document.getElementById('addBtn');
+    const formMsg = document.getElementById('formMsg');
+    formMsg.textContent = '';
+    formMsg.className = 'formmsg';
+    addBtn.disabled = true;
+    addBtn.textContent = 'Adicionando...';
+
+    const initials = document.getElementById('initials').value.trim().toUpperCase();
+    const birthDate = document.getElementById('birthDate').value;
+    const mrn = document.getElementById('mrn').value.trim() || null;
+    const track = document.getElementById('track').value;
+    const visitDate = document.getElementById('visitDate').value;
+
+    try {
+      // Busca paciente existente por iniciais + data de nascimento; cria se não existir.
+      let { data: existing, error: findErr } = await client
+        .from('patients')
+        .select('id')
+        .eq('initials', initials)
+        .eq('birth_date', birthDate)
+        .maybeSingle();
+
+      if (findErr) throw findErr;
+
+      let patientId;
+      if (existing) {
+        patientId = existing.id;
+      } else {
+        const { data: created, error: createErr } = await client
+          .from('patients')
+          .insert({ initials, birth_date: birthDate, medical_record_number: mrn })
+          .select('id')
+          .single();
+        if (createErr) throw createErr;
+        patientId = created.id;
+      }
+
+      const { error: visitErr } = await client
+        .from('visits')
+        .insert({ patient_id: patientId, visit_date: visitDate, track, status: 'agendado' });
+      if (visitErr) throw visitErr;
+
+      formMsg.textContent = 'Consulta adicionada.';
+      formMsg.className = 'formmsg ok';
+      document.getElementById('addForm').reset();
+      loadVisits();
+    } catch (err) {
+      formMsg.textContent = 'Erro: ' + err.message;
+      formMsg.className = 'formmsg error';
+    } finally {
+      addBtn.disabled = false;
+      addBtn.textContent = 'Adicionar';
+    }
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await client.auth.signOut();
+    window.location.href = "login.html";
+  });
+
+  (async () => {
+    const session = await requireSession();
+    if (session) loadVisits();
+  })();
+</script>
+
+</body>
+</html>
