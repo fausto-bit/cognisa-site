@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roteiro de Atendimento — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.55;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .panelnav{display:flex;gap:18px;}
+  .panelnav a{
+    color:var(--gold-soft);text-decoration:none;font-size:13.5px;font-weight:500;
+    padding-bottom:3px;border-bottom:2px solid transparent;
+  }
+  .panelnav a:hover{color:var(--ivory);}
+  .panelnav a.active{color:var(--ivory);border-bottom-color:var(--gold);}
+  #logoutBtn{
+    background:transparent;border:1.5px solid var(--gold-soft);color:var(--ivory);
+    padding:8px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;
+    cursor:pointer;
+  }
+  #logoutBtn:hover{background:rgba(255,255,255,.08);}
+
+  .tabs{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;}
+  .tab{
+    background:#fff;border:1.5px solid #DDD6C7;border-radius:8px;
+    padding:10px 18px;font-size:14px;font-weight:700;color:var(--teal);
+    cursor:pointer;
+  }
+  .tab.active{background:var(--teal);border-color:var(--teal);color:var(--ivory);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{
+    background:#fff;border-radius:12px;padding:22px 24px;margin-top:18px;
+    box-shadow:0 1px 3px rgba(31,59,54,.08);
+  }
+  .card h2{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:var(--teal);margin-bottom:4px;}
+  .card .time{font-size:12.5px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-bottom:14px;}
+  .card ul{margin:0 0 14px 20px;font-size:14.5px;}
+  .card ul li{margin-bottom:5px;}
+  .card .note{font-size:13px;color:#6b6b60;font-style:italic;}
+
+  .formlinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .formlinks a{
+    display:inline-block;background:var(--ivory);border:1.5px solid var(--gold-soft);
+    color:var(--teal);text-decoration:none;font-size:13px;font-weight:700;
+    padding:6px 14px;border-radius:20px;
+  }
+  .formlinks a:hover{background:var(--gold-soft);}
+
+  table{width:100%;border-collapse:collapse;margin-top:8px;}
+  th{
+    text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+    color:#8a8578;padding:8px 10px;border-bottom:2px solid #eee6d6;vertical-align:bottom;
+  }
+  td{padding:14px 10px;border-bottom:1px solid #eee6d6;font-size:14px;vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.consulta{font-weight:700;color:var(--teal);white-space:nowrap;}
+  td .sub{font-weight:400;color:#6b6b60;font-size:12.5px;}
+  td .none{color:#a39d8c;font-style:italic;}
+
+  .intro{font-size:14.5px;color:#4a4a42;margin-top:16px;max-width:700px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Área privada</div>
+    <h1>Roteiro de Atendimento</h1>
+  </div>
+  <nav class="panelnav">
+    <a href="index.html">Painel</a>
+    <a href="roteiro.html" class="active">Roteiro de Atendimento</a>
+  </nav>
+  <button id="logoutBtn">Sair</button>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs">
+    <button class="tab active" data-target="condensado">Particular Condensado (90 min)</button>
+    <button class="tab" data-target="ciclo">Ciclo Cognisa (6+1 consultas)</button>
+  </div>
+
+  <!-- ===== PARTICULAR CONDENSADO ===== -->
+  <div class="panel active" id="condensado">
+    <p class="intro">Tudo que o paciente/cuidador consegue responder sozinho vem pronto da Fase 0 (pré-consulta, 48h antes). A sessão presencial fica reservada para exame físico, teste de desempenho e conversa sensível.</p>
+
+    <div class="card">
+      <h2>Fase 0 — Pré-consulta (remota, 48h antes)</h2>
+      <div class="note" style="margin-bottom:10px;">Enviar por WhatsApp o link de cada formulário para o paciente/cuidador preencher em casa. Pedir também para trazer todos os medicamentos em uso e os últimos exames de sangue.</div>
+      <div class="formlinks">
+        <a href="../cognisa-ivcf20.html" target="_blank">IVCF-20</a>
+        <a href="../cognisa-man.html" target="_blank">MNA-SF</a>
+        <a href="../cognisa-lawton-aivd.html" target="_blank">Lawton (AIVD)</a>
+        <a href="../cognisa-katz-abvd.html" target="_blank">Katz (ABVD)</a>
+        <a href="../cognisa-gds15.html" target="_blank">GDS-15</a>
+        <a href="../cognisa-zarit.html" target="_blank">Zarit</a>
+        <a href="../cognisa-imc.html" target="_blank">IMC</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 1 — Abertura e conferência</h2>
+      <div class="time">10 min</div>
+      <ul>
+        <li>Revisar os formulários preenchidos em casa — checar inconsistências, esclarecer itens em branco</li>
+        <li>Queixa principal espontânea (olho no olho, sem tela)</li>
+        <li>Autopercepção de saúde (0-10 ou Ótima/Boa/Regular/Ruim)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 2 — Atena: Cognição</h2>
+      <div class="time">15 min</div>
+      <ul>
+        <li>MoCA completo (com ajuste de escolaridade)</li>
+        <li>Teste do sussurro (rastreio auditivo)</li>
+        <li>Queixa cognitiva subjetiva (paciente + informante, se presente)</li>
+        <li class="none">IVCF-20 já veio pronto da Fase 0 — só conferir a classificação</li>
+      </ul>
+      <div class="formlinks"><a href="../cognisa-moca.html" target="_blank">MoCA</a></div>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 3 — Hefesto: Força e mobilidade</h2>
+      <div class="time">15 min</div>
+      <ul>
+        <li>Dinamometria (handgrip) — 3 tentativas por mão</li>
+        <li>TUG (Timed Up and Go)</li>
+        <li>Velocidade de marcha em 4 metros</li>
+        <li>Teste sentar-levantar 5x</li>
+        <li>Semi-tandem + Tandem (equilíbrio)</li>
+        <li>Histórico de quedas no ano (número, lesão, medo de cair)</li>
+      </ul>
+      <div class="note">Blocos 2 e 3 juntos formam o SPPB completo + MoCA — o núcleo físico-cognitivo que exige presença do médico.</div>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 4 — Deméter: Nutrição</h2>
+      <div class="time">5 min</div>
+      <ul>
+        <li>Circunferência da panturrilha</li>
+        <li>Peso e altura de conferência</li>
+        <li>Definir exames laboratoriais a solicitar (vit. D, HbA1c, TFG, hemoglobina, perfil lipídico, albumina)</li>
+        <li class="none">MNA-SF e IMC já vieram prontos — só revisar</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 5 — Hermes: Medicamentos e diretivas</h2>
+      <div class="time">15 min</div>
+      <ul>
+        <li>Brown bag review — todos os medicamentos na mesa</li>
+        <li>Aplicar Beers + STOPP/START mentalmente, marcar oportunidades de deprescrição</li>
+        <li>Carga anticolinérgica</li>
+        <li>Iniciar ou revisar conversa de Diretivas Antecipadas de Vontade (DAV) — não precisa fechar hoje, mas abrir a conversa e registrar decisões já tomadas</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 6 — Apolo: Humor, sono, cardiovascular</h2>
+      <div class="time">10 min</div>
+      <ul>
+        <li>PA e FC de consolidação</li>
+        <li>Padrão de sono (queixa dirigida — tempo curto)</li>
+        <li>Sintomas cardiovasculares ao esforço/estresse</li>
+        <li class="none">GDS-15 já veio pronto — só conferir pontuação e sinalizar se ≥10</li>
+      </ul>
+      <div class="formlinks"><a href="../cognisa-diario-sono.html" target="_blank">Diário de Sono (se aplicável)</a></div>
+    </div>
+
+    <div class="card">
+      <h2>Bloco 7 — Síntese e entrega</h2>
+      <div class="time">20 min</div>
+      <ul>
+        <li>Calcular complexidade global (Katz, internações, IVCF, Fried/SPPB, PA, quedas, GDS, CIDs, polifarmácia)</li>
+        <li>Definir 2-3 prioridades de ação para os próximos meses</li>
+        <li>Entregar: Resumo Geriátrico de 1 página + plano priorizado + capítulo relevante do Manual do Panteão Vital + rascunho de DAV se aplicável</li>
+        <li>Agendar retorno (4-6 meses se moderado/alto; anual se robusto)</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>O que fica de fora deste protocolo (propositalmente)</h2>
+      <ul>
+        <li>IVSF-10 completo — versão resumida verbal aqui, instrumento formal fica pro retorno</li>
+        <li>Checklist ambiental do lar (exige visita, não acontece no consultório)</li>
+        <li>Fenótipo de Fried completo — o SPPB já cobre força/marcha; exaustão e perda de peso ficam como perguntas rápidas</li>
+        <li>Zarit completo se não houver cuidador presente na consulta</li>
+      </ul>
+      <div class="note">Completam-se no retorno seguinte, junto com o monitoramento das prioridades definidas hoje.</div>
+    </div>
+  </div>
+
+  <!-- ===== CICLO COGNISA ===== -->
+  <div class="panel" id="ciclo">
+    <p class="intro">Cada consulta do ciclo de 6+1 tem uma combinação diferente de formulários que já podem vir prontos de casa e itens que só acontecem com o médico na sala.</p>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:16%">Consulta</th>
+            <th style="width:34%">Pré-consulta (vem de casa)</th>
+            <th>Só na sala</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="consulta">1 · Atena<div class="sub">Cognição</div></td>
+            <td><div class="formlinks"><a href="../cognisa-ivcf20.html" target="_blank">IVCF-20</a></div></td>
+            <td>MoCA / Mini-Cog, teste do sussurro, exame neurológico sumário</td>
+          </tr>
+          <tr>
+            <td class="consulta">2 · Deméter<div class="sub">Nutrição</div></td>
+            <td><div class="formlinks">
+              <a href="../cognisa-man.html" target="_blank">MNA-SF</a>
+              <a href="../cognisa-imc.html" target="_blank">IMC</a>
+            </div></td>
+            <td>Circunferência da panturrilha, conferência de peso/altura, leitura dos exames pedidos</td>
+          </tr>
+          <tr>
+            <td class="consulta">3 · Hefesto<div class="sub">Força / mobilidade</div></td>
+            <td><span class="none">nenhum — não é autoaplicável</span></td>
+            <td>Handgrip, TUG, marcha 4m, sentar-levantar 5x, semi-tandem/tandem</td>
+          </tr>
+          <tr>
+            <td class="consulta">4 · Héstia<div class="sub">Funcionalidade / lar</div></td>
+            <td><div class="formlinks">
+              <a href="../cognisa-katz-abvd.html" target="_blank">Katz</a>
+              <a href="../cognisa-lawton-aivd.html" target="_blank">Lawton</a>
+              <a href="../cognisa-zarit.html" target="_blank">Zarit</a>
+            </div><div class="sub" style="margin-top:6px;">Zarit só se houver cuidador</div></td>
+            <td>IVSF-10 <a href="../cognisa-ivsf10.html" target="_blank" style="color:var(--teal);">(abrir)</a> e checklist ambiental — ainda feitos verbalmente</td>
+          </tr>
+          <tr>
+            <td class="consulta">5 · Hermes<div class="sub">Remédios / DAV</div></td>
+            <td><span class="none">nenhum formulário — só trazer os remédios físicos</span></td>
+            <td>Brown bag review, Beers/STOPP, carga anticolinérgica, conversa de DAV</td>
+          </tr>
+          <tr>
+            <td class="consulta">6 · Apolo<div class="sub">Humor / sono / cardio</div></td>
+            <td><div class="formlinks">
+              <a href="../cognisa-gds15.html" target="_blank">GDS-15</a>
+              <a href="../cognisa-diario-sono.html" target="_blank">Diário de Sono</a>
+            </div></td>
+            <td>Sinais vitais, sintomas cardiovasculares</td>
+          </tr>
+          <tr>
+            <td class="consulta">7 · Síntese</td>
+            <td><span class="none">nenhum novo</span></td>
+            <td>Consolidação, árvore de complexidade, entrega do manual</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Retorno Unimed / convênio</h2>
+      <p style="font-size:14.5px;">Sem estrutura fixa de "consulta temática" — a cada retorno, priorize 2-3 variáveis que ainda estejam em aberto para aquele paciente, puxando do que falta no ciclo acima (ex.: se falta Héstia, manda Katz+Lawton+Zarit antes do próximo retorno).</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  (async () => {
+    const { data } = await client.auth.getSession();
+    if (!data.session) window.location.href = "login.html";
+  })();
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await client.auth.signOut();
+    window.location.href = "login.html";
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

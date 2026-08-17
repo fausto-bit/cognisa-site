@@ -25,6 +25,13 @@
   }
   header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;}
   header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .panelnav{display:flex;gap:18px;}
+  .panelnav a{
+    color:var(--gold-soft);text-decoration:none;font-size:13.5px;font-weight:500;
+    padding-bottom:3px;border-bottom:2px solid transparent;
+  }
+  .panelnav a:hover{color:var(--ivory);}
+  .panelnav a.active{color:var(--ivory);border-bottom-color:var(--gold);}
   #logoutBtn{
     background:transparent;border:1.5px solid var(--gold-soft);color:var(--ivory);
     padding:8px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;
@@ -85,6 +92,10 @@
     <div class="eyebrow">Cognisa · Área privada</div>
     <h1>Painel</h1>
   </div>
+  <nav class="panelnav">
+    <a href="index.html" class="active">Painel</a>
+    <a href="roteiro.html">Roteiro de Atendimento</a>
+  </nav>
   <button id="logoutBtn">Sair</button>
 </header>
 
