@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prontuário — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --alert:#A84B3A;
+    --ok:#3F6B4F; --pending:#B8863A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .panelnav{display:flex;gap:18px;}
+  .panelnav a{
+    color:var(--gold-soft);text-decoration:none;font-size:13.5px;font-weight:500;
+    padding-bottom:3px;border-bottom:2px solid transparent;
+  }
+  .panelnav a:hover{color:var(--ivory);}
+  .panelnav a.active{color:var(--ivory);border-bottom-color:var(--gold);}
+  #logoutBtn{
+    background:transparent;border:1.5px solid var(--gold-soft);color:var(--ivory);
+    padding:8px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;
+    cursor:pointer;
+  }
+  #logoutBtn:hover{background:rgba(255,255,255,.08);}
+
+  .card{
+    background:#fff;border-radius:12px;padding:22px 24px;margin-top:24px;
+    box-shadow:0 1px 3px rgba(31,59,54,.08);
+  }
+  .card h2{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:19px;color:var(--teal);margin-bottom:14px;}
+
+  .searchrow{display:flex;gap:10px;flex-wrap:wrap;}
+  .searchrow input{
+    flex:1;min-width:160px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:7px;
+    font-family:'DM Sans',sans-serif;font-size:14.5px;background:#FBFAF7;color:var(--ink);
+  }
+  .searchrow input:focus{outline:none;border-color:var(--gold);}
+  .searchrow button{
+    background:var(--gold);color:var(--teal);border:none;border-radius:7px;
+    padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;
+  }
+  .searchrow button:hover{background:var(--gold-soft);}
+
+  .resultlist{margin-top:14px;}
+  .resultitem{
+    padding:10px 12px;border-radius:7px;cursor:pointer;font-size:14.5px;
+    display:flex;justify-content:space-between;
+  }
+  .resultitem:hover{background:var(--ivory);}
+  .resultitem .sub{color:#8a8578;font-size:12.5px;}
+
+  .patienthead{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+  }
+  .patienthead .id{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--teal);}
+  .patienthead .sub{font-size:13px;color:#8a8578;}
+  .changepatient{
+    background:transparent;border:1.5px solid var(--teal);color:var(--teal);
+    border-radius:7px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;
+  }
+  .changepatient:hover{background:var(--teal);color:var(--ivory);}
+
+  .domain{margin-top:22px;}
+  .domain:first-child{margin-top:0;}
+  .domain h3{
+    font-family:'Cormorant Garamond',serif;font-size:16.5px;color:var(--teal);
+    border-bottom:2px solid var(--gold-soft);padding-bottom:5px;margin-bottom:10px;
+  }
+  .varrow{
+    display:grid;grid-template-columns:26px 1fr 200px;gap:10px;align-items:center;
+    padding:6px 0;
+  }
+  .dot{width:10px;height:10px;border-radius:50%;background:var(--pending);justify-self:center;}
+  .dot.filled{background:var(--ok);}
+  .varlabel{font-size:13.5px;color:var(--ink);}
+  .varlabel .vid{color:#8a8578;font-size:11px;margin-right:4px;}
+  .varrow input{
+    padding:7px 9px;border:1.5px solid #DDD6C7;border-radius:6px;
+    font-family:'DM Sans',sans-serif;font-size:13.5px;background:#FBFAF7;color:var(--ink);width:100%;
+  }
+  .varrow input:focus{outline:none;border-color:var(--gold);}
+
+  .progress{font-size:13px;color:#6b6b60;margin-top:4px;}
+  .empty{color:#8a8578;font-size:14px;padding:10px 0;}
+  .saveflash{color:var(--ok);font-size:11px;margin-left:6px;opacity:0;transition:opacity .3s;}
+  .saveflash.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Área privada</div>
+    <h1>Prontuário</h1>
+  </div>
+  <nav class="panelnav">
+    <a href="index.html">Painel</a>
+    <a href="roteiro.html">Roteiro de Atendimento</a>
+    <a href="prontuario.html" class="active">Prontuário</a>
+  </nav>
+  <button id="logoutBtn">Sair</button>
+</header>
+
+<div class="wrap">
+
+  <div class="card" id="searchCard">
+    <h2>Buscar paciente</h2>
+    <div class="searchrow">
+      <input type="text" id="searchInitials" placeholder="Iniciais (ex: MAS)">
+      <button id="searchBtn">Buscar</button>
+    </div>
+    <div class="resultlist" id="resultList"></div>
+  </div>
+
+  <div class="card" id="patientCard" style="display:none;">
+    <div class="patienthead">
+      <div>
+        <div class="id" id="patientId">—</div>
+        <div class="sub" id="patientSub"></div>
+      </div>
+      <button class="changepatient" id="changePatientBtn">Trocar paciente</button>
+    </div>
+    <div class="progress" id="progressText"></div>
+  </div>
+
+  <div class="card" id="varsCard" style="display:none;">
+    <h2>Mapa de variáveis</h2>
+    <div id="domainsWrap"></div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // CORE-76: dicionário de variáveis da coorte geriátrica Cognisa.
+  const CORE76 = [
+    { domain: "1 · Demografia e contexto clínico", vars: [
+      ["V01","Idade (anos)"], ["V02","Sexo ao nascimento"], ["V03","Escolaridade (anos completos)"],
+      ["V04","Estado civil"], ["V05","Local de residência"], ["V06","Arranjo domiciliar"]
+    ]},
+    { domain: "2 · Morbidade e carga de doença", vars: [
+      ["V07","Hipertensão"], ["V08","Diabetes"], ["V09","Doença cardiovascular"],
+      ["V10","Doença cerebrovascular (AVC/AIT)"], ["V11","Doença pulmonar crônica"],
+      ["V12","Doença renal crônica (presença + estágio)"], ["V13","Doença osteoarticular relevante"],
+      ["V14","Câncer (nenhum/prévio/ativo/em tratamento)"]
+    ]},
+    { domain: "3 · Medicamentos e prescrição", vars: [
+      ["V15","Número total de medicamentos"], ["V16","Polifarmácia (≥5)"], ["V17","Hiperpolifarmácia (≥10)"],
+      ["V18","Nº medicamentos potencialmente inapropriados (Beers/STOPP)"], ["V19","Carga anticolinérgica (escore)"],
+      ["V20","Nº medicamentos associados a risco de queda"], ["V21","Nº prescrições potencialmente omissas (START)"],
+      ["V22","Intervenção de deprescrição no período"]
+    ]},
+    { domain: "4 · Funcionalidade", vars: [
+      ["V23","Katz — ABVD (escore)"], ["V24","Lawton-Brody — AIVD (escore)"],
+      ["V25","Dependência ABVD"], ["V26","Dependência AIVD"], ["V27","Capacidade de caminhar"],
+      ["V28","Uso de dispositivo auxiliar"], ["V29","Atividade física habitual (min/semana)"],
+      ["V30","Mudança funcional desde a última avaliação"]
+    ]},
+    { domain: "5 · Mobilidade e quedas", vars: [
+      ["V31","Queda nos últimos 12 meses"], ["V32","Número de quedas/12 meses"],
+      ["V33","Queda recorrente (≥2/12 meses)"], ["V34","Queda com lesão"], ["V35","Queda com fratura"],
+      ["V36","TUG (segundos, valor bruto)"], ["V37","Velocidade de marcha habitual (m/s)"],
+      ["V38","Medo de cair (FES-I ou equivalente)"]
+    ]},
+    { domain: "6 · Fragilidade e sarcopenia", vars: [
+      ["V39","Clinical Frailty Scale (1-9)"], ["V40","Fenótipo de Fried (5 componentes)"],
+      ["V41","SARC-F (0-10)"], ["V42","Força de preensão palmar (kg)"], ["V43","Sentar-levantar 5x (segundos)"],
+      ["V44","Massa muscular (valor + método)"], ["V45","Circunferência da panturrilha (cm)"]
+    ]},
+    { domain: "7 · Cognição e neuropsiquiatria", vars: [
+      ["V46","MoCA (escore bruto + versão + escolaridade)"], ["V47","Diagnóstico cognitivo"],
+      ["V48","Tipo provável de transtorno neurocognitivo"], ["V49","Delirium prévio"],
+      ["V50","Risco de delirium"], ["V51","Mudança cognitiva percebida pelo informante"],
+      ["V52","Sintomas neuropsiquiátricos (NPI-Q, escore)"]
+    ]},
+    { domain: "8 · Nutrição", vars: [
+      ["V53","Peso (kg)"], ["V54","IMC (kg/m²)"], ["V55","Perda ponderal não intencional 6m (%)"],
+      ["V56","MNA-SF (0-14)"], ["V57","Circunferência da panturrilha"],
+      ["V58","Ingestão proteica estimada (g/kg/dia)"], ["V59","Risco de disfagia"]
+    ]},
+    { domain: "9 · Humor, sono e comportamento", vars: [
+      ["V60","Depressão (GDS-15)"], ["V61","Ansiedade (GAD-7 ou equivalente)"],
+      ["V62","Qualidade do sono"], ["V63","Insônia clinicamente relevante"], ["V64","Sonolência diurna"]
+    ]},
+    { domain: "10 · Sentidos, continência e saúde oral", vars: [
+      ["V65","Déficit visual"], ["V66","Déficit auditivo"], ["V67","Incontinência urinária"],
+      ["V68","Incontinência fecal"], ["V69","Saúde oral (OHAT ou equivalente)"]
+    ]},
+    { domain: "11 · Contexto social, segurança e objetivos", vars: [
+      ["V70","Rede de suporte social"], ["V71","Sobrecarga do cuidador (Zarit)"],
+      ["V72","Risco social/violência/negligência"], ["V73","Diretivas antecipadas / objetivos de cuidado"]
+    ]},
+    { domain: "12 · Laboratório e fisiologia", vars: [
+      ["V74","Hemoglobina (g/dL)"], ["V75","Creatinina + eGFR"], ["V76","Albumina (g/dL)"]
+    ]}
+  ];
+  const TOTAL_VARS = CORE76.reduce((sum, d) => sum + d.vars.length, 0);
+
+  let currentPatient = null; // { id, initials, birth_date, medical_record_number }
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  async function searchPatients(){
+    const term = document.getElementById('searchInitials').value.trim().toUpperCase();
+    const resultList = document.getElementById('resultList');
+    if (!term) { resultList.innerHTML = ''; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .ilike('initials', `%${term}%`)
+      .order('initials');
+
+    if (error) {
+      resultList.innerHTML = `<div class="empty">Erro: ${error.message}</div>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      resultList.innerHTML = `<div class="empty">Nenhum paciente encontrado com essas iniciais.</div>`;
+      return;
+    }
+
+    resultList.innerHTML = data.map(p => `
+      <div class="resultitem" data-id="${p.id}">
+        <span>${p.initials}</span>
+        <span class="sub">${formatDate(p.birth_date)}${p.medical_record_number ? ' · Prontuário ' + p.medical_record_number : ''}</span>
+      </div>
+    `).join('');
+
+    resultList.querySelectorAll('.resultitem').forEach(item => {
+      item.addEventListener('click', () => {
+        const p = data.find(x => x.id === item.dataset.id);
+        selectPatient(p);
+      });
+    });
+  }
+
+  async function selectPatient(patient){
+    currentPatient = patient;
+    document.getElementById('searchCard').style.display = 'none';
+    document.getElementById('patientCard').style.display = 'block';
+    document.getElementById('varsCard').style.display = 'block';
+
+    document.getElementById('patientId').textContent =
+      `${patient.initials}-${(patient.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      `Nascimento ${formatDate(patient.birth_date)}${patient.medical_record_number ? ' · Prontuário ' + patient.medical_record_number : ''}`;
+
+    await renderVariables();
+  }
+
+  async function renderVariables(){
+    const { data, error } = await client
+      .from('patient_variables')
+      .select('variable_id, value')
+      .eq('patient_id', currentPatient.id);
+
+    const valueMap = {};
+    if (!error && data) data.forEach(row => { valueMap[row.variable_id] = row.value; });
+
+    const filledCount = Object.values(valueMap).filter(v => v !== null && v !== '').length;
+    document.getElementById('progressText').textContent =
+      `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
+
+    const wrap = document.getElementById('domainsWrap');
+    wrap.innerHTML = CORE76.map(d => `
+      <div class="domain">
+        <h3>${d.domain}</h3>
+        ${d.vars.map(([id, label]) => {
+          const val = valueMap[id] || '';
+          const filled = val !== '';
+          return `
+            <div class="varrow">
+              <div class="dot ${filled ? 'filled' : ''}" id="dot-${id}"></div>
+              <div class="varlabel"><span class="vid">${id}</span>${label}</div>
+              <div>
+                <input type="text" data-var-id="${id}" value="${val.replace(/"/g,'&quot;')}" placeholder="—">
+                <span class="saveflash" id="flash-${id}">salvo</span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `).join('');
+
+    wrap.querySelectorAll('input[data-var-id]').forEach(input => {
+      input.addEventListener('blur', () => saveVariable(input.dataset.varId, input.value.trim()));
+    });
+  }
+
+  async function saveVariable(variableId, value){
+    const { error } = await client
+      .from('patient_variables')
+      .upsert(
+        { patient_id: currentPatient.id, variable_id: variableId, value: value, updated_at: new Date().toISOString() },
+        { onConflict: 'patient_id,variable_id' }
+      );
+
+    if (error) { alert('Erro ao salvar ' + variableId + ': ' + error.message); return; }
+
+    const dot = document.getElementById('dot-' + variableId);
+    dot.classList.toggle('filled', value !== '');
+
+    const flash = document.getElementById('flash-' + variableId);
+    flash.classList.add('show');
+    setTimeout(() => flash.classList.remove('show'), 1200);
+
+    // atualiza contador
+    const dots = document.querySelectorAll('.dot');
+    const filledCount = document.querySelectorAll('.dot.filled').length;
+    document.getElementById('progressText').textContent =
+      `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
+  }
+
+  document.getElementById('searchBtn').addEventListener('click', searchPatients);
+  document.getElementById('searchInitials').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') searchPatients();
+  });
+  document.getElementById('changePatientBtn').addEventListener('click', () => {
+    currentPatient = null;
+    document.getElementById('searchCard').style.display = 'block';
+    document.getElementById('patientCard').style.display = 'none';
+    document.getElementById('varsCard').style.display = 'none';
+    document.getElementById('resultList').innerHTML = '';
+    document.getElementById('searchInitials').value = '';
+    document.getElementById('searchInitials').focus();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await client.auth.signOut();
+    window.location.href = "login.html";
+  });
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    // Se veio de um link com ?patient_id=, seleciona direto.
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (patientId) {
+      const { data, error } = await client
+        .from('patients')
+        .select('id, initials, birth_date, medical_record_number')
+        .eq('id', patientId)
+        .maybeSingle();
+      if (!error && data) selectPatient(data);
+    }
+  })();
+</script>
+
+</body>
+</html>

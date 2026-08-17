@@ -95,6 +95,7 @@
   <nav class="panelnav">
     <a href="index.html" class="active">Painel</a>
     <a href="roteiro.html">Roteiro de Atendimento</a>
+    <a href="prontuario.html">Prontuário</a>
   </nav>
   <button id="logoutBtn">Sair</button>
 </header>
@@ -178,7 +179,7 @@
     const tableWrap = document.getElementById('tableWrap');
     const { data, error } = await client
       .from('visits')
-      .select('id, visit_date, track, status, patients ( initials, birth_date, medical_record_number )')
+      .select('id, patient_id, visit_date, track, status, patients ( initials, birth_date, medical_record_number )')
       .order('visit_date', { ascending: false });
 
     if (error) {
@@ -198,7 +199,7 @@
       const p = v.patients;
       const idLabel = p ? `${p.initials}-${(p.birth_date || '').replace(/-/g,'').slice(2)}` : '—';
       html += `<tr>
-        <td>${idLabel}</td>
+        <td><a href="prontuario.html?patient_id=${v.patient_id}" style="color:var(--teal);font-weight:700;">${idLabel}</a></td>
         <td>${formatDate(v.visit_date)}</td>
         <td>${trackLabels[v.track] || v.track}</td>
         <td>
