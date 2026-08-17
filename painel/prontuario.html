@@ -90,11 +90,11 @@
   .dot.filled{background:var(--ok);}
   .varlabel{font-size:13.5px;color:var(--ink);}
   .varlabel .vid{color:#8a8578;font-size:11px;margin-right:4px;}
-  .varrow input{
+  .varrow input, .varrow select{
     padding:7px 9px;border:1.5px solid #DDD6C7;border-radius:6px;
     font-family:'DM Sans',sans-serif;font-size:13.5px;background:#FBFAF7;color:var(--ink);width:100%;
   }
-  .varrow input:focus{outline:none;border-color:var(--gold);}
+  .varrow input:focus, .varrow select:focus{outline:none;border-color:var(--gold);}
 
   .progress{font-size:13px;color:#6b6b60;margin-top:4px;}
   .empty{color:#8a8578;font-size:14px;padding:10px 0;}
@@ -152,65 +152,91 @@
   const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // CORE-76: dicionário de variáveis da coorte geriátrica Cognisa.
+  // Tipos: n=número, t=texto livre (só onde a variável é descritiva por natureza),
+  // s:[...opções]=seleção fixa. Sim/Não é a seleção mais comum.
+  const SIMNAO = ["Sim","Não"];
   const CORE76 = [
     { domain: "1 · Demografia e contexto clínico", vars: [
-      ["V01","Idade (anos)"], ["V02","Sexo ao nascimento"], ["V03","Escolaridade (anos completos)"],
-      ["V04","Estado civil"], ["V05","Local de residência"], ["V06","Arranjo domiciliar"]
+      ["V01","Idade (anos)","n"], ["V02","Sexo ao nascimento","s",["Masculino","Feminino"]],
+      ["V03","Escolaridade (anos completos)","n"],
+      ["V04","Estado civil","s",["Solteiro(a)","Casado(a)","União estável","Divorciado(a)","Viúvo(a)"]],
+      ["V05","Local de residência","s",["Casa própria","Casa alugada","ILPI","Residência de familiares","Outro"]],
+      ["V06","Arranjo domiciliar","s",["Sozinho","Cônjuge","Filhos","Outros familiares","Cuidador formal"]]
     ]},
     { domain: "2 · Morbidade e carga de doença", vars: [
-      ["V07","Hipertensão"], ["V08","Diabetes"], ["V09","Doença cardiovascular"],
-      ["V10","Doença cerebrovascular (AVC/AIT)"], ["V11","Doença pulmonar crônica"],
-      ["V12","Doença renal crônica (presença + estágio)"], ["V13","Doença osteoarticular relevante"],
-      ["V14","Câncer (nenhum/prévio/ativo/em tratamento)"]
+      ["V07","Hipertensão","s",SIMNAO], ["V08","Diabetes","s",SIMNAO],
+      ["V09","Doença cardiovascular (DAC/IC/DAOP/FA)","s",SIMNAO],
+      ["V10","Doença cerebrovascular (AVC/AIT)","s",SIMNAO], ["V11","Doença pulmonar crônica","s",SIMNAO],
+      ["V12","Doença renal crônica","s",["Não","Sim — estágio 1","Sim — estágio 2","Sim — estágio 3a","Sim — estágio 3b","Sim — estágio 4","Sim — estágio 5"]],
+      ["V13","Doença osteoarticular relevante","s",SIMNAO],
+      ["V14","Câncer","s",["Nenhum","Prévio","Ativo","Em tratamento"]]
     ]},
     { domain: "3 · Medicamentos e prescrição", vars: [
-      ["V15","Número total de medicamentos"], ["V16","Polifarmácia (≥5)"], ["V17","Hiperpolifarmácia (≥10)"],
-      ["V18","Nº medicamentos potencialmente inapropriados (Beers/STOPP)"], ["V19","Carga anticolinérgica (escore)"],
-      ["V20","Nº medicamentos associados a risco de queda"], ["V21","Nº prescrições potencialmente omissas (START)"],
-      ["V22","Intervenção de deprescrição no período"]
+      ["V15","Número total de medicamentos","n"], ["V16","Polifarmácia (≥5)","s",SIMNAO],
+      ["V17","Hiperpolifarmácia (≥10)","s",SIMNAO],
+      ["V18","Nº medicamentos potencialmente inapropriados (Beers/STOPP)","n"],
+      ["V19","Carga anticolinérgica (escore)","n"],
+      ["V20","Nº medicamentos associados a risco de queda","n"],
+      ["V21","Nº prescrições potencialmente omissas (START)","n"],
+      ["V22","Intervenção de deprescrição no período","s",["Nenhuma","Redução","Suspensão","Substituição"]]
     ]},
     { domain: "4 · Funcionalidade", vars: [
-      ["V23","Katz — ABVD (escore)"], ["V24","Lawton-Brody — AIVD (escore)"],
-      ["V25","Dependência ABVD"], ["V26","Dependência AIVD"], ["V27","Capacidade de caminhar"],
-      ["V28","Uso de dispositivo auxiliar"], ["V29","Atividade física habitual (min/semana)"],
-      ["V30","Mudança funcional desde a última avaliação"]
+      ["V23","Katz — ABVD (escore)","n"], ["V24","Lawton-Brody — AIVD (escore)","n"],
+      ["V25","Dependência ABVD","s",["Independente","Parcial","Importante"]],
+      ["V26","Dependência AIVD","s",["Independente","Parcial","Importante"]],
+      ["V27","Capacidade de caminhar","s",["Independente","Com dispositivo","Com assistência","Incapaz"]],
+      ["V28","Uso de dispositivo auxiliar","s",SIMNAO],
+      ["V29","Atividade física habitual (min/semana)","n"],
+      ["V30","Mudança funcional desde a última avaliação","s",["Melhorou","Estável","Piorou"]]
     ]},
     { domain: "5 · Mobilidade e quedas", vars: [
-      ["V31","Queda nos últimos 12 meses"], ["V32","Número de quedas/12 meses"],
-      ["V33","Queda recorrente (≥2/12 meses)"], ["V34","Queda com lesão"], ["V35","Queda com fratura"],
-      ["V36","TUG (segundos, valor bruto)"], ["V37","Velocidade de marcha habitual (m/s)"],
-      ["V38","Medo de cair (FES-I ou equivalente)"]
+      ["V31","Queda nos últimos 12 meses","s",SIMNAO], ["V32","Número de quedas/12 meses","n"],
+      ["V33","Queda recorrente (≥2/12 meses)","s",SIMNAO], ["V34","Queda com lesão","s",SIMNAO],
+      ["V35","Queda com fratura","s",SIMNAO], ["V36","TUG (segundos, valor bruto)","n"],
+      ["V37","Velocidade de marcha habitual (m/s)","n"],
+      ["V38","Medo de cair (FES-I ou equivalente, escore)","n"]
     ]},
     { domain: "6 · Fragilidade e sarcopenia", vars: [
-      ["V39","Clinical Frailty Scale (1-9)"], ["V40","Fenótipo de Fried (5 componentes)"],
-      ["V41","SARC-F (0-10)"], ["V42","Força de preensão palmar (kg)"], ["V43","Sentar-levantar 5x (segundos)"],
-      ["V44","Massa muscular (valor + método)"], ["V45","Circunferência da panturrilha (cm)"]
+      ["V39","Clinical Frailty Scale (1-9)","s",["1","2","3","4","5","6","7","8","9"]],
+      ["V40","Fenótipo de Fried (5 componentes)","t"],
+      ["V41","SARC-F (0-10)","n"], ["V42","Força de preensão palmar (kg)","n"],
+      ["V43","Sentar-levantar 5x (segundos)","n"], ["V44","Massa muscular (valor + método)","t"],
+      ["V45","Circunferência da panturrilha (cm)","n"]
     ]},
     { domain: "7 · Cognição e neuropsiquiatria", vars: [
-      ["V46","MoCA (escore bruto + versão + escolaridade)"], ["V47","Diagnóstico cognitivo"],
-      ["V48","Tipo provável de transtorno neurocognitivo"], ["V49","Delirium prévio"],
-      ["V50","Risco de delirium"], ["V51","Mudança cognitiva percebida pelo informante"],
-      ["V52","Sintomas neuropsiquiátricos (NPI-Q, escore)"]
+      ["V46","MoCA (escore bruto + versão + escolaridade)","t"],
+      ["V47","Diagnóstico cognitivo","s",["Normal","Comprometimento subjetivo (CCS)","MCI/CCL","Demência"]],
+      ["V48","Tipo provável de transtorno neurocognitivo","t"], ["V49","Delirium prévio","s",SIMNAO],
+      ["V50","Risco de delirium","s",["Baixo","Moderado","Alto"]],
+      ["V51","Mudança cognitiva percebida pelo informante","s",["Sim","Não","Não se aplica"]],
+      ["V52","Sintomas neuropsiquiátricos (NPI-Q, escore)","n"]
     ]},
     { domain: "8 · Nutrição", vars: [
-      ["V53","Peso (kg)"], ["V54","IMC (kg/m²)"], ["V55","Perda ponderal não intencional 6m (%)"],
-      ["V56","MNA-SF (0-14)"], ["V57","Circunferência da panturrilha"],
-      ["V58","Ingestão proteica estimada (g/kg/dia)"], ["V59","Risco de disfagia"]
+      ["V53","Peso (kg)","n"], ["V54","IMC (kg/m²)","n"],
+      ["V55","Perda ponderal não intencional 6m (%)","n"], ["V56","MNA-SF (0-14)","n"],
+      ["V57","Circunferência da panturrilha (cm)","n"],
+      ["V58","Ingestão proteica estimada (g/kg/dia)","n"], ["V59","Risco de disfagia","s",SIMNAO]
     ]},
     { domain: "9 · Humor, sono e comportamento", vars: [
-      ["V60","Depressão (GDS-15)"], ["V61","Ansiedade (GAD-7 ou equivalente)"],
-      ["V62","Qualidade do sono"], ["V63","Insônia clinicamente relevante"], ["V64","Sonolência diurna"]
+      ["V60","Depressão (GDS-15, escore)","n"], ["V61","Ansiedade (GAD-7 ou equivalente, escore)","n"],
+      ["V62","Qualidade do sono","s",["Boa","Regular","Ruim"]],
+      ["V63","Insônia clinicamente relevante","s",SIMNAO], ["V64","Sonolência diurna","s",SIMNAO]
     ]},
     { domain: "10 · Sentidos, continência e saúde oral", vars: [
-      ["V65","Déficit visual"], ["V66","Déficit auditivo"], ["V67","Incontinência urinária"],
-      ["V68","Incontinência fecal"], ["V69","Saúde oral (OHAT ou equivalente)"]
+      ["V65","Déficit visual","s",["Normal","Leve","Moderado","Grave"]],
+      ["V66","Déficit auditivo","s",SIMNAO],
+      ["V67","Incontinência urinária","s",["Não","Sim — urgência","Sim — esforço","Sim — mista","Sim — outra"]],
+      ["V68","Incontinência fecal","s",SIMNAO], ["V69","Saúde oral (OHAT ou equivalente, escore)","n"]
     ]},
     { domain: "11 · Contexto social, segurança e objetivos", vars: [
-      ["V70","Rede de suporte social"], ["V71","Sobrecarga do cuidador (Zarit)"],
-      ["V72","Risco social/violência/negligência"], ["V73","Diretivas antecipadas / objetivos de cuidado"]
+      ["V70","Rede de suporte social","s",["Adequada","Parcial","Inadequada"]],
+      ["V71","Sobrecarga do cuidador (Zarit, escore)","n"],
+      ["V72","Risco social/violência/negligência","s",SIMNAO],
+      ["V73","Diretivas antecipadas / objetivos de cuidado","s",["Não discutido","Discutido","Registrado","DAV existente"]]
     ]},
     { domain: "12 · Laboratório e fisiologia", vars: [
-      ["V74","Hemoglobina (g/dL)"], ["V75","Creatinina + eGFR"], ["V76","Albumina (g/dL)"]
+      ["V74","Hemoglobina (g/dL)","n"], ["V75","Creatinina + eGFR (valor + método)","t"],
+      ["V76","Albumina (g/dL)","n"]
     ]}
   ];
   const TOTAL_VARS = CORE76.reduce((sum, d) => sum + d.vars.length, 0);
@@ -291,11 +317,21 @@
     document.getElementById('progressText').textContent =
       `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
 
+    function fieldHtml(id, type, options, val){
+      if (type === 's') {
+        const opts = ['<option value="">—</option>']
+          .concat(options.map(o => `<option value="${o}" ${o === val ? 'selected' : ''}>${o}</option>`));
+        return `<select data-var-id="${id}">${opts.join('')}</select>`;
+      }
+      const inputType = type === 'n' ? 'number' : 'text';
+      return `<input type="${inputType}" data-var-id="${id}" value="${val.replace(/"/g,'&quot;')}" placeholder="—">`;
+    }
+
     const wrap = document.getElementById('domainsWrap');
     wrap.innerHTML = CORE76.map(d => `
       <div class="domain">
         <h3>${d.domain}</h3>
-        ${d.vars.map(([id, label]) => {
+        ${d.vars.map(([id, label, type, options]) => {
           const val = valueMap[id] || '';
           const filled = val !== '';
           return `
@@ -303,7 +339,7 @@
               <div class="dot ${filled ? 'filled' : ''}" id="dot-${id}"></div>
               <div class="varlabel"><span class="vid">${id}</span>${label}</div>
               <div>
-                <input type="text" data-var-id="${id}" value="${val.replace(/"/g,'&quot;')}" placeholder="—">
+                ${fieldHtml(id, type, options, val)}
                 <span class="saveflash" id="flash-${id}">salvo</span>
               </div>
             </div>
@@ -314,6 +350,9 @@
 
     wrap.querySelectorAll('input[data-var-id]').forEach(input => {
       input.addEventListener('blur', () => saveVariable(input.dataset.varId, input.value.trim()));
+    });
+    wrap.querySelectorAll('select[data-var-id]').forEach(sel => {
+      sel.addEventListener('change', () => saveVariable(sel.dataset.varId, sel.value));
     });
   }
 
