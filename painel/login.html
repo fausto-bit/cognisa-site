@@ -97,7 +97,7 @@
     const { error } = await client.auth.signInWithPassword({ email, password });
 
     if (error) {
-      msg.textContent = 'E-mail ou senha incorretos.';
+      msg.textContent = 'Erro: ' + error.message + ' (código: ' + (error.status || error.code || '?') + ')';
       msg.className = 'msg error';
       submitBtn.disabled = false;
       submitBtn.textContent = 'Entrar';
