@@ -1,4 +1,4 @@
-// Cognisa · Painel privado · Edge Function: extract-variables
+// Cognisa - Painel privado - Edge Function: extract-variables
 //
 // Recebe um texto clínico livre e devolve sugestões de valores para as
 // variáveis CORE-76, com o trecho de evidência usado para cada uma.
@@ -6,16 +6,20 @@
 // médico revisa e confirma cada sugestão na tela do Prontuário (portão de
 // validação manual obrigatório).
 //
-// Deploy:
-//   supabase functions deploy extract-variables --project-ref wkubjtnwipqlrynauvpa
-//   supabase secrets set ANTHROPIC_API_KEY=sk-ant-... --project-ref wkubjtnwipqlrynauvpa
+// Deploy: pela dashboard do Supabase (Edge Functions -> extract-variables -> Editor -> Deploy).
+// IMPORTANTE: nas configuracoes desta function, "Verify JWT" / "Enforce JWT Verification"
+// precisa ficar DESLIGADO -- senao o proprio Supabase bloqueia ate o preflight de CORS do
+// navegador antes de chegar aqui. A checagem de login e feita manualmente abaixo
+// (checkAuth), entao a function continua protegida mesmo com essa opcao desligada.
 //
-// Por padrão o Supabase exige um JWT de usuário autenticado para chamar esta
-// function (verify_jwt fica ligado) — não desative isso no deploy.
+// Secret necessario: ANTHROPIC_API_KEY (Edge Functions -> Manage secrets).
+// SUPABASE_URL e SUPABASE_ANON_KEY ja vem prontos automaticamente, nao precisa configurar.
 
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const ANTHROPIC_MODEL = "claude-sonnet-5";
 
 // Mesmo dicionário CORE-76 usado em painel/prontuario.html.
@@ -160,9 +164,26 @@ function corsHeadersFor(req: Request) {
   };
 }
 
+async function isLoggedIn(req: Request): Promise<boolean> {
+  const authHeader = req.headers.get("Authorization") || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  if (!token || !SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
+
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+    headers: { Authorization: `Bearer ${token}`, apikey: SUPABASE_ANON_KEY },
+  });
+  return res.ok;
+}
+
 Deno.serve(async (req: Request) => {
   const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  if (!(await isLoggedIn(req))) {
+    return new Response(JSON.stringify({ error: "Não autenticado." }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   if (!ANTHROPIC_API_KEY) {
     return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY não configurada nos secrets da function." }), {
