@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Completude — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --alert:#A84B3A;
+    --ok:#3F6B4F; --pending:#B8863A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .panelnav{display:flex;gap:18px;flex-wrap:wrap;}
+  .panelnav a{
+    color:var(--gold-soft);text-decoration:none;font-size:13.5px;font-weight:500;
+    padding-bottom:3px;border-bottom:2px solid transparent;
+  }
+  .panelnav a:hover{color:var(--ivory);}
+  .panelnav a.active{color:var(--ivory);border-bottom-color:var(--gold);}
+  #logoutBtn{
+    background:transparent;border:1.5px solid var(--gold-soft);color:var(--ivory);
+    padding:8px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;
+    cursor:pointer;
+  }
+  #logoutBtn:hover{background:rgba(255,255,255,.08);}
+
+  .filterrow{margin-top:24px;display:flex;gap:10px;align-items:center;}
+  .filterrow input{
+    flex:1;max-width:280px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:7px;
+    font-family:'DM Sans',sans-serif;font-size:14.5px;background:#fff;color:var(--ink);
+  }
+  .filterrow input:focus{outline:none;border-color:var(--gold);}
+  .sortlabel{font-size:12.5px;color:#8a8578;}
+
+  .card{
+    background:#fff;border-radius:12px;padding:20px 22px;margin-top:16px;
+    box-shadow:0 1px 3px rgba(31,59,54,.08);
+  }
+  .patienthead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+  .patienthead .id{
+    font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--teal);
+    text-decoration:none;
+  }
+  .patienthead .id:hover{text-decoration:underline;}
+  .patienthead .sub{font-size:12.5px;color:#8a8578;}
+  .overallpct{
+    font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;
+    padding:4px 14px;border-radius:20px;color:#fff;
+  }
+
+  .domaingrid{margin-top:16px;display:grid;grid-template-columns:1fr;gap:8px;}
+  .domainrow{display:grid;grid-template-columns:180px 1fr 50px;gap:10px;align-items:center;}
+  .domainname{font-size:12.5px;color:var(--ink);}
+  .bartrack{background:#EEE6D6;border-radius:6px;height:8px;overflow:hidden;}
+  .barfill{height:100%;border-radius:6px;}
+  .domainfrac{font-size:11.5px;color:#8a8578;text-align:right;}
+
+  .empty{color:#8a8578;font-size:14px;padding:20px 0;text-align:center;}
+  .loading{color:#8a8578;font-size:14px;padding:20px 0;text-align:center;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Área privada</div>
+    <h1>Completude</h1>
+  </div>
+  <nav class="panelnav">
+    <a href="index.html">Painel</a>
+    <a href="roteiro.html">Roteiro de Atendimento</a>
+    <a href="prontuario.html">Prontuário</a>
+    <a href="completude.html" class="active">Completude</a>
+  </nav>
+  <button id="logoutBtn">Sair</button>
+</header>
+
+<div class="wrap">
+  <div class="filterrow">
+    <input type="text" id="filterInitials" placeholder="Filtrar por iniciais">
+    <span class="sortlabel">Ordenado por menor completude primeiro</span>
+  </div>
+  <div id="listWrap"><div class="loading">Carregando...</div></div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Mesmo agrupamento de domínios do CORE-76 usado em prontuario.html (só os IDs, sem labels/tipos).
+  const CORE76_DOMAINS = [
+    { domain: "1 · Demografia e contexto clínico", ids: ["V01","V02","V03","V04","V05","V06"] },
+    { domain: "2 · Morbidade e carga de doença", ids: ["V07","V08","V09","V10","V11","V12","V13","V14"] },
+    { domain: "3 · Medicamentos e prescrição", ids: ["V15","V16","V17","V18","V19","V20","V21","V22"] },
+    { domain: "4 · Funcionalidade", ids: ["V23","V24","V25","V26","V27","V28","V29","V30"] },
+    { domain: "5 · Mobilidade e quedas", ids: ["V31","V32","V33","V34","V35","V36","V37","V38"] },
+    { domain: "6 · Fragilidade e sarcopenia", ids: ["V39","V40","V41","V42","V43","V44","V45"] },
+    { domain: "7 · Cognição e neuropsiquiatria", ids: ["V46","V47","V48","V49","V50","V51","V52"] },
+    { domain: "8 · Nutrição", ids: ["V53","V54","V55","V56","V57","V58","V59"] },
+    { domain: "9 · Humor, sono e comportamento", ids: ["V60","V61","V62","V63","V64"] },
+    { domain: "10 · Sentidos, continência e saúde oral", ids: ["V65","V66","V67","V68","V69"] },
+    { domain: "11 · Contexto social, segurança e objetivos", ids: ["V70","V71","V72","V73"] },
+    { domain: "12 · Laboratório e fisiologia", ids: ["V74","V75","V76"] },
+  ];
+  const TOTAL_VARS = CORE76_DOMAINS.reduce((sum, d) => sum + d.ids.length, 0);
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function pctColor(pct){
+    if (pct >= 80) return 'var(--ok)';
+    if (pct >= 40) return 'var(--pending)';
+    return 'var(--alert)';
+  }
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  let allPatients = [];
+
+  async function loadCompleteness(){
+    const listWrap = document.getElementById('listWrap');
+
+    const [{ data: patients, error: pErr }, { data: vars, error: vErr }] = await Promise.all([
+      client.from('patients').select('id, initials, birth_date, medical_record_number'),
+      client.from('patient_variables').select('patient_id, variable_id, value'),
+    ]);
+
+    if (pErr) { listWrap.innerHTML = `<div class="empty">Erro ao carregar pacientes: ${escapeHtml(pErr.message)}</div>`; return; }
+    if (vErr) { listWrap.innerHTML = `<div class="empty">Erro ao carregar variáveis: ${escapeHtml(vErr.message)}</div>`; return; }
+    if (!patients || patients.length === 0) { listWrap.innerHTML = `<div class="empty">Nenhum paciente cadastrado ainda.</div>`; return; }
+
+    const filledByPatient = {};
+    (vars || []).forEach(row => {
+      if (row.value === null || row.value === '') return;
+      if (!filledByPatient[row.patient_id]) filledByPatient[row.patient_id] = new Set();
+      filledByPatient[row.patient_id].add(row.variable_id);
+    });
+
+    allPatients = patients.map(p => {
+      const filled = filledByPatient[p.id] || new Set();
+      const domains = CORE76_DOMAINS.map(d => {
+        const filledCount = d.ids.filter(id => filled.has(id)).length;
+        return { domain: d.domain, filledCount, total: d.ids.length };
+      });
+      const overallFilled = domains.reduce((sum, d) => sum + d.filledCount, 0);
+      return {
+        ...p,
+        domains,
+        overallFilled,
+        overallPct: Math.round((overallFilled / TOTAL_VARS) * 100),
+      };
+    }).sort((a, b) => a.overallPct - b.overallPct);
+
+    renderList();
+  }
+
+  function renderList(){
+    const listWrap = document.getElementById('listWrap');
+    const term = document.getElementById('filterInitials').value.trim().toUpperCase();
+    const patients = term ? allPatients.filter(p => p.initials.toUpperCase().includes(term)) : allPatients;
+
+    if (patients.length === 0) {
+      listWrap.innerHTML = `<div class="empty">Nenhum paciente encontrado.</div>`;
+      return;
+    }
+
+    listWrap.innerHTML = patients.map(p => {
+      const idLabel = `${p.initials}-${(p.birth_date || '').replace(/-/g,'').slice(2)}`;
+      const domainRows = p.domains.map(d => {
+        const pct = d.total ? Math.round((d.filledCount / d.total) * 100) : 0;
+        return `
+          <div class="domainrow">
+            <div class="domainname">${escapeHtml(d.domain)}</div>
+            <div class="bartrack"><div class="barfill" style="width:${pct}%;background:${pctColor(pct)};"></div></div>
+            <div class="domainfrac">${d.filledCount}/${d.total}</div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="card">
+          <div class="patienthead">
+            <div>
+              <a class="id" href="prontuario.html?patient_id=${p.id}">${escapeHtml(idLabel)}</a>
+              <div class="sub">Nascimento ${formatDate(p.birth_date)}${p.medical_record_number ? ' · Prontuário ' + escapeHtml(p.medical_record_number) : ''} · ${p.overallFilled}/${TOTAL_VARS} variáveis</div>
+            </div>
+            <div class="overallpct" style="background:${pctColor(p.overallPct)};">${p.overallPct}%</div>
+          </div>
+          <div class="domaingrid">${domainRows}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('filterInitials').addEventListener('input', renderList);
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await client.auth.signOut();
+    window.location.href = "login.html";
+  });
+
+  (async () => {
+    const session = await requireSession();
+    if (session) loadCompleteness();
+  })();
+</script>
+
+</body>
+</html>
