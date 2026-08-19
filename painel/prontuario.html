@@ -100,6 +100,46 @@
   .empty{color:#8a8578;font-size:14px;padding:10px 0;}
   .saveflash{color:var(--ok);font-size:11px;margin-left:6px;opacity:0;transition:opacity .3s;}
   .saveflash.show{opacity:1;}
+
+  #freeText{
+    width:100%;min-height:140px;padding:12px 14px;border:1.5px solid #DDD6C7;border-radius:8px;
+    font-family:'DM Sans',sans-serif;font-size:14px;background:#FBFAF7;color:var(--ink);resize:vertical;
+  }
+  #freeText:focus{outline:none;border-color:var(--gold);}
+  .extractrow{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:10px;}
+  .extracthint{font-size:12.5px;color:#8a8578;max-width:520px;}
+  #extractBtn{
+    background:var(--teal);color:var(--ivory);border:none;border-radius:7px;
+    padding:10px 20px;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;
+  }
+  #extractBtn:hover{background:var(--teal-light);}
+  #extractBtn:disabled{opacity:.6;cursor:default;}
+  .extracterror{color:var(--alert);font-size:13px;margin-top:10px;}
+
+  .suggestionlist{margin-top:16px;}
+  .suggestrow{
+    display:grid;grid-template-columns:24px 1fr 1fr;gap:12px;align-items:start;
+    padding:10px 0;border-top:1px solid #eee6d6;
+  }
+  .suggestrow:first-child{border-top:none;}
+  .suggestrow input[type="checkbox"]{margin-top:3px;width:16px;height:16px;}
+  .suggestlabel{font-size:13.5px;font-weight:700;color:var(--ink);}
+  .suggestlabel .vid{color:#8a8578;font-size:11px;font-weight:400;margin-right:4px;}
+  .suggestvals{font-size:13px;}
+  .suggestvals .cur{color:#a39d8c;text-decoration:line-through;margin-right:6px;}
+  .suggestvals .new{color:var(--ok);font-weight:700;}
+  .suggestevidence{font-size:12px;color:#8a8578;font-style:italic;margin-top:3px;}
+  .suggestactions{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px;flex-wrap:wrap;}
+  #applyBtn{
+    background:var(--gold);color:var(--teal);border:none;border-radius:7px;
+    padding:9px 18px;font-weight:700;font-size:13.5px;cursor:pointer;
+  }
+  #applyBtn:hover{background:var(--gold-soft);}
+  #cancelSuggestBtn{
+    background:transparent;border:1.5px solid #DDD6C7;color:#6b6b60;border-radius:7px;
+    padding:9px 18px;font-size:13.5px;cursor:pointer;
+  }
+  .applyflash{font-size:13px;color:var(--ok);font-weight:700;}
 </style>
 </head>
 <body>
@@ -137,6 +177,17 @@
       <button class="changepatient" id="changePatientBtn">Trocar paciente</button>
     </div>
     <div class="progress" id="progressText"></div>
+  </div>
+
+  <div class="card" id="extractCard" style="display:none;">
+    <h2>Nova informação clínica</h2>
+    <textarea id="freeText" placeholder="Cole ou digite aqui a história clínica, evolução ou anotações da consulta. A IA vai sugerir valores para as variáveis do mapa abaixo — nada é salvo automaticamente, você revisa e confirma cada item."></textarea>
+    <div class="extractrow">
+      <div class="extracthint">A extração só sugere; nenhuma variável é gravada até você revisar e clicar em "Salvar selecionadas".</div>
+      <button id="extractBtn">Extrair variáveis</button>
+    </div>
+    <div class="extracterror" id="extractError" style="display:none;"></div>
+    <div class="suggestionlist" id="suggestionList"></div>
   </div>
 
   <div class="card" id="varsCard" style="display:none;">
@@ -294,6 +345,7 @@
     currentPatient = patient;
     document.getElementById('searchCard').style.display = 'none';
     document.getElementById('patientCard').style.display = 'block';
+    document.getElementById('extractCard').style.display = 'block';
     document.getElementById('varsCard').style.display = 'block';
 
     document.getElementById('patientId').textContent =
@@ -380,6 +432,107 @@
       `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
   }
 
+  const VAR_INDEX = {};
+  CORE76.forEach(d => d.vars.forEach(v => { VAR_INDEX[v[0]] = { label: v[1], type: v[2], options: v[3] }; }));
+
+  async function extractVariables(){
+    const freeText = document.getElementById('freeText').value.trim();
+    const errorEl = document.getElementById('extractError');
+    const btn = document.getElementById('extractBtn');
+    errorEl.style.display = 'none';
+    document.getElementById('suggestionList').innerHTML = '';
+
+    if (!freeText) { errorEl.textContent = 'Cole ou digite algum texto antes de extrair.'; errorEl.style.display = 'block'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Extraindo...';
+    try {
+      const { data, error } = await client.functions.invoke('extract-variables', { body: { freeText } });
+      if (error) throw error;
+      renderSuggestions(data.suggestions || []);
+    } catch (err) {
+      errorEl.textContent = 'Erro ao extrair: ' + (err.message || err);
+      errorEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Extrair variáveis';
+    }
+  }
+
+  async function currentValueMap(){
+    const { data } = await client
+      .from('patient_variables')
+      .select('variable_id, value')
+      .eq('patient_id', currentPatient.id);
+    const map = {};
+    (data || []).forEach(row => { map[row.variable_id] = row.value; });
+    return map;
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  async function renderSuggestions(suggestions){
+    const list = document.getElementById('suggestionList');
+    if (!suggestions.length) {
+      list.innerHTML = '<div class="empty">Nenhuma variável identificada com evidência clara no texto.</div>';
+      return;
+    }
+
+    const valueMap = await currentValueMap();
+
+    const rows = suggestions
+      .filter(s => VAR_INDEX[s.variable_id])
+      .map(s => {
+        const info = VAR_INDEX[s.variable_id];
+        const cur = valueMap[s.variable_id] || '—';
+        return `
+          <div class="suggestrow" data-var-id="${s.variable_id}">
+            <input type="checkbox" checked>
+            <div>
+              <div class="suggestlabel"><span class="vid">${s.variable_id}</span>${info.label}</div>
+              <div class="suggestevidence">"${escapeHtml(s.evidence)}"</div>
+            </div>
+            <div class="suggestvals">
+              <span class="cur">${escapeHtml(cur)}</span>
+              <span class="new">${escapeHtml(s.value)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    list.innerHTML = `
+      ${rows}
+      <div class="suggestactions">
+        <button id="cancelSuggestBtn">Descartar</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="applyflash" id="applyFlash" style="opacity:0;">Salvo</span>
+          <button id="applyBtn">Salvar selecionadas</button>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('cancelSuggestBtn').addEventListener('click', () => {
+      list.innerHTML = '';
+      document.getElementById('freeText').value = '';
+    });
+
+    document.getElementById('applyBtn').addEventListener('click', async () => {
+      const rowsToApply = Array.from(list.querySelectorAll('.suggestrow')).filter(r => r.querySelector('input[type="checkbox"]').checked);
+      for (const row of rowsToApply) {
+        const varId = row.dataset.varId;
+        const suggestion = suggestions.find(s => s.variable_id === varId);
+        if (suggestion) await saveVariable(varId, suggestion.value);
+      }
+      list.innerHTML = '';
+      document.getElementById('freeText').value = '';
+      await renderVariables();
+    });
+  }
+
+  document.getElementById('extractBtn').addEventListener('click', extractVariables);
+
   document.getElementById('searchBtn').addEventListener('click', searchPatients);
   document.getElementById('searchInitials').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') searchPatients();
@@ -388,10 +541,14 @@
     currentPatient = null;
     document.getElementById('searchCard').style.display = 'block';
     document.getElementById('patientCard').style.display = 'none';
+    document.getElementById('extractCard').style.display = 'none';
     document.getElementById('varsCard').style.display = 'none';
     document.getElementById('resultList').innerHTML = '';
     document.getElementById('searchInitials').value = '';
     document.getElementById('searchInitials').focus();
+    document.getElementById('freeText').value = '';
+    document.getElementById('suggestionList').innerHTML = '';
+    document.getElementById('extractError').style.display = 'none';
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
