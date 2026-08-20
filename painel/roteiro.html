@@ -59,13 +59,53 @@
   .card ul li{margin-bottom:5px;}
   .card .note{font-size:13px;color:#6b6b60;font-style:italic;}
 
-  .formlinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+  .formlinks{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center;}
   .formlinks a{
     display:inline-block;background:var(--ivory);border:1.5px solid var(--gold-soft);
     color:var(--teal);text-decoration:none;font-size:13px;font-weight:700;
     padding:6px 14px;border-radius:20px;
   }
   .formlinks a:hover{background:var(--gold-soft);}
+
+  .patientselect{
+    background:#fff;border-radius:12px;padding:16px 20px;margin-top:20px;
+    box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;align-items:center;
+    gap:12px;flex-wrap:wrap;
+  }
+  .patientselect .lbl{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;}
+  .patientselect input{
+    flex:1;min-width:160px;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:7px;
+    font-family:'DM Sans',sans-serif;font-size:14px;background:#FBFAF7;color:var(--ink);
+  }
+  .patientselect input:focus{outline:none;border-color:var(--gold);}
+  .patientselect button{
+    background:var(--gold);color:var(--teal);border:none;border-radius:7px;
+    padding:8px 16px;font-weight:700;font-size:13.5px;cursor:pointer;
+  }
+  .patientselect button:hover{background:var(--gold-soft);}
+  .patientselect .current{
+    display:flex;align-items:center;gap:10px;font-size:14.5px;
+  }
+  .patientselect .current .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:18px;color:var(--teal);}
+  .patientselect .current button{
+    background:transparent;border:1.5px solid var(--teal);color:var(--teal);
+    padding:6px 12px;font-size:12.5px;
+  }
+  .patientselect .current a.escalasbtn{
+    background:var(--gold);color:var(--teal);text-decoration:none;font-weight:700;
+    padding:8px 16px;border-radius:7px;font-size:13.5px;
+  }
+  .patientselect .current a.escalasbtn:hover{background:var(--gold-soft);}
+  .patientresults{position:relative;}
+  .patientresults .dropdown{
+    position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;
+    border:1.5px solid #DDD6C7;border-radius:8px;box-shadow:0 4px 12px rgba(31,59,54,.12);
+    z-index:10;max-height:220px;overflow-y:auto;
+  }
+  .patientresults .dropdown .item{padding:9px 14px;cursor:pointer;font-size:14px;display:flex;justify-content:space-between;}
+  .patientresults .dropdown .item:hover{background:var(--ivory);}
+  .patientresults .dropdown .item .sub{color:#8a8578;font-size:12px;}
+  .patientresults .dropdown .empty{padding:9px 14px;font-size:13px;color:#8a8578;}
 
   table{width:100%;border-collapse:collapse;margin-top:8px;}
   th{
@@ -99,6 +139,23 @@
 </header>
 
 <div class="wrap">
+
+  <div class="patientselect" id="patientSelectSearch">
+    <span class="lbl">Paciente</span>
+    <div class="patientresults" style="flex:1;min-width:160px;">
+      <input type="text" id="roteiroSearchInitials" placeholder="Buscar paciente por iniciais...">
+      <div class="dropdown" id="roteiroResultDropdown" style="display:none;"></div>
+    </div>
+  </div>
+  <div class="patientselect" id="patientSelectCurrent" style="display:none;">
+    <div class="current">
+      <span class="lbl">Paciente</span>
+      <span class="pid" id="roteiroPatientId">—</span>
+      <span style="color:#8a8578;font-size:13px;" id="roteiroPatientSub"></span>
+    </div>
+    <a class="escalasbtn" id="roteiroEscalasLink" href="escalas.html" target="_blank">Abrir Escalas Médicos</a>
+    <button id="roteiroChangePatientBtn">Trocar</button>
+  </div>
 
   <div class="tabs">
     <button class="tab active" data-target="condensado">Particular Condensado (90 min)</button>
@@ -292,9 +349,84 @@
   const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
   const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function selectRoteiroPatient(patient){
+    sessionStorage.setItem('cognisa_current_patient', JSON.stringify(patient));
+    document.getElementById('patientSelectSearch').style.display = 'none';
+    document.getElementById('patientSelectCurrent').style.display = 'flex';
+    document.getElementById('roteiroPatientId').textContent =
+      `${patient.initials}-${(patient.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('roteiroPatientSub').textContent =
+      `Nascimento ${formatDate(patient.birth_date)}${patient.medical_record_number ? ' · Prontuário ' + patient.medical_record_number : ''}`;
+    document.getElementById('roteiroEscalasLink').href = `escalas.html?patient_id=${patient.id}`;
+  }
+
+  async function searchRoteiroPatients(){
+    const term = document.getElementById('roteiroSearchInitials').value.trim().toUpperCase();
+    const dropdown = document.getElementById('roteiroResultDropdown');
+    if (!term) { dropdown.style.display = 'none'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .ilike('initials', `%${term}%`)
+      .order('initials');
+
+    if (error || !data || data.length === 0) {
+      dropdown.innerHTML = `<div class="empty">${error ? 'Erro: ' + error.message : 'Nenhum paciente encontrado.'}</div>`;
+      dropdown.style.display = 'block';
+      return;
+    }
+
+    dropdown.innerHTML = data.map(p => `
+      <div class="item" data-id="${p.id}">
+        <span>${p.initials}</span>
+        <span class="sub">${formatDate(p.birth_date)}${p.medical_record_number ? ' · ' + p.medical_record_number : ''}</span>
+      </div>
+    `).join('');
+    dropdown.style.display = 'block';
+
+    dropdown.querySelectorAll('.item').forEach(item => {
+      item.addEventListener('click', () => {
+        const p = data.find(x => x.id === item.dataset.id);
+        dropdown.style.display = 'none';
+        document.getElementById('roteiroSearchInitials').value = '';
+        selectRoteiroPatient(p);
+      });
+    });
+  }
+
+  document.getElementById('roteiroSearchInitials').addEventListener('input', searchRoteiroPatients);
+  document.getElementById('roteiroChangePatientBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('cognisa_current_patient');
+    document.getElementById('patientSelectCurrent').style.display = 'none';
+    document.getElementById('patientSelectSearch').style.display = 'flex';
+  });
+
   (async () => {
     const { data } = await client.auth.getSession();
-    if (!data.session) window.location.href = "login.html";
+    if (!data.session) { window.location.href = "login.html"; return; }
+
+    const params = new URLSearchParams(window.location.search);
+    const urlPatientId = params.get('patient_id');
+    if (urlPatientId) {
+      const { data: patient, error } = await client
+        .from('patients')
+        .select('id, initials, birth_date, medical_record_number')
+        .eq('id', urlPatientId)
+        .maybeSingle();
+      if (!error && patient) { selectRoteiroPatient(patient); return; }
+    }
+
+    const stored = sessionStorage.getItem('cognisa_current_patient');
+    if (stored) {
+      try { selectRoteiroPatient(JSON.parse(stored)); } catch(e) {}
+    }
   })();
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
