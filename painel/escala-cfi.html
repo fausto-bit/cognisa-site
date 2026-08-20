@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CFI (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --alert:#A84B3A; --ok:#5B7A5B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:772px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .mode-toggle{display:flex;gap:0;margin-bottom:20px;border:1.5px solid var(--teal);border-radius:8px;overflow:hidden;width:fit-content;}
+  .mode-toggle button{border:none;background:#fff;color:var(--teal);padding:11px 22px;font-size:13.5px;cursor:pointer;font-weight:700;font-family:'DM Sans',sans-serif;}
+  .mode-toggle button.active{background:var(--teal);color:var(--gold-soft);}
+
+  .question{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:12px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .qtext{font-size:15px;font-weight:600;color:var(--teal);margin:2px 0 12px;}
+  .options{display:flex;gap:10px;flex-wrap:wrap;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;cursor:pointer;transition:.15s;background:#FBFAF7;font-size:13.5px;flex:1;text-align:center;min-width:90px;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .score-panel{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
+  .score-card{background:var(--teal);color:var(--ivory);border-radius:12px;padding:20px 22px;text-align:center;}
+  .score-card .label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:6px;}
+  .score-card .value{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:700;line-height:1;}
+  .score-card .value span{font-size:15px;color:var(--gold-soft);font-weight:500;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button.act{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #saveBtn{background:var(--gold);color:var(--teal);}
+  #saveBtn:hover{background:var(--gold-soft);}
+  #saveBtn:disabled{opacity:.6;cursor:default;}
+  .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;text-align:center;}
+  .saveflash.show{display:block;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos · Atena</div>
+    <h1>CFI</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">
+    <strong>Pré-preenchido como "Não" em todos os itens, nas duas versões</strong> — clique só no que estiver alterado. Preencha a versão Paciente e depois troque para Informante. Cada clique já salva sozinho no Prontuário.
+  </div>
+
+  <div class="mode-toggle">
+    <button id="btnPaciente" class="active">Versão Paciente</button>
+    <button id="btnInformante">Versão Informante</button>
+  </div>
+
+  <div id="qContainer"></div>
+
+  <div class="section-title">Resultado</div>
+  <div class="score-panel">
+    <div class="score-card">
+      <div class="label">Total · Paciente (V84)</div>
+      <div class="value" id="scorePaciente">0<span>/14</span></div>
+    </div>
+    <div class="score-card">
+      <div class="label">Total · Informante (V85)</div>
+      <div class="value" id="scoreInformante">0<span>/14</span></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="act" id="saveBtn">Salvar no Prontuário (V84, V85)</button>
+  </div>
+  <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentPatient = null;
+
+  const questions = [
+    { p:"Você tem mais dificuldade para lembrar a data de hoje, o dia da semana ou o mês em comparação a 1 ano atrás?", i:"Ele(a) tem mais dificuldade para lembrar a data de hoje, o dia da semana ou o mês em comparação a 1 ano atrás?" },
+    { p:"Você tem mais dificuldade em lembrar o local onde guardou seus objetos em comparação a 1 ano atrás?", i:"Ele(a) tem mais dificuldade em lembrar o local onde guardou objetos em comparação a 1 ano atrás?" },
+    { p:"Você se esquece mais frequentemente de compromissos ou eventos sociais?", i:"Ele(a) se esquece mais frequentemente de compromissos ou eventos sociais?" },
+    { p:"Você repete as mesmas perguntas ou histórias com mais frequência na mesma conversa?", i:"Ele(a) repete as mesmas perguntas ou histórias com mais frequência na mesma conversa?" },
+    { p:"Você tem mais dificuldade para lembrar de tomar seus remédios no horário correto?", i:"Ele(a) tem mais dificuldade para lembrar de tomar os remédios no horário correto?" },
+    { p:"Você tem mais dificuldade para se orientar ao dirigir ou andar em locais não muito familiares?", i:"Ele(a) tem mais dificuldade para se orientar ao dirigir ou andar em locais não muito familiares?" },
+    { p:"Você tem mais dificuldade para lidar com dinheiro (fazer troco, pagar contas, gerenciar extratos)?", i:"Ele(a) tem mais dificuldade para lidar com dinheiro (fazer troco, pagar contas, gerenciar extratos)?" },
+    { p:"Você sente mais dificuldade em acompanhar finanças complexas ou preencher documentos?", i:"Ele(a) sente mais dificuldade em acompanhar finanças complexas ou preencher documentos?" },
+    { p:"Você tem mais dificuldade em usar aparelhos eletrônicos ou eletrodomésticos?", i:"Ele(a) tem mais dificuldade em usar aparelhos eletrônicos ou eletrodomésticos?" },
+    { p:"Você tem mais dificuldade para aprender a usar um novo dispositivo ou aplicativo?", i:"Ele(a) tem mais dificuldade para aprender a usar um novo dispositivo ou aplicativo?" },
+    { p:"Você tem mais dificuldade para encontrar as palavras certas ao falar?", i:"Ele(a) tem mais dificuldade para encontrar as palavras certas ao falar?" },
+    { p:"Você tem mais dificuldade para acompanhar o raciocínio em conversas em grupo ou filmes?", i:"Ele(a) tem mais dificuldade para acompanhar o raciocínio em conversas em grupo ou filmes?" },
+    { p:"Você percebeu diminuição na sua capacidade de realizar atividades de lazer ou hobbies?", i:"Você percebeu diminuição na capacidade dele(a) de realizar atividades de lazer ou hobbies?" },
+    { p:"Em geral, você sente que sua memória ou raciocínio estão piores do que há 1 ano?", i:"Em geral, você sente que a memória ou raciocínio dele(a) estão piores do que há 1 ano?" }
+  ];
+
+  let mode = 'paciente';
+  const answers = { paciente: Array(14).fill(0), informante: Array(14).fill(0) };
+  const qContainer = document.getElementById('qContainer');
+
+  function render() {
+    qContainer.innerHTML = '';
+    questions.forEach((q, idx) => {
+      const text = mode === 'paciente' ? q.p : q.i;
+      const current = answers[mode][idx];
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `
+        <div class="qnum">Pergunta ${idx+1} de 14</div>
+        <div class="qtext">${text}</div>
+        <div class="options">
+          <label class="opt ${current===0?'selected':''}" data-idx="${idx}" data-v="0">Não</label>
+          <label class="opt ${current===0.5?'selected':''}" data-idx="${idx}" data-v="0.5">Talvez</label>
+          <label class="opt ${current===1?'selected':''}" data-idx="${idx}" data-v="1">Sim</label>
+        </div>
+      `;
+      qContainer.appendChild(div);
+    });
+  }
+
+  qContainer.addEventListener('click', (e) => {
+    const opt = e.target.closest('label.opt');
+    if(!opt) return;
+    const idx = parseInt(opt.dataset.idx);
+    const val = parseFloat(opt.dataset.v);
+    answers[mode][idx] = val;
+    render();
+    updateScores();
+    salvarNoProntuario();
+  });
+
+  document.getElementById('btnPaciente').addEventListener('click', () => setMode('paciente'));
+  document.getElementById('btnInformante').addEventListener('click', () => setMode('informante'));
+
+  function setMode(m) {
+    mode = m;
+    document.getElementById('btnPaciente').classList.toggle('active', m==='paciente');
+    document.getElementById('btnInformante').classList.toggle('active', m==='informante');
+    render();
+  }
+
+  function computeTotal(arr) {
+    return arr.reduce((a,b) => a+b, 0);
+  }
+
+  function updateScores() {
+    const tp = computeTotal(answers.paciente);
+    const ti = computeTotal(answers.informante);
+    document.getElementById('scorePaciente').innerHTML = tp + '<span>/14</span>';
+    document.getElementById('scoreInformante').innerHTML = ti + '<span>/14</span>';
+    document.getElementById('saveFlash').classList.remove('show');
+    return { tp, ti };
+  }
+
+  async function salvarNoProntuario(){
+    if (!currentPatient) return;
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const { tp, ti } = updateScores();
+    const now = new Date().toISOString();
+
+    const { error } = await client.from('patient_variables').upsert([
+      { patient_id: currentPatient.id, variable_id: 'V84', value: String(tp), updated_at: now },
+      { patient_id: currentPatient.id, variable_id: 'V85', value: String(ti), updated_at: now }
+    ], { onConflict: 'patient_id,variable_id' });
+
+    btn.disabled = false;
+    btn.textContent = 'Salvar no Prontuário (V84, V85)';
+
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    document.getElementById('saveFlash').classList.add('show');
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    currentPatient = data;
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    render();
+    updateScores();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lawton — AIVD (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:712px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .question p.qtext{font-size:15px;margin:0 0 14px;color:#4a4a44;}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #saveBtn{background:var(--gold);color:var(--teal);}
+  #saveBtn:hover{background:var(--gold-soft);}
+  #saveBtn:disabled{opacity:.6;cursor:default;}
+  .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;}
+  .saveflash.show{display:block;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos · Hermes</div>
+    <h1>Escala de Lawton — AIVD</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">
+    <strong>Pré-preenchido como independente em todos os itens</strong> — clique apenas no(s) item(ns) em que o paciente precisa de ajuda. Cada clique já salva sozinho no Prontuário. Se estiver tudo normal, clique "Salvar no Prontuário" mesmo assim, pra confirmar.
+  </div>
+
+  <div class="section-title">Para cada atividade, como a pessoa se encontra hoje?</div>
+
+  <div id="questions"></div>
+
+  <div class="result" id="result">
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">8 / 8</div>
+    <div class="category" id="category">Independência total</div>
+    <div class="actions">
+      <button id="saveBtn">Salvar no Prontuário (V24, V26)</button>
+    </div>
+    <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentPatient = null;
+
+  const questions = [
+    {name:"Telefone", text:"Consegue usar o telefone/celular sozinho(a) — procurar e discar números, atender chamadas?"},
+    {name:"Compras", text:"Consegue fazer compras sozinho(a), sem precisar que outra pessoa compre por ela?"},
+    {name:"Preparo de refeições", text:"Consegue planejar e preparar uma refeição completa sozinho(a)?"},
+    {name:"Trabalhos domésticos", text:"Consegue cuidar da casa sozinho(a) (limpeza leve, arrumação), mesmo que com alguma ajuda ocasional?"},
+    {name:"Lavagem de roupas", text:"Consegue lavar suas próprias roupas sozinho(a)?"},
+    {name:"Transporte", text:"Consegue se locomover sozinho(a) — dirigir, pegar transporte público ou táxi/aplicativo sem depender de acompanhante?"},
+    {name:"Uso de medicamentos", text:"Consegue tomar seus remédios sozinho(a), nas doses e horários corretos, sem precisar que alguém organize ou lembre?"},
+    {name:"Finanças", text:"Consegue cuidar do próprio dinheiro sozinho(a) — pagar contas, controlar gastos, ir ao banco?"}
+  ];
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderQuestions(){
+    const container = document.getElementById('questions');
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `
+        <div class="qnum">Item ${i+1} de 8</div>
+        <div class="dname">${q.name}</div>
+        <p class="qtext">${q.text}</p>
+        <div class="options">
+          <label class="opt selected" data-q="${i}" data-v="independente"><input type="radio" name="q${i}" value="independente" checked>Independente</label>
+          <label class="opt" data-q="${i}" data-v="dependente"><input type="radio" name="q${i}" value="dependente">Precisa de ajuda</label>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('label.opt');
+      if(!opt) return;
+      const q = opt.dataset.q;
+      document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+      opt.classList.add('selected');
+      calcular();
+      salvarNoProntuario();
+    });
+  }
+
+  function calcular(){
+    let total = 0;
+    questions.forEach((q, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      if (sel && sel.dataset.v === 'independente') total += 1;
+    });
+
+    let categoria = '', cor = '';
+    if(total === 8){ categoria = 'Independência total'; cor='var(--ok)'; }
+    else if(total >= 5){ categoria = 'Dependência leve a parcial'; cor='var(--warn)'; }
+    else { categoria = 'Dependência importante'; cor='var(--alert)'; }
+
+    document.getElementById('scoreValue').textContent = total + ' / 8';
+    const catEl = document.getElementById('category');
+    catEl.textContent = categoria;
+    catEl.style.color = cor;
+
+    document.getElementById('saveFlash').classList.remove('show');
+  }
+
+  function categoriaParaV26(total){
+    if (total === 8) return 'Independente';
+    if (total >= 5) return 'Parcial';
+    return 'Importante';
+  }
+
+  async function salvarNoProntuario(){
+    if (!currentPatient) return;
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const total = parseInt(document.getElementById('scoreValue').textContent.split(' / ')[0], 10);
+    const v26 = categoriaParaV26(total);
+    const now = new Date().toISOString();
+
+    const { error } = await client.from('patient_variables').upsert([
+      { patient_id: currentPatient.id, variable_id: 'V24', value: String(total), updated_at: now },
+      { patient_id: currentPatient.id, variable_id: 'V26', value: v26, updated_at: now }
+    ], { onConflict: 'patient_id,variable_id' });
+
+    btn.disabled = false;
+    btn.textContent = 'Salvar no Prontuário (V24, V26)';
+
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    document.getElementById('saveFlash').classList.add('show');
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    currentPatient = data;
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    renderQuestions();
+    calcular();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPI-Q (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:780px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:732px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .domain{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .domain .dnum{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .domain .dname{font-size:17px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .domain p.dtext{font-size:14px;margin:0 0 14px;color:#4a4a44;}
+
+  .yn{display:flex;gap:10px;margin-bottom:10px;}
+  label.yn-opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 18px;font-size:13.5px;cursor:pointer;background:#FBFAF7;flex:1;text-align:center;}
+  label.yn-opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:600;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .subfields{display:none;grid-template-columns:1fr 1fr;gap:14px;padding-top:10px;border-top:1px dashed #DDD6C7;}
+  .subfields.show{display:grid;}
+  .subfields .field label{display:block;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .subfields select{width:100%;font-size:14px;padding:8px 9px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;}
+  @media (max-width:480px){.subfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .scores{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin:6px 0 10px;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #saveBtn{background:var(--gold);color:var(--teal);}
+  #saveBtn:hover{background:var(--gold-soft);}
+  #saveBtn:disabled{opacity:.6;cursor:default;}
+  .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;}
+  .saveflash.show{display:block;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos · Atena</div>
+    <h1>NPI-Q</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">
+    <strong>Pré-preenchido como "Não" (ausente) em todos os 12 itens</strong> — clique em "Sim" só no que estiver presente, e escolha gravidade/estresse. Cada clique já salva sozinho no Prontuário.
+  </div>
+
+  <div class="section-title">No último mês, o paciente apresentou...</div>
+
+  <div id="domains"></div>
+
+  <div class="result" id="result">
+    <div class="scores">
+      <div><div class="score-label">Gravidade (V52)</div><div class="score" id="scoreGravidade">0 / 36</div></div>
+      <div><div class="score-label">Estresse cuidador (V86)</div><div class="score" id="scoreEstresse">0 / 60</div></div>
+    </div>
+    <div class="actions">
+      <button id="saveBtn">Salvar no Prontuário (V52, V86)</button>
+    </div>
+    <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentPatient = null;
+
+  const domains = [
+    {name:"Delírios", text:"Acredita em coisas que não são verdadeiras?"},
+    {name:"Alucinações", text:"Vê ou ouve coisas que não estão realmente presentes?"},
+    {name:"Agitação/Agressividade", text:"Resiste a ajuda, ou é difícil de lidar em certos momentos?"},
+    {name:"Depressão/Disforia", text:"Parece triste ou deprimido, chora ou diz que está triste?"},
+    {name:"Ansiedade", text:"Fica nervoso, preocupado ou assustado sem motivo aparente?"},
+    {name:"Euforia/Exaltação", text:"Parece feliz demais ou animado sem motivo aparente?"},
+    {name:"Apatia/Indiferença", text:"Perdeu interesse no mundo ao redor, ou menos motivado a iniciar atividades?"},
+    {name:"Desinibição", text:"Age de forma impulsiva, ou diz coisas que normalmente não diria em público?"},
+    {name:"Irritabilidade/Labilidade", text:"Fica impaciente/irritado com facilidade, ou o humor muda rapidamente?"},
+    {name:"Comportamento motor aberrante", text:"Fica andando de um lado a outro, mexendo em objetos sem propósito claro?"},
+    {name:"Sono/Comportamento noturno", text:"Acorda à noite, se levanta cedo demais, ou dorme excessivamente de dia?"},
+    {name:"Apetite/Alimentação", text:"Teve mudança de apetite, de peso, ou mudou hábitos alimentares?"}
+  ];
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderDomains(){
+    const container = document.getElementById('domains');
+    domains.forEach((d, i) => {
+      const div = document.createElement('div');
+      div.className = 'domain';
+      div.innerHTML = `
+        <div class="dnum">Item ${i+1} de 12</div>
+        <div class="dname">${d.name}</div>
+        <p class="dtext">${d.text}</p>
+        <div class="yn">
+          <label class="yn-opt selected" data-q="${i}" data-v="nao"><input type="radio" name="yn${i}" value="nao" checked>Não</label>
+          <label class="yn-opt" data-q="${i}" data-v="sim"><input type="radio" name="yn${i}" value="sim">Sim</label>
+        </div>
+        <div class="subfields" id="sub${i}">
+          <div class="field">
+            <label>Gravidade</label>
+            <select id="sev${i}">
+              <option value="1">Leve</option>
+              <option value="2">Moderada</option>
+              <option value="3">Severa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Estresse para o cuidador</label>
+            <select id="dis${i}">
+              <option value="0">Nenhum</option>
+              <option value="1">Mínimo</option>
+              <option value="2">Leve</option>
+              <option value="3">Moderado</option>
+              <option value="4">Severo</option>
+              <option value="5">Muito severo/extremo</option>
+            </select>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('label.yn-opt');
+      if(opt){
+        const q = opt.dataset.q;
+        document.querySelectorAll(`label.yn-opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+        opt.classList.add('selected');
+        const sub = document.getElementById(`sub${q}`);
+        if(opt.dataset.v === 'sim'){ sub.classList.add('show'); } else { sub.classList.remove('show'); }
+        calcular();
+        salvarNoProntuario();
+      }
+    });
+
+    container.querySelectorAll('select').forEach(sel => {
+      sel.addEventListener('change', () => { calcular(); salvarNoProntuario(); });
+    });
+  }
+
+  function calcular(){
+    let gravidadeTotal = 0, estresseTotal = 0;
+    domains.forEach((d, i) => {
+      const sel = document.querySelector(`label.yn-opt[data-q="${i}"].selected`);
+      if (sel && sel.dataset.v === 'sim') {
+        gravidadeTotal += parseInt(document.getElementById(`sev${i}`).value, 10);
+        estresseTotal += parseInt(document.getElementById(`dis${i}`).value, 10);
+      }
+    });
+
+    document.getElementById('scoreGravidade').textContent = gravidadeTotal + ' / 36';
+    document.getElementById('scoreEstresse').textContent = estresseTotal + ' / 60';
+    document.getElementById('saveFlash').classList.remove('show');
+    return { gravidadeTotal, estresseTotal };
+  }
+
+  async function salvarNoProntuario(){
+    if (!currentPatient) return;
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const { gravidadeTotal, estresseTotal } = calcular();
+    const now = new Date().toISOString();
+
+    const { error } = await client.from('patient_variables').upsert([
+      { patient_id: currentPatient.id, variable_id: 'V52', value: String(gravidadeTotal), updated_at: now },
+      { patient_id: currentPatient.id, variable_id: 'V86', value: String(estresseTotal), updated_at: now }
+    ], { onConflict: 'patient_id,variable_id' });
+
+    btn.disabled = false;
+    btn.textContent = 'Salvar no Prontuário (V52, V86)';
+
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    document.getElementById('saveFlash').classList.add('show');
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    currentPatient = data;
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    renderDomains();
+    calcular();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IVCF-20 (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:800px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:752px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .autobox{background:#fff;border:1.5px solid var(--gold-soft);border-radius:10px;padding:16px 22px;margin-bottom:16px;}
+  .autobox .label{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:4px;}
+  .autobox .val{font-size:15px;color:var(--teal);font-weight:700;}
+
+  .dim{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .dim-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--teal);margin-bottom:12px;border-bottom:1.5px dashed var(--gold-soft);padding-bottom:6px;}
+  .question{margin-bottom:14px;}
+  .question:last-child{margin-bottom:0;}
+  .question p.qtext{font-size:14.5px;margin:0 0 8px;color:#4a4a44;}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 8px;text-align:center;font-size:12.5px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #saveBtn{background:var(--gold);color:var(--teal);}
+  #saveBtn:hover{background:var(--gold-soft);}
+  #saveBtn:disabled{opacity:.6;cursor:default;}
+  .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;}
+  .saveflash.show{display:block;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos</div>
+    <h1>IVCF-20</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">
+    <strong>Q1 (idade) é calculada automaticamente</strong> pela data de nascimento do paciente. <strong>Q2 vem marcada "boa"</strong> e as demais 18 perguntas vêm marcadas "Não" — clique só no que estiver alterado. Cada clique já salva sozinho no Prontuário. Se estiver tudo normal, clique "Salvar no Prontuário" mesmo assim, pra confirmar.
+  </div>
+
+  <div class="autobox">
+    <div class="label">Q1 · Idade (automático)</div>
+    <div class="val" id="ageAuto">—</div>
+  </div>
+
+  <div id="dims"></div>
+
+  <div class="result" id="result">
+    <div class="score-label">Escore total</div>
+    <div class="score" id="scoreValue">— / 40</div>
+    <div class="category" id="category">—</div>
+    <div class="actions">
+      <button id="saveBtn">Salvar no Prontuário (V77, V78)</button>
+    </div>
+    <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentPatient = null;
+  let q1Score = 0;
+
+  const DIMS = [
+    { title: "3 · Atividades de vida diária", qs: [
+      { id:"q3", text:"Deixou de fazer compras por causa da saúde?", pts:4 },
+      { id:"q4", text:"Deixou de controlar dinheiro/gastos/contas por causa da saúde?", pts:4 },
+      { id:"q5", text:"Deixou de realizar pequenos trabalhos domésticos por causa da saúde?", pts:4 },
+      { id:"q6", text:"Deixou de tomar banho sozinho por causa da saúde?", pts:6 }
+    ]},
+    { title: "4 · Cognição", qs: [
+      { id:"q7", text:"Familiar/amigo relatou que está ficando esquecido?", pts:1 },
+      { id:"q8", text:"Esse esquecimento está piorando nos últimos meses?", pts:1 },
+      { id:"q9", text:"Esse esquecimento impede alguma atividade do cotidiano?", pts:2 }
+    ]},
+    { title: "5 · Humor", qs: [
+      { id:"q10", text:"No último mês, teve desânimo, tristeza ou desesperança?", pts:2 },
+      { id:"q11", text:"No último mês, perdeu interesse/prazer em atividades?", pts:2 }
+    ]},
+    { title: "6 · Mobilidade", qs: [
+      { id:"q12", text:"Incapaz de elevar os braços acima do ombro?", pts:1 },
+      { id:"q13", text:"Incapaz de manusear/segurar pequenos objetos?", pts:1 },
+      { id:"q14", text:"Perda de peso não intencional / IMC<22 / panturrilha<31cm / marcha lenta (>5s em 4m)?", pts:2 },
+      { id:"q15", text:"Dificuldade de caminhar que impede alguma atividade do cotidiano?", pts:2 },
+      { id:"q16", text:"Duas ou mais quedas no último ano?", pts:2 },
+      { id:"q17", text:"Perde urina ou fezes sem querer, em algum momento?", pts:2 }
+    ]},
+    { title: "7 · Comunicação", qs: [
+      { id:"q18", text:"Problema de visão que impede alguma atividade do cotidiano (mesmo com óculos)?", pts:2 },
+      { id:"q19", text:"Problema de audição que impede alguma atividade do cotidiano (mesmo com aparelho)?", pts:2 }
+    ]},
+    { title: "8 · Comorbidades múltiplas", qs: [
+      { id:"q20", text:"≥5 doenças crônicas, ou ≥5 medicamentos regulares, ou internação nos últimos 6 meses?", pts:4 }
+    ]}
+  ];
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function calcAge(birthDateIso){
+    const b = new Date(birthDateIso);
+    const t = new Date();
+    let age = t.getFullYear() - b.getFullYear();
+    const m = t.getMonth() - b.getMonth();
+    if (m < 0 || (m === 0 && t.getDate() < b.getDate())) age--;
+    return age;
+  }
+
+  function renderQ1(birthDateIso){
+    const age = calcAge(birthDateIso);
+    if (age >= 85) q1Score = 3;
+    else if (age >= 75) q1Score = 1;
+    else q1Score = 0;
+    document.getElementById('ageAuto').textContent = `${age} anos → ${q1Score} pt(s)`;
+  }
+
+  function renderQ2(){
+    const div = document.createElement('div');
+    div.className = 'dim';
+    div.innerHTML = `
+      <div class="dim-title">2 · Autopercepção da saúde</div>
+      <div class="question">
+        <p class="qtext">Em geral, comparando com outras pessoas da idade, como o paciente diria que está sua saúde?</p>
+        <div class="options">
+          <label class="opt selected" data-q="q2" data-v="0"><input type="radio" name="q2" value="0" checked>Excelente/boa (0)</label>
+          <label class="opt" data-q="q2" data-v="1"><input type="radio" name="q2" value="1">Regular/ruim (1)</label>
+        </div>
+      </div>
+    `;
+    document.getElementById('dims').appendChild(div);
+  }
+
+  function renderDims(){
+    const container = document.getElementById('dims');
+    DIMS.forEach(dim => {
+      const div = document.createElement('div');
+      div.className = 'dim';
+      div.innerHTML = `
+        <div class="dim-title">${dim.title}</div>
+        ${dim.qs.map(q => `
+          <div class="question">
+            <p class="qtext">${q.text}</p>
+            <div class="options">
+              <label class="opt selected" data-q="${q.id}" data-v="0"><input type="radio" name="${q.id}" value="0" checked>Não (0)</label>
+              <label class="opt" data-q="${q.id}" data-v="${q.pts}"><input type="radio" name="${q.id}" value="${q.pts}">Sim (${q.pts})</label>
+            </div>
+          </div>
+        `).join('')}
+      `;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('label.opt');
+      if(!opt) return;
+      const q = opt.dataset.q;
+      document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+      opt.classList.add('selected');
+      calcular();
+      salvarNoProntuario();
+    });
+  }
+
+  function classify(total){
+    if (total <= 6) return { t: 'Baixo risco de vulnerabilidade — idoso robusto', v78: 'Baixo risco', cor: 'var(--ok)' };
+    if (total <= 14) return { t: 'Risco moderado de vulnerabilidade', v78: 'Risco moderado', cor: 'var(--warn)' };
+    return { t: 'Alto risco de vulnerabilidade — idoso frágil', v78: 'Alto risco', cor: 'var(--alert)' };
+  }
+
+  function calcular(){
+    let total = q1Score;
+    document.querySelectorAll('label.opt.selected').forEach(sel => {
+      total += parseInt(sel.dataset.v, 10);
+    });
+
+    const cl = classify(total);
+    document.getElementById('scoreValue').textContent = total + ' / 40';
+    const catEl = document.getElementById('category');
+    catEl.textContent = cl.t;
+    catEl.style.color = cl.cor;
+
+    document.getElementById('saveFlash').classList.remove('show');
+    return { total, v78: cl.v78 };
+  }
+
+  async function salvarNoProntuario(){
+    if (!currentPatient) return;
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const { total, v78 } = calcular();
+    const now = new Date().toISOString();
+
+    const { error } = await client.from('patient_variables').upsert([
+      { patient_id: currentPatient.id, variable_id: 'V77', value: String(total), updated_at: now },
+      { patient_id: currentPatient.id, variable_id: 'V78', value: v78, updated_at: now }
+    ], { onConflict: 'patient_id,variable_id' });
+
+    btn.disabled = false;
+    btn.textContent = 'Salvar no Prontuário (V77, V78)';
+
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    document.getElementById('saveFlash').classList.add('show');
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    currentPatient = data;
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    renderQ1(data.birth_date);
+    renderQ2();
+    renderDims();
+    calcular();
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classificação ASA (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid #A84B3A;border-left:6px solid #A84B3A;border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:712px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .asa-option{background:#fff;border-radius:10px;padding:18px 20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(31,59,54,.08);border:1.5px solid transparent;cursor:pointer;transition:.15s;}
+  .asa-option:hover{border-color:var(--gold-soft);}
+  .asa-option.selected{border-color:var(--gold);background:#FBF6ED;}
+  .asa-option .class{font-family:'Cormorant Garamond', serif;font-size:20px;font-weight:700;color:var(--teal);}
+  .asa-option .desc{font-size:14px;color:#4a4a44;margin-top:4px;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .emergency-toggle{background:#fff;border-radius:10px;padding:16px 22px;margin:20px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;align-items:center;gap:12px;}
+  .emergency-toggle input{width:18px;height:18px;}
+
+  .result{margin-top:20px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:44px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .desc{font-size:15px;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos · Apolo</div>
+    <h1>Classificação ASA</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">Julgamento clínico pontual — não é gravado como variável basal da coorte, fica só no registro desta consulta.</div>
+
+  <div class="section-title">Selecione a classificação</div>
+
+  <div id="asaOptions"></div>
+
+  <div class="emergency-toggle">
+    <input type="checkbox" id="emergency">
+    <label for="emergency">Procedimento de urgência/emergência (adiciona o sufixo "E")</label>
+  </div>
+
+  <div class="result" id="result">
+    <div class="score-label">Classificação</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="desc" id="descText"></div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const classes = [
+    {code:"ASA I", desc:"Paciente saudável, sem doenças sistêmicas."},
+    {code:"ASA II", desc:"Doença sistêmica leve, sem limitação funcional."},
+    {code:"ASA III", desc:"Doença sistêmica grave, com limitação funcional real."},
+    {code:"ASA IV", desc:"Doença sistêmica grave que representa ameaça constante à vida."},
+    {code:"ASA V", desc:"Paciente moribundo, sem expectativa de sobrevida sem a cirurgia."},
+    {code:"ASA VI", desc:"Paciente com morte encefálica, para doação de órgãos."}
+  ];
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderOptions(){
+    const container = document.getElementById('asaOptions');
+    classes.forEach((c, i) => {
+      const div = document.createElement('div');
+      div.className = 'asa-option';
+      div.dataset.i = i;
+      div.innerHTML = `<input type="radio" name="asa" value="${i}"><div class="class">${c.code}</div><div class="desc">${c.desc}</div>`;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('.asa-option');
+      if(!opt) return;
+      document.querySelectorAll('.asa-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      mostrarResultado();
+    });
+    document.getElementById('emergency').addEventListener('change', mostrarResultado);
+  }
+
+  function mostrarResultado(){
+    const selected = document.querySelector('.asa-option.selected');
+    if(!selected) return;
+    const i = parseInt(selected.dataset.i);
+    const c = classes[i];
+    const emergency = document.getElementById('emergency').checked;
+    document.getElementById('scoreValue').textContent = c.code + (emergency ? 'E' : '');
+    document.getElementById('descText').textContent = c.desc + (emergency ? ' Procedimento realizado em caráter de urgência/emergência.' : '');
+    document.getElementById('result').classList.add('show');
+  }
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    renderOptions();
+  })();
+</script>
+
+</body>
+</html>
