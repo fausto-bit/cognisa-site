@@ -52,6 +52,11 @@
   .msg{margin-top:16px;font-size:13.5px;text-align:center;}
   .msg.error{color:var(--alert);}
   .backlink{display:block;text-align:center;margin-top:20px;font-size:13px;color:#8a8578;text-decoration:none;}
+  .forgotlink{display:block;text-align:center;margin-top:14px;font-size:13px;color:var(--gold);text-decoration:none;}
+  .forgotlink:hover{text-decoration:underline;}
+  .hidden{display:none;}
+  #resetForm{margin-top:18px;padding-top:18px;border-top:1px solid #DDD6C7;}
+  .msg.success{color:var(--teal);}
 </style>
 </head>
 <body>
@@ -67,6 +72,16 @@
     <button type="submit" id="submitBtn">Entrar</button>
     <div class="msg" id="msg"></div>
   </form>
+
+  <a class="forgotlink" id="forgotToggle" href="#">Esqueci minha senha</a>
+
+  <form id="resetForm" class="hidden">
+    <label for="resetEmail">E-mail</label>
+    <input type="email" id="resetEmail" required autocomplete="username">
+    <button type="submit" id="resetBtn">Enviar link de redefinição</button>
+    <div class="msg" id="resetMsg"></div>
+  </form>
+
   <a class="backlink" href="../index.html">← Voltar ao site</a>
 </div>
 
@@ -105,6 +120,43 @@
     }
 
     window.location.href = "index.html";
+  });
+
+  // Fluxo "Esqueci minha senha"
+  const forgotToggle = document.getElementById('forgotToggle');
+  const resetForm = document.getElementById('resetForm');
+  const resetMsg = document.getElementById('resetMsg');
+  const resetBtn = document.getElementById('resetBtn');
+
+  forgotToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    resetForm.classList.toggle('hidden');
+    forgotToggle.textContent = resetForm.classList.contains('hidden') ? 'Esqueci minha senha' : 'Voltar ao login';
+  });
+
+  resetForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    resetMsg.textContent = '';
+    resetMsg.className = 'msg';
+    resetBtn.disabled = true;
+    resetBtn.textContent = 'Enviando...';
+
+    const email = document.getElementById('resetEmail').value.trim();
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/painel/redefinir-senha.html'
+    });
+
+    resetBtn.disabled = false;
+    resetBtn.textContent = 'Enviar link de redefinição';
+
+    if (error) {
+      resetMsg.textContent = 'Erro: ' + error.message;
+      resetMsg.className = 'msg error';
+      return;
+    }
+
+    resetMsg.textContent = 'Se este e-mail estiver cadastrado, você receberá um link para redefinir a senha.';
+    resetMsg.className = 'msg success';
   });
 </script>
 
