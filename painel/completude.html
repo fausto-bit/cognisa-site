@@ -180,12 +180,25 @@
         return { domain: d.domain, filledCount, total: d.ids.length };
       });
       const overallFilled = domains.reduce((sum, d) => sum + d.filledCount, 0);
+
+      // Domínio menos completo (pra atalho direto no Prontuário). Ignora domínios já 100% completos.
+      let leastCompleteDomainNum = null, leastPct = null;
+      domains.forEach(d => {
+        if (d.filledCount >= d.total) return;
+        const pct = d.filledCount / d.total;
+        if (leastPct === null || pct < leastPct) {
+          leastPct = pct;
+          leastCompleteDomainNum = d.domain.split(' ')[0];
+        }
+      });
+
       return {
         ...p,
         values,
         domains,
         overallFilled,
         overallPct: Math.round((overallFilled / TOTAL_VARS) * 100),
+        leastCompleteDomainNum,
       };
     }).sort((a, b) => a.overallPct - b.overallPct);
 
@@ -251,11 +264,13 @@
         `;
       }).join('');
 
+      const domainParam = p.leastCompleteDomainNum ? `&domain=${encodeURIComponent(p.leastCompleteDomainNum)}` : '';
+
       return `
         <div class="card">
           <div class="patienthead">
             <div>
-              <a class="id" href="prontuario.html?patient_id=${p.id}">${escapeHtml(idLabel)}</a>
+              <a class="id" href="prontuario.html?patient_id=${p.id}${domainParam}">${escapeHtml(idLabel)}</a>
               <div class="sub">Nascimento ${formatDate(p.birth_date)}${p.medical_record_number ? ' · Prontuário ' + escapeHtml(p.medical_record_number) : ''} · ${p.overallFilled}/${TOTAL_VARS} variáveis</div>
             </div>
             <div class="overallpct" style="background:${pctColor(p.overallPct)};">${p.overallPct}%</div>

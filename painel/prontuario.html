@@ -78,6 +78,11 @@
 
   .domain{margin-top:22px;}
   .domain:first-child{margin-top:0;}
+  @keyframes domainHighlight{
+    0%{box-shadow:0 0 0 4px var(--gold);}
+    100%{box-shadow:0 0 0 0 rgba(184,145,90,0);}
+  }
+  .domain.highlight{animation:domainHighlight 2.5s ease-out;border-radius:8px;}
   .domain h3{
     font-family:'Cormorant Garamond',serif;font-size:16.5px;color:var(--teal);
     border-bottom:2px solid var(--gold-soft);padding-bottom:5px;margin-bottom:10px;
@@ -347,7 +352,7 @@
 
     const wrap = document.getElementById('domainsWrap');
     wrap.innerHTML = CORE76.map(d => `
-      <div class="domain">
+      <div class="domain" id="domain-${d.domain.split(' ')[0]}">
         <h3>${d.domain}</h3>
         ${d.vars.map(([id, label, type, options]) => {
           const val = valueMap[id] || '';
@@ -430,7 +435,20 @@
         .select('id, initials, birth_date, medical_record_number')
         .eq('id', patientId)
         .maybeSingle();
-      if (!error && data) selectPatient(data);
+      if (!error && data) {
+        await selectPatient(data);
+
+        // Se veio com &domain=, rola até o domínio (atalho da Completude).
+        const domainNum = params.get('domain');
+        if (domainNum) {
+          const domainEl = document.getElementById('domain-' + domainNum);
+          if (domainEl) {
+            domainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            domainEl.classList.add('highlight');
+            setTimeout(() => domainEl.classList.remove('highlight'), 2600);
+          }
+        }
+      }
     }
   })();
 </script>
