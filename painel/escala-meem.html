@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEEM (versão médico) — Painel Cognisa</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .patientbar{
+    background:#fff;border-bottom:1.5px solid #DDD6C7;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  }
+  .patientbar .pid{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:17px;color:var(--teal);}
+  .patientbar .sub{font-size:12.5px;color:#8a8578;margin-left:8px;}
+
+  .notice{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:28px 24px;font-size:14px;color:var(--teal);max-width:712px;}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .edu-select{background:#fff;border-radius:10px;padding:16px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .edu-select label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .edu-select select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .edu-select select:focus{outline:none;border-color:var(--gold);}
+
+  .domain{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .domain .dnum{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .domain .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 8px;}
+  .domain p.dtext{font-size:14px;margin:0 0 14px;color:#4a4a44;}
+  .scorerow{display:flex;align-items:center;gap:12px;}
+  .scorerow input{width:80px;font-size:16px;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;text-align:center;}
+  .scorerow input:focus{outline:none;border-color:var(--gold);}
+  .scorerow .maxlabel{font-size:13px;color:#7a776a;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .cutoff{font-size:13px;color:var(--gold-soft);margin-top:6px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #saveBtn{background:var(--gold);color:var(--teal);}
+  #saveBtn:hover{background:var(--gold-soft);}
+  #saveBtn:disabled{opacity:.6;cursor:default;}
+  .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;}
+  .saveflash.show{display:block;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Escalas Médicos · Atena</div>
+    <h1>Mini Exame do Estado Mental</h1>
+  </div>
+  <a class="backlink" href="escalas.html">← Escalas Médicos</a>
+</header>
+
+<div class="patientbar" id="patientBar" style="display:none;">
+  <span class="pid" id="patientId">—</span><span class="sub" id="patientSub"></span>
+</div>
+
+<div id="noPatientNotice" class="notice" style="display:none;">
+  Nenhum paciente selecionado. Volte para <a href="escalas.html">Escalas Médicos</a> e escolha um paciente primeiro.
+</div>
+
+<div class="wrap" id="formWrap" style="display:none;">
+
+  <div class="hint">
+    <strong>Cada domínio já vem com a pontuação máxima</strong> — reduza apenas o que o paciente errou. Selecione a escolaridade para calcular o ponto de corte. Sai do campo (Tab ou clique fora) e já salva sozinho no Prontuário. Se estiver tudo normal, clique "Salvar no Prontuário" mesmo assim, pra confirmar.
+  </div>
+
+  <div class="edu-select">
+    <label for="escolaridade">Escolaridade</label>
+    <select id="escolaridade">
+      <option value="">Selecione</option>
+      <option value="analfabeto">Analfabeto(a)</option>
+      <option value="1a4">1 a 4 anos de estudo</option>
+      <option value="5a8">5 a 8 anos de estudo</option>
+      <option value="9a11">9 a 11 anos de estudo</option>
+      <option value="superior">Ensino superior completo</option>
+    </select>
+  </div>
+
+  <div class="section-title">Pontuação por domínio</div>
+
+  <div id="domains"></div>
+
+  <div class="result" id="result">
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">30 / 30</div>
+    <div class="category" id="category">Informe a escolaridade para interpretação</div>
+    <div class="cutoff" id="cutoffNote"></div>
+    <div class="actions">
+      <button id="saveBtn">Salvar no Prontuário (V87)</button>
+    </div>
+    <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
+  </div>
+
+</div>
+
+<script>
+  const SUPABASE_URL = "https://wkubjtnwipqlrynauvpa.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_H0O-YMO7H7QA-dZIQbZnJQ_AdaCXWtb";
+  const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentPatient = null;
+
+  const domains = [
+    {name:"Orientação temporal", max:5, text:"Ano, estação do ano, mês, dia do mês, dia da semana (1 ponto cada)."},
+    {name:"Orientação espacial", max:5, text:"Estado, cidade, bairro/local, andar (se aplicável), local específico (1 ponto cada)."},
+    {name:"Registro", max:3, text:"Repetir 3 palavras não relacionadas (1 ponto por palavra repetida corretamente na primeira tentativa)."},
+    {name:"Atenção e cálculo", max:5, text:"Subtração seriada de 7 a partir de 100 (5 subtrações), ou soletrar 'MUNDO' de trás para frente."},
+    {name:"Evocação", max:3, text:"Recordar as 3 palavras do item de registro, após intervalo com outra tarefa (1 ponto cada)."},
+    {name:"Nomeação", max:2, text:"Nomear dois objetos mostrados (ex.: caneta, relógio)."},
+    {name:"Repetição", max:1, text:"Repetir a frase 'Nem aqui, nem ali, nem lá'."},
+    {name:"Comando de 3 estágios", max:3, text:"Executar comando verbal em 3 etapas (ex.: pegar o papel com a mão direita, dobrá-lo ao meio, colocar no chão)."},
+    {name:"Leitura e execução", max:1, text:"Ler e executar o comando escrito 'FECHE OS OLHOS'."},
+    {name:"Escrita", max:1, text:"Escrever uma frase completa espontaneamente."},
+    {name:"Cópia do desenho", max:1, text:"Copiar o desenho de dois pentágonos sobrepostos."}
+  ];
+
+  function cutoffPorEscolaridade(esc){
+    const cutoffs = {
+      'analfabeto': 19,
+      '1a4': 24,
+      '5a8': 26,
+      '9a11': 28,
+      'superior': 29
+    };
+    return cutoffs[esc] || null;
+  }
+
+  function formatDate(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderDomains(){
+    const container = document.getElementById('domains');
+    domains.forEach((d, i) => {
+      const div = document.createElement('div');
+      div.className = 'domain';
+      div.innerHTML = `
+        <div class="dnum">Domínio ${i+1} de ${domains.length}</div>
+        <div class="dname">${d.name}</div>
+        <p class="dtext">${d.text}</p>
+        <div class="scorerow">
+          <input type="number" id="dom${i}" min="0" max="${d.max}" value="${d.max}">
+          <span class="maxlabel">de ${d.max} ponto${d.max > 1 ? 's' : ''}</span>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.querySelectorAll('#domains input').forEach(inp => {
+      inp.addEventListener('input', calcular);
+      inp.addEventListener('change', salvarNoProntuario);
+    });
+    document.getElementById('escolaridade').addEventListener('change', () => { calcular(); salvarNoProntuario(); });
+  }
+
+  function calcular(){
+    let total = 0;
+    domains.forEach((d, i) => {
+      let n = parseInt(document.getElementById(`dom${i}`).value, 10);
+      if (isNaN(n)) n = 0;
+      if (n > d.max) n = d.max;
+      if (n < 0) n = 0;
+      total += n;
+    });
+
+    document.getElementById('scoreValue').textContent = total + ' / 30';
+
+    const escolaridade = document.getElementById('escolaridade').value;
+    const escolaridadeLabel = document.getElementById('escolaridade').selectedOptions[0]?.text || '';
+    const cutoff = cutoffPorEscolaridade(escolaridade);
+    const catEl = document.getElementById('category');
+    const cutoffNote = document.getElementById('cutoffNote');
+
+    if (cutoff !== null){
+      if (total < cutoff){
+        catEl.textContent = 'Abaixo do ponto de corte — sugestivo de déficit cognitivo';
+        catEl.style.color = 'var(--alert)';
+      } else {
+        catEl.textContent = 'Dentro do esperado para a escolaridade';
+        catEl.style.color = 'var(--ok)';
+      }
+      cutoffNote.textContent = `Ponto de corte para "${escolaridadeLabel}": ${cutoff}/30`;
+    } else {
+      catEl.textContent = 'Informe a escolaridade para interpretação';
+      catEl.style.color = 'var(--gold-soft)';
+      cutoffNote.textContent = '';
+    }
+
+    document.getElementById('saveFlash').classList.remove('show');
+  }
+
+  async function salvarNoProntuario(){
+    if (!currentPatient) return;
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true;
+    btn.textContent = 'Salvando...';
+
+    const total = document.getElementById('scoreValue').textContent.split(' / ')[0];
+    const categoria = document.getElementById('category').textContent;
+    const escolaridade = document.getElementById('escolaridade').value;
+    const valor = escolaridade ? `${total}/30 (${categoria})` : `${total}/30`;
+    const now = new Date().toISOString();
+
+    const { error } = await client.from('patient_variables').upsert([
+      { patient_id: currentPatient.id, variable_id: 'V87', value: valor, updated_at: now }
+    ], { onConflict: 'patient_id,variable_id' });
+
+    btn.disabled = false;
+    btn.textContent = 'Salvar no Prontuário (V87)';
+
+    if (error) { alert('Erro ao salvar: ' + error.message); return; }
+    document.getElementById('saveFlash').classList.add('show');
+  }
+
+  document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  async function requireSession(){
+    const { data } = await client.auth.getSession();
+    if (!data.session) { window.location.href = "login.html"; return null; }
+    return data.session;
+  }
+
+  (async () => {
+    const session = await requireSession();
+    if (!session) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const patientId = params.get('patient_id');
+    if (!patientId) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    const { data, error } = await client
+      .from('patients')
+      .select('id, initials, birth_date, medical_record_number')
+      .eq('id', patientId)
+      .maybeSingle();
+
+    if (error || !data) { document.getElementById('noPatientNotice').style.display = 'block'; return; }
+
+    currentPatient = data;
+    document.getElementById('patientBar').style.display = 'flex';
+    document.getElementById('patientId').textContent =
+      `${data.initials}-${(data.birth_date || '').replace(/-/g,'').slice(2)}`;
+    document.getElementById('patientSub').textContent =
+      ` · Nascimento ${formatDate(data.birth_date)}${data.medical_record_number ? ' · Prontuário ' + data.medical_record_number : ''}`;
+    document.getElementById('formWrap').style.display = 'block';
+
+    renderDomains();
+  })();
+</script>
+
+</body>
+</html>
