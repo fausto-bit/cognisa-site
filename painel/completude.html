@@ -130,6 +130,29 @@
   ];
   const TOTAL_VARS = CORE76_DOMAINS.reduce((sum, d) => sum + d.ids.length, 0);
 
+  // Mesmo agrupamento em 6 abas do Prontuário (ver prontuario.html) — usado só
+  // pra calcular qual aba abrir no atalho de completude. Os 14 domínios acima
+  // continuam sendo a unidade de exibição desta página.
+  const TABS = [
+    { name: "Identificação", domains: [1] },
+    { name: "Cognição & Humor", domains: [7, 9] },
+    { name: "Funcionalidade & Motricidade", domains: [4, 5, 6] },
+    { name: "Nutrição & Antropometria", domains: [8] },
+    { name: "Saúde Clínica & Polifarmácia", domains: [2, 3, 12, 13] },
+    { name: "Sensorial & Outros", domains: [10, 11] },
+  ];
+  const VAR_TAB_OVERRIDE = {
+    V84: 1, V85: 1, V86: 1,
+    V80: 4, V81: 4,
+    V79: 5, V82: 5, V83: 5,
+  };
+
+  function tabIndexForVar(id, domNum){
+    const override = VAR_TAB_OVERRIDE[id];
+    if (override !== undefined) return override;
+    return TABS.findIndex(t => t.domains.includes(domNum));
+  }
+
   function escapeHtml(str){
     return String(str).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   }
@@ -181,15 +204,23 @@
       });
       const overallFilled = domains.reduce((sum, d) => sum + d.filledCount, 0);
 
-      // Domínio menos completo (pra atalho direto no Prontuário). Ignora domínios já 100% completos.
-      let leastCompleteDomainNum = null, leastPct = null;
-      domains.forEach(d => {
-        if (d.filledCount >= d.total) return;
-        const pct = d.filledCount / d.total;
-        if (leastPct === null || pct < leastPct) {
-          leastPct = pct;
-          leastCompleteDomainNum = d.domain.split(' ')[0];
-        }
+      // Aba menos completa (pra atalho direto no Prontuário, já na aba certa).
+      // Ignora abas já 100% completas.
+      const tabTally = TABS.map(() => ({ filled: 0, total: 0 }));
+      CORE76_DOMAINS.forEach(d => {
+        const dNum = parseInt(d.domain.split(' ')[0], 10);
+        d.ids.forEach(id => {
+          const tabIdx = tabIndexForVar(id, dNum);
+          if (tabIdx < 0) return;
+          tabTally[tabIdx].total += 1;
+          if (values[id] !== undefined) tabTally[tabIdx].filled += 1;
+        });
+      });
+      let leastCompleteTabIndex = null, leastPct = null;
+      tabTally.forEach((t, i) => {
+        if (t.total === 0 || t.filled >= t.total) return;
+        const pct = t.filled / t.total;
+        if (leastPct === null || pct < leastPct) { leastPct = pct; leastCompleteTabIndex = i; }
       });
 
       return {
@@ -198,7 +229,7 @@
         domains,
         overallFilled,
         overallPct: Math.round((overallFilled / TOTAL_VARS) * 100),
-        leastCompleteDomainNum,
+        leastCompleteTabIndex,
       };
     }).sort((a, b) => a.overallPct - b.overallPct);
 
@@ -264,13 +295,13 @@
         `;
       }).join('');
 
-      const domainParam = p.leastCompleteDomainNum ? `&domain=${encodeURIComponent(p.leastCompleteDomainNum)}` : '';
+      const tabParam = p.leastCompleteTabIndex !== null ? `&tab=${p.leastCompleteTabIndex}` : '';
 
       return `
         <div class="card">
           <div class="patienthead">
             <div>
-              <a class="id" href="prontuario.html?patient_id=${p.id}${domainParam}">${escapeHtml(idLabel)}</a>
+              <a class="id" href="prontuario.html?patient_id=${p.id}${tabParam}">${escapeHtml(idLabel)}</a>
               <div class="sub">Nascimento ${formatDate(p.birth_date)}${p.medical_record_number ? ' · Prontuário ' + escapeHtml(p.medical_record_number) : ''} · ${p.overallFilled}/${TOTAL_VARS} variáveis</div>
             </div>
             <div class="overallpct" style="background:${pctColor(p.overallPct)};">${p.overallPct}%</div>

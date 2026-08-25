@@ -76,13 +76,22 @@
   }
   .changepatient:hover{background:var(--teal);color:var(--ivory);}
 
-  .domain{margin-top:22px;}
-  .domain:first-child{margin-top:0;}
+  .tabbar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:22px;border-bottom:1.5px solid #EEE6D6;}
+  .tabbtn{
+    background:transparent;border:none;padding:10px 14px;font-family:'DM Sans',sans-serif;
+    font-size:13.5px;font-weight:600;color:#8a8578;cursor:pointer;
+    border-bottom:2.5px solid transparent;margin-bottom:-1.5px;border-radius:6px 6px 0 0;
+  }
+  .tabbtn:hover{color:var(--teal);}
+  .tabbtn.active{color:var(--teal);border-bottom-color:var(--gold);}
   @keyframes domainHighlight{
     0%{box-shadow:0 0 0 4px var(--gold);}
     100%{box-shadow:0 0 0 0 rgba(184,145,90,0);}
   }
-  .domain.highlight{animation:domainHighlight 2.5s ease-out;border-radius:8px;}
+  .tabbtn.highlight{animation:domainHighlight 2.5s ease-out;}
+
+  .domain{margin-top:22px;}
+  .domain:first-child{margin-top:0;}
   .domain h3{
     font-family:'Cormorant Garamond',serif;font-size:16.5px;color:var(--teal);
     border-bottom:2px solid var(--gold-soft);padding-bottom:5px;margin-bottom:10px;
@@ -149,6 +158,7 @@
 
   <div class="card" id="varsCard" style="display:none;">
     <h2>Mapa de variáveis</h2>
+    <div class="tabbar" id="tabBar"></div>
     <div id="domainsWrap"></div>
   </div>
 
@@ -264,7 +274,42 @@
   ];
   const TOTAL_VARS = CORE76.reduce((sum, d) => sum + d.vars.length, 0);
 
+  // Reorganização visual em 6 abas (2026-08-25). Cada domínio pertence a uma aba,
+  // exceto o domínio 14 "Rastreios complementares" (mix de instrumentos sem tema
+  // único), cujas variáveis são realocadas individualmente via VAR_TAB_OVERRIDE.
+  const TABS = [
+    { name: "Identificação", domains: [1] },
+    { name: "Cognição & Humor", domains: [7, 9] },
+    { name: "Funcionalidade & Motricidade", domains: [4, 5, 6] },
+    { name: "Nutrição & Antropometria", domains: [8] },
+    { name: "Saúde Clínica & Polifarmácia", domains: [2, 3, 12, 13] },
+    { name: "Sensorial & Outros", domains: [10, 11] },
+  ];
+  const VAR_TAB_OVERRIDE = {
+    V84: 1, V85: 1, V86: 1,
+    V80: 4, V81: 4,
+    V79: 5, V82: 5, V83: 5,
+  };
+
+  function domainNum(d){ return parseInt(d.domain.split(' ')[0], 10); }
+
+  function varsForTab(tabIndex){
+    const groups = [];
+    CORE76.forEach(d => {
+      const dNum = domainNum(d);
+      const matched = d.vars.filter(([id]) => {
+        const override = VAR_TAB_OVERRIDE[id];
+        if (override !== undefined) return override === tabIndex;
+        return TABS[tabIndex].domains.includes(dNum);
+      });
+      if (matched.length) groups.push({ domainLabel: d.domain, vars: matched });
+    });
+    return groups;
+  }
+
   let currentPatient = null; // { id, initials, birth_date, medical_record_number }
+  let currentValueMap = {};
+  let activeTabIndex = 0;
 
   async function requireSession(){
     const { data } = await client.auth.getSession();
@@ -313,8 +358,9 @@
     });
   }
 
-  async function selectPatient(patient){
+  async function selectPatient(patient, opts = {}){
     currentPatient = patient;
+    if (!opts.keepTab) activeTabIndex = 0;
     document.getElementById('searchCard').style.display = 'none';
     document.getElementById('patientCard').style.display = 'block';
     document.getElementById('varsCard').style.display = 'block';
@@ -333,29 +379,53 @@
       .select('variable_id, value')
       .eq('patient_id', currentPatient.id);
 
-    const valueMap = {};
-    if (!error && data) data.forEach(row => { valueMap[row.variable_id] = row.value; });
+    currentValueMap = {};
+    if (!error && data) data.forEach(row => { currentValueMap[row.variable_id] = row.value; });
 
-    const filledCount = Object.values(valueMap).filter(v => v !== null && v !== '').length;
+    updateProgressText();
+    renderTabBar();
+    renderTabContent();
+  }
+
+  function updateProgressText(){
+    const filledCount = Object.values(currentValueMap).filter(v => v !== null && v !== '').length;
     document.getElementById('progressText').textContent =
       `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
+  }
 
-    function fieldHtml(id, type, options, val){
-      if (type === 's') {
-        const opts = ['<option value="">—</option>']
-          .concat(options.map(o => `<option value="${o}" ${o === val ? 'selected' : ''}>${o}</option>`));
-        return `<select data-var-id="${id}">${opts.join('')}</select>`;
-      }
-      const inputType = type === 'n' ? 'number' : 'text';
-      return `<input type="${inputType}" data-var-id="${id}" value="${val.replace(/"/g,'&quot;')}" placeholder="—">`;
+  function renderTabBar(){
+    const bar = document.getElementById('tabBar');
+    bar.innerHTML = TABS.map((t, i) =>
+      `<button type="button" class="tabbtn${i === activeTabIndex ? ' active' : ''}" data-tab="${i}">${t.name}</button>`
+    ).join('');
+    bar.querySelectorAll('.tabbtn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeTabIndex = parseInt(btn.dataset.tab, 10);
+        renderTabBar();
+        renderTabContent();
+      });
+    });
+  }
+
+  function fieldHtml(id, type, options, val){
+    if (type === 's') {
+      const opts = ['<option value="">—</option>']
+        .concat(options.map(o => `<option value="${o}" ${o === val ? 'selected' : ''}>${o}</option>`));
+      return `<select data-var-id="${id}">${opts.join('')}</select>`;
     }
+    const inputType = type === 'n' ? 'number' : 'text';
+    return `<input type="${inputType}" data-var-id="${id}" value="${val.replace(/"/g,'&quot;')}" placeholder="—">`;
+  }
 
+  function renderTabContent(){
     const wrap = document.getElementById('domainsWrap');
-    wrap.innerHTML = CORE76.map(d => `
-      <div class="domain" id="domain-${d.domain.split(' ')[0]}">
-        <h3>${d.domain}</h3>
-        ${d.vars.map(([id, label, type, options]) => {
-          const val = valueMap[id] || '';
+    const groups = varsForTab(activeTabIndex);
+
+    wrap.innerHTML = groups.map(g => `
+      <div class="domain">
+        <h3>${g.domainLabel}</h3>
+        ${g.vars.map(([id, label, type, options]) => {
+          const val = currentValueMap[id] || '';
           const filled = val !== '';
           return `
             <div class="varrow">
@@ -389,18 +459,18 @@
 
     if (error) { alert('Erro ao salvar ' + variableId + ': ' + error.message); return; }
 
+    currentValueMap[variableId] = value;
+
     const dot = document.getElementById('dot-' + variableId);
-    dot.classList.toggle('filled', value !== '');
+    if (dot) dot.classList.toggle('filled', value !== '');
 
     const flash = document.getElementById('flash-' + variableId);
-    flash.classList.add('show');
-    setTimeout(() => flash.classList.remove('show'), 1200);
+    if (flash) {
+      flash.classList.add('show');
+      setTimeout(() => flash.classList.remove('show'), 1200);
+    }
 
-    // atualiza contador
-    const dots = document.querySelectorAll('.dot');
-    const filledCount = document.querySelectorAll('.dot.filled').length;
-    document.getElementById('progressText').textContent =
-      `${filledCount} de ${TOTAL_VARS} variáveis preenchidas`;
+    updateProgressText();
   }
 
   document.getElementById('searchBtn').addEventListener('click', searchPatients);
@@ -436,16 +506,19 @@
         .eq('id', patientId)
         .maybeSingle();
       if (!error && data) {
-        await selectPatient(data);
+        // Se veio com &tab=, abre direto na aba menos completa (atalho da Completude).
+        const tabParam = params.get('tab');
+        const hasTab = tabParam !== null && TABS[parseInt(tabParam, 10)];
+        if (hasTab) activeTabIndex = parseInt(tabParam, 10);
 
-        // Se veio com &domain=, rola até o domínio (atalho da Completude).
-        const domainNum = params.get('domain');
-        if (domainNum) {
-          const domainEl = document.getElementById('domain-' + domainNum);
-          if (domainEl) {
-            domainEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            domainEl.classList.add('highlight');
-            setTimeout(() => domainEl.classList.remove('highlight'), 2600);
+        await selectPatient(data, { keepTab: hasTab });
+
+        if (hasTab) {
+          document.getElementById('varsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const activeBtn = document.querySelector('.tabbtn.active');
+          if (activeBtn) {
+            activeBtn.classList.add('highlight');
+            setTimeout(() => activeBtn.classList.remove('highlight'), 2600);
           }
         }
       }
