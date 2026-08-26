@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /painel/
+
+Sitemap: https://cognisa.med.br/sitemap.xml
