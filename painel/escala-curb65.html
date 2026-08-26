@@ -58,6 +58,11 @@
   .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
   .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
   .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
 </style>
 </head>
 <body>
@@ -96,6 +101,9 @@
     <div class="score" id="scoreValue">0 / 5</div>
     <div class="category" id="category">Baixo risco</div>
     <div class="note" id="note"></div>
+    <div class="actions">
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+    </div>
   </div>
 
 </div>
@@ -179,6 +187,17 @@
     catEl.textContent = categoria;
     catEl.style.color = cor;
     document.getElementById('note').textContent = nota;
+  }
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const pid = document.getElementById('patientId').textContent.trim();
+    const psub = document.getElementById('patientSub').textContent.trim();
+    const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const cat = document.getElementById('category').textContent.trim();
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 
   async function requireSession(){

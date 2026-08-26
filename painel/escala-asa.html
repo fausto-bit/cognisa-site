@@ -55,6 +55,11 @@
   .result .score{font-family:'Cormorant Garamond', serif;font-size:44px;font-weight:700;line-height:1;color:var(--gold-soft);}
   .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
   .result .desc{font-size:15px;margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
 </style>
 </head>
 <body>
@@ -92,6 +97,9 @@
     <div class="score-label">Classificação</div>
     <div class="score" id="scoreValue">–</div>
     <div class="desc" id="descText"></div>
+    <div class="actions">
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+    </div>
   </div>
 
 </div>
@@ -145,6 +153,17 @@
     document.getElementById('scoreValue').textContent = c.code + (emergency ? 'E' : '');
     document.getElementById('descText').textContent = c.desc + (emergency ? ' Procedimento realizado em caráter de urgência/emergência.' : '');
     document.getElementById('result').classList.add('show');
+  }
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const pid = document.getElementById('patientId').textContent.trim();
+    const psub = document.getElementById('patientSub').textContent.trim();
+    const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const desc = document.getElementById('descText').textContent.trim();
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\n${desc}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 
   async function requireSession(){

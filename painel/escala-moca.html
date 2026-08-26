@@ -64,6 +64,8 @@
   #saveBtn{background:var(--gold);color:var(--teal);}
   #saveBtn:hover{background:var(--gold-soft);}
   #saveBtn:disabled{opacity:.6;cursor:default;}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
   .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;}
   .saveflash.show{display:block;}
 </style>
@@ -107,6 +109,7 @@
     <div class="category" id="category">Dentro do esperado (≥ 26)</div>
     <div class="actions">
       <button id="saveBtn">Salvar no Prontuário (V46)</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
     </div>
     <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
   </div>
@@ -208,6 +211,17 @@
   }
 
   document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const pid = document.getElementById('patientId').textContent.trim();
+    const psub = document.getElementById('patientSub').textContent.trim();
+    const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const cat = document.getElementById('category').textContent.trim();
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
+  }
 
   async function requireSession(){
     const { data } = await client.auth.getSession();

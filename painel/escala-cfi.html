@@ -64,6 +64,8 @@
   #saveBtn{background:var(--gold);color:var(--teal);}
   #saveBtn:hover{background:var(--gold-soft);}
   #saveBtn:disabled{opacity:.6;cursor:default;}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
   .saveflash{display:none;color:var(--gold-soft);font-size:13px;margin-top:10px;text-align:center;}
   .saveflash.show{display:block;}
 </style>
@@ -113,6 +115,7 @@
 
   <div class="actions">
     <button class="act" id="saveBtn">Salvar no Prontuário (V84, V85)</button>
+    <button class="act" id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
   </div>
   <div class="saveflash" id="saveFlash">Salvo no Mapa de variáveis.</div>
 
@@ -222,6 +225,16 @@
   }
 
   document.getElementById('saveBtn').addEventListener('click', salvarNoProntuario);
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const pid = document.getElementById('patientId').textContent.trim();
+    const psub = document.getElementById('patientSub').textContent.trim();
+    const tp = document.getElementById('scorePaciente').textContent.trim();
+    const ti = document.getElementById('scoreInformante').textContent.trim();
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\nTotal · Paciente (V84): ${tp}\nTotal · Informante (V85): ${ti}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
+  }
 
   function formatDate(iso){
     if(!iso) return '';
