@@ -158,7 +158,9 @@
     const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    const peso = document.getElementById('peso').value;
+    const altura = document.getElementById('altura').value;
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\nPeso: ${peso} kg\nAltura: ${altura} m\n\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

@@ -232,7 +232,13 @@
     const psub = document.getElementById('patientSub').textContent.trim();
     const tp = document.getElementById('scorePaciente').textContent.trim();
     const ti = document.getElementById('scoreInformante').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\nTotal · Paciente (V84): ${tp}\nTotal · Informante (V85): ${ti}`;
+    const mapVal = v => v === 0 ? 'Não' : v === 0.5 ? 'Talvez' : 'Sim';
+    const itens = questions.map((q, i) => {
+      const rp = mapVal(answers.paciente[i]);
+      const ri = mapVal(answers.informante[i]);
+      return `${i+1}. ${q.p}\n   Paciente: ${rp} · Informante: ${ri}`;
+    }).join('\n');
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens}\n\nTotal · Paciente (V84): ${tp}\nTotal · Informante (V85): ${ti}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

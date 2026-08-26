@@ -213,7 +213,18 @@
     const v62 = document.getElementById('v62Val').textContent.trim();
     const v63 = document.getElementById('v63Val').textContent.trim();
     const v64 = document.getElementById('v64Val').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\nV62 · Qualidade do sono: ${v62}\nV63 · Insônia relevante: ${v63}\nV64 · Sonolência diurna: ${v64}`;
+    const latencia = selVal('latencia') === '1' ? 'Mais de 30 min' : 'Até 30 min';
+    const despertares = document.getElementById('despertares').value;
+    const reparador = selVal('reparador');
+    const reparadorLabel = reparador === 'Boa' ? 'Sim' : reparador === 'Regular' ? 'Às vezes' : 'Não';
+    const sonolencia = selVal('sonolencia');
+    const itens = [
+      `Tempo para pegar no sono: ${latencia}`,
+      `Despertares durante a noite: ${despertares}`,
+      `Sono reparador ao acordar: ${reparadorLabel}`,
+      `Sonolência excessiva durante o dia: ${sonolencia}`
+    ].join('\n');
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens}\n\nV62 · Qualidade do sono: ${v62}\nV63 · Insônia relevante: ${v63}\nV64 · Sonolência diurna: ${v64}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

@@ -273,7 +273,14 @@
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
     const incomplete = document.getElementById('incompleteNote').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
+    const itens = questions.map((q, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      const resposta = sel ? sel.textContent.trim() : 'Não respondido';
+      return `${q.text}: ${resposta}`;
+    });
+    const imcCp = imcOuCPScore();
+    itens.push(imcCp.label);
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens.join('\n')}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}${incomplete ? '\n' + incomplete : ''}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

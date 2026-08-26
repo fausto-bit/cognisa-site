@@ -279,7 +279,17 @@
     const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    const itens = [`Q1 · Idade: ${document.getElementById('ageAuto').textContent.trim()}`];
+    const q2Sel = document.querySelector('label.opt[data-q="q2"].selected');
+    itens.push(`Autopercepção da saúde: ${q2Sel ? q2Sel.textContent.trim() : 'Não respondido'}`);
+    DIMS.forEach(dim => {
+      dim.qs.forEach(q => {
+        const sel = document.querySelector(`label.opt[data-q="${q.id}"].selected`);
+        const resposta = sel ? sel.textContent.trim() : 'Não respondido';
+        itens.push(`${q.text}: ${resposta}`);
+      });
+    });
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens.join('\n')}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

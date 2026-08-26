@@ -257,7 +257,12 @@
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
     const cutoff = document.getElementById('cutoffNote').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}${cutoff ? '\n' + cutoff : ''}`;
+    const escolaridadeLabel = document.getElementById('escolaridade').selectedOptions[0]?.text || 'Não informada';
+    const itens = domains.map((d, i) => {
+      const val = document.getElementById(`dom${i}`).value;
+      return `${d.name}: ${val}/${d.max}`;
+    }).join('\n');
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\nEscolaridade: ${escolaridadeLabel}\n${itens}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}${cutoff ? '\n' + cutoff : ''}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

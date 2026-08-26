@@ -218,7 +218,12 @@
     const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    const itens = questions.map((text, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      const resposta = sel ? sel.textContent.trim() : 'Não respondido';
+      return `${text}: ${resposta}`;
+    }).join('\n');
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

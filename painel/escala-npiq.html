@@ -244,7 +244,15 @@
     const psub = document.getElementById('patientSub').textContent.trim();
     const gravidade = document.getElementById('scoreGravidade').textContent.trim();
     const estresse = document.getElementById('scoreEstresse').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\nGravidade (V52): ${gravidade}\nEstresse do cuidador (V86): ${estresse}`;
+    const itens = domains.map((d, i) => {
+      const sel = document.querySelector(`label.yn-opt[data-q="${i}"].selected`);
+      const presente = sel && sel.dataset.v === 'sim';
+      if (!presente) return `${d.name}: Não`;
+      const sevLabel = document.getElementById(`sev${i}`).selectedOptions[0].text;
+      const disLabel = document.getElementById(`dis${i}`).selectedOptions[0].text;
+      return `${d.name}: Sim — gravidade ${sevLabel}, estresse do cuidador ${disLabel}`;
+    }).join('\n');
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens}\n\nGravidade (V52): ${gravidade}\nEstresse do cuidador (V86): ${estresse}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 

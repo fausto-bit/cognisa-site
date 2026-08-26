@@ -234,7 +234,15 @@
     const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
     const score = document.getElementById('scoreValue').textContent.trim();
     const cat = document.getElementById('category').textContent.trim();
-    const texto = `${titulo}\nPaciente: ${pid}${psub}\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    const itens = questions.map((q, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      const resposta = sel ? sel.textContent.trim() : 'Não respondido';
+      return `${q.text}: ${resposta}`;
+    });
+    const overallSel = document.querySelector('label.opt[data-q="21"].selected');
+    const overallResposta = overallSel ? overallSel.textContent.trim() : 'Não respondido';
+    itens.push(`De um modo geral, o quanto o cuidador se sente sobrecarregado(a)?: ${overallResposta}`);
+    const texto = `${titulo}\nPaciente: ${pid}${psub}\n\n${itens.join('\n')}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
     navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
   }
 
