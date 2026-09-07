@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAR-Q+ — Cognisa</title>
+<meta name="description" content="Triagem de prontidão e segurança para início de atividade física — ferramenta clínica, parte do Panteão Vital (Cognisa).">
+<meta property="og:type" content="website">
+<meta property="og:title" content="PAR-Q+ — Cognisa">
+<meta property="og:description" content="Triagem de prontidão e segurança para início de atividade física — ferramenta clínica, parte do Panteão Vital (Cognisa).">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-parq-plus.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:500px;margin:0 auto;}
+  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .dname{font-size:17px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .question p.qtext{font-size:14.5px;margin:0 0 14px;color:#4a4a44;}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 8px;text-align:center;font-size:13px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+  .section-sub{font-size:13.5px;color:#5c5c56;margin:-8px 0 16px;}
+
+  #stage2{display:none;}
+  #stage2.show{display:block;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:34px;font-weight:700;line-height:1.15;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:480px;margin-left:auto;margin-right:auto;}
+  .result .note.special{color:#F0D9B8;font-weight:700;margin-top:18px;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #stage1Btn,#calcBtn{background:var(--gold);color:var(--teal);}
+  #stage1Btn:hover,#calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Hefesto</div>
+  <div class="badge">Uso exclusivo médico</div>
+  <h1>PAR-Q+</h1>
+  <p>Physical Activity Readiness Questionnaire for Everyone — triagem de prontidão e segurança para início de atividade física</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de triagem. Ele não substitui avaliação médica presencial, especialmente quando indicar necessidade de liberação prévia.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <select id="filledby">
+        <option value="">Selecione</option>
+        <option value="Paciente">O próprio paciente</option>
+        <option value="Profissional de saúde">Profissional de saúde</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-title">Etapa 1 — Triagem geral</div>
+  <div class="section-sub">Se qualquer resposta for "Sim", a Etapa 2 (aprofundamento) será liberada abaixo.</div>
+
+  <div id="stage1"></div>
+
+  <div class="actions">
+    <button id="stage1Btn" onclick="avaliarEtapa1()">Avançar</button>
+  </div>
+
+  <div id="stage2">
+    <div class="section-title">Etapa 2 — Aprofundamento por condição</div>
+    <div class="section-sub">Responda apenas os blocos que se aplicam ao paciente. Os demais podem ficar como "Não".</div>
+
+    <div id="stage2Questions"></div>
+
+    <div class="actions">
+      <button id="calcBtn" onclick="calcularFinal()">Calcular resultado</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Resultado</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="note" id="note"></div>
+    <div class="note special" id="specialNote"></div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const stage1Questions = [
+  "Condição cardíaca ou pressão alta diagnosticada?",
+  "Dor no peito em repouso, atividades diárias ou exercício?",
+  "Perda de equilíbrio por tontura ou perda de consciência nos últimos 12 meses?",
+  "Outra condição médica crônica (diabetes, doença renal, AVC)?",
+  "Uso atual de medicação prescrita para condição crônica?",
+  "Dor articular, óssea ou muscular que piora com atividade física?",
+  "Recomendação médica prévia de só exercitar-se sob supervisão?"
+];
+
+const stage2Questions = [
+  {name:"Cardiovascular / Hipertensão", text:"Pressão arterial descontrolada em repouso (≥160/90) ou infarto, cirurgia cardíaca ou AVC nos últimos 6 meses?"},
+  {name:"Metabolismo (Diabetes)", text:"Hipoglicemias frequentes sem aviso, ou complicações graves (retinopatia, neuropatia, úlcera de pé)?"},
+  {name:"Respiratório (Asma / DPOC)", text:"Aperto no peito, chiado, dispneia a pequenos esforços ou uso de bombinha de resgate mais de 2x por semana?"},
+  {name:"Musculoesquelético", text:"Dor aguda ou limitação mecânica em articulação de carga que impeça caminhada leve por 10 minutos?"}
+];
+
+const s1container = document.getElementById('stage1');
+stage1Questions.forEach((text, i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  div.innerHTML = `
+    <div class="qnum">Pergunta ${i+1} de ${stage1Questions.length}</div>
+    <p class="qtext" style="margin-top:6px;">${text}</p>
+    <div class="options">
+      <label class="opt" data-q="s1-${i}" data-v="sim"><input type="radio" name="s1-${i}" value="sim">Sim</label>
+      <label class="opt" data-q="s1-${i}" data-v="nao"><input type="radio" name="s1-${i}" value="nao">Não</label>
+    </div>
+  `;
+  s1container.appendChild(div);
+});
+
+const s2container = document.getElementById('stage2Questions');
+stage2Questions.forEach((q, i) => {
+  const div = document.createElement('div');
+  div.className = 'question';
+  div.innerHTML = `
+    <div class="dname">${q.name}</div>
+    <p class="qtext">${q.text}</p>
+    <div class="options">
+      <label class="opt" data-q="s2-${i}" data-v="sim"><input type="radio" name="s2-${i}" value="sim">Sim</label>
+      <label class="opt" data-q="s2-${i}" data-v="nao"><input type="radio" name="s2-${i}" value="nao">Não</label>
+    </div>
+  `;
+  s2container.appendChild(div);
+});
+
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(!opt) return;
+  const q = opt.dataset.q;
+  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+  opt.classList.add('selected');
+});
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function idSummaryTexto(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const preenchidoPor = document.getElementById('filledby').value;
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(preenchidoPor) idParts.push(`Preenchido por: ${preenchidoPor}`);
+  return idParts.join('  ·  ');
+}
+
+function respostasStage(prefix, n){
+  const resp = [];
+  for(let i=0;i<n;i++){
+    const sel = document.querySelector(`label.opt[data-q="${prefix}-${i}"].selected`);
+    resp.push(sel ? sel.dataset.v : null);
+  }
+  return resp;
+}
+
+let etapa2Liberada = false;
+
+function avaliarEtapa1(){
+  const respostas = respostasStage('s1', stage1Questions.length);
+  if(respostas.some(r => r === null)){
+    alert('Responda todas as perguntas da Etapa 1 antes de avançar.');
+    return;
+  }
+
+  document.getElementById('idSummary').textContent = idSummaryTexto();
+
+  const algumSim = respostas.some(r => r === 'sim');
+  if(!algumSim){
+    etapa2Liberada = false;
+    document.getElementById('stage2').classList.remove('show');
+    document.getElementById('scoreValue').textContent = 'Liberado';
+    document.getElementById('note').textContent = 'Apto para treino leve/moderado, com progressão gradual da intensidade.';
+    document.getElementById('specialNote').textContent = '';
+    document.getElementById('incompleteNote').textContent = '';
+    document.getElementById('result').classList.add('show');
+    document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  } else {
+    etapa2Liberada = true;
+    document.getElementById('result').classList.remove('show');
+    const stage2 = document.getElementById('stage2');
+    stage2.classList.add('show');
+    stage2.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+
+function calcularFinal(){
+  const respostas = respostasStage('s2', stage2Questions.length);
+  if(respostas.some(r => r === null)){
+    alert('Responda todos os blocos da Etapa 2 antes de calcular (marque "Não" se não se aplicar).');
+    return;
+  }
+
+  document.getElementById('idSummary').textContent = idSummaryTexto();
+
+  const algumSim = respostas.some(r => r === 'sim');
+  if(!algumSim){
+    document.getElementById('scoreValue').textContent = 'Liberado';
+    document.getElementById('note').textContent = 'Apto para treino leve/moderado, com progressão gradual da intensidade.';
+    document.getElementById('specialNote').textContent = '';
+  } else {
+    document.getElementById('scoreValue').textContent = 'Requer avaliação médica';
+    document.getElementById('note').textContent = 'Exige avaliação e liberação médica prévia antes de iniciar o programa de exercícios.';
+    document.getElementById('specialNote').textContent = 'Nota: em pacientes usando betabloqueador ou anti-hipertensivo, prescrever intensidade pela Escala de Borg (12–14) ou %VO₂ de reserva, em vez de frequência cardíaca alvo.';
+  }
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function resumoTexto(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const resultado = document.getElementById('scoreValue').textContent;
+  const nota = document.getElementById('note').textContent;
+  const especial = document.getElementById('specialNote').textContent;
+  let linhas = ['PAR-Q+'];
+  if(idSummary) linhas.push(idSummary);
+  linhas.push(`Resultado: ${resultado}`);
+  linhas.push(nota);
+  if(especial) linhas.push(especial);
+  return linhas.join('\n');
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('PAR-Q+', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Hefesto · Uso exclusivo médico', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const preenchidoPor = document.getElementById('filledby').value || 'Não informado';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data do preenchimento: ${data}`, 11, false, 1);
+  addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
+
+  addWrapped('Etapa 1 — Triagem geral', 13, true, 3, [184,145,90]);
+  const r1 = respostasStage('s1', stage1Questions.length);
+  stage1Questions.forEach((q, i) => {
+    addWrapped(`${i+1}. ${q}: ${r1[i] === 'sim' ? 'Sim' : (r1[i] === 'nao' ? 'Não' : 'Não respondida')}`, 10.5, false, 2.5);
+  });
+
+  if(etapa2Liberada){
+    addWrapped('Etapa 2 — Aprofundamento por condição', 13, true, 3, [184,145,90]);
+    const r2 = respostasStage('s2', stage2Questions.length);
+    stage2Questions.forEach((q, i) => {
+      addWrapped(`${q.name}: ${r2[i] === 'sim' ? 'Sim' : (r2[i] === 'nao' ? 'Não' : 'Não respondida')}`, 10.5, false, 0.5);
+      addWrapped(q.text, 9.5, false, 2.5, [90,90,80]);
+    });
+  }
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const resultado = document.getElementById('scoreValue').textContent;
+  const nota = document.getElementById('note').textContent;
+  const especial = document.getElementById('specialNote').textContent;
+  addWrapped(`Resultado: ${resultado}`, 13, true, 2);
+  addWrapped(nota, 11, false, especial ? 3 : 5);
+  if(especial){ addWrapped(especial, 10, true, 5, [168,75,58]); }
+
+  addWrapped('Nota: este instrumento é uma ferramenta de triagem e não substitui avaliação médica presencial.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `PARQ-Plus_${nome.replace(/\s+/g,'-')}.pdf` : 'PARQ-Plus.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp() {
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(resumoTexto());
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  navigator.clipboard.writeText(resumoTexto()).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>
