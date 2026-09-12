@@ -314,7 +314,7 @@
   </div>
 
   <footer>
-    <strong>Dr. Fausto Azambuja Machado</strong> — Geriatra e Clínico Geral · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602<br>
+    <strong>Dr. Fausto Azambuja Machado</strong> — Geriatra & Internista · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602<br>
     Este formulário é uma ferramenta de triagem e não substitui avaliação médica presencial. Em caso de escore elevado, procure orientação profissional.
   </footer>
 
@@ -538,7 +538,7 @@ function exportPDF() {
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(9);
   doc.setTextColor(95, 107, 101);
-  const legal = doc.splitTextToSize('Dr. Fausto Azambuja Machado — Geriatra e Clínico Geral · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602. Ferramenta de triagem; não substitui avaliação médica presencial.', 500);
+  const legal = doc.splitTextToSize('Dr. Fausto Azambuja Machado — Geriatra & Internista · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602. Ferramenta de triagem; não substitui avaliação médica presencial.', 500);
   doc.text(legal, marginX, 800);
 
   const fname = (meta.name !== '(não informado)' ? meta.name.replace(/\s+/g,'_') : 'paciente');
