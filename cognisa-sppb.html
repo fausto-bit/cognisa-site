@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPPB — Short Physical Performance Battery — Cognisa</title>
+<meta name="description" content="Bateria Breve de Desempenho Físico (SPPB) — equilíbrio, velocidade de marcha e força de membros inferiores. Ferramenta clínica, parte do Panteão Vital (Cognisa).">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SPPB — Short Physical Performance Battery — Cognisa">
+<meta property="og:description" content="Bateria Breve de Desempenho Físico (SPPB) — equilíbrio, velocidade de marcha e força de membros inferiores. Ferramenta clínica, parte do Panteão Vital (Cognisa).">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-sppb.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:500px;margin:0 auto;}
+  header.top .badge{display:inline-block;background:var(--gold);color:var(--teal);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:14px;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .question p.qtext{font-size:14.5px;margin:0 0 14px;color:#4a4a44;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 12px;font-size:13.5px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  label.opt .pts{font-weight:700;color:var(--gold);margin-right:6px;}
+  label.opt.selected .pts{color:var(--gold-soft);}
+
+  .subtest{margin-top:16px;padding-top:16px;border-top:1px dashed #DDD6C7;transition:opacity .2s;}
+  .timefield{margin-top:14px;max-width:280px;}
+  .timefield label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .timefield input{width:100%;font-family:'DM Sans',sans-serif;font-size:14.5px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .timefield input:focus{outline:none;border-color:var(--gold);}
+
+  .subscore{text-align:right;font-size:12.5px;font-weight:700;color:var(--teal-light);margin-top:12px;}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:460px;margin-left:auto;margin-right:auto;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+  .breakdown{display:flex;justify-content:center;gap:22px;margin-top:18px;flex-wrap:wrap;}
+  .breakdown .b-item{font-size:12px;color:var(--gold-soft);}
+  .breakdown .b-item strong{display:block;font-size:19px;color:var(--ivory);font-family:'Cormorant Garamond', serif;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Hefesto</div>
+  <div class="badge">Uso exclusivo médico</div>
+  <h1>SPPB</h1>
+  <p>Short Physical Performance Battery — Bateria Breve de Desempenho Físico</p>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento requer aplicação estruturada por profissional de saúde treinado (cronometragem dos testes). O escore é um dado de apoio diagnóstico e deve ser interpretado no contexto clínico completo do paciente.
+  </div>
+
+  <div class="blank-note">
+    Aplique os três testes normalmente e registre aqui a pontuação obtida em cada um. Se um domínio não foi aplicado, deixe sem selecionar — ele entra como 0 ponto e é sinalizado no resultado.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data de aplicação</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="applier">Aplicado por</label>
+      <input type="text" id="applier" placeholder="Nome do profissional">
+    </div>
+  </div>
+
+  <div class="section-title">Bateria de testes</div>
+
+  <div id="domains"></div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="calcular()">Calcular resultado</button>
+  </div>
+
+  <div class="result" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Pontuação SPPB</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="category" id="category">–</div>
+    <div class="note" id="note"></div>
+    <div class="breakdown">
+      <div class="b-item"><strong id="b-equilibrio">–</strong>Equilíbrio</div>
+      <div class="b-item"><strong id="b-marcha">–</strong>Marcha</div>
+      <div class="b-item"><strong id="b-cadeira">–</strong>Levantar</div>
+    </div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const classificacoes = [
+  { min:0, max:3, label:"Limitação grave", cor:"var(--alert)",
+    nota:"Alto risco de dependência e quedas. Indicada intervenção imediata (fisioterapia, avaliação de risco de queda, revisão de ambiente domiciliar)." },
+  { min:4, max:6, label:"Limitação moderada", cor:"var(--warn)",
+    nota:"Risco intermediário a alto. Indicação clara de fisioterapia/exercício adaptado e reavaliação periódica." },
+  { min:7, max:9, label:"Limitação leve", cor:"var(--warn)",
+    nota:"Sinais iniciais de declínio funcional. Focar em prevenção, fortalecimento muscular e monitorização." },
+  { min:10, max:12, label:"Mínima ou sem limitação", cor:"var(--ok)",
+    nota:"Desempenho preservado. Incentivar manutenção da atividade física regular." }
+];
+
+const opcoesEquilibrio = [
+  {v:0, label:"Não conseguiu manter os pés juntos (lado a lado) por 10 segundos"},
+  {v:1, label:"Manteve pés juntos por 10s, mas não o semitandem por 10 segundos"},
+  {v:2, label:"Manteve semitandem por 10s; manteve o tandem por menos de 3 segundos"},
+  {v:3, label:"Manteve o tandem entre 3 e 9,99 segundos"},
+  {v:4, label:"Manteve o tandem por 10 segundos ou mais"}
+];
+const opcoesMarcha = [
+  {v:0, label:"Não conseguiu realizar o teste"},
+  {v:1, label:"Tempo maior que 8,70 segundos"},
+  {v:2, label:"Tempo entre 6,21 e 8,70 segundos"},
+  {v:3, label:"Tempo entre 4,82 e 6,20 segundos"},
+  {v:4, label:"Tempo igual ou menor que 4,81 segundos"}
+];
+const opcoesCadeira = [
+  {v:0, label:"Não conseguiu completar, ou tempo maior que 60 segundos"},
+  {v:1, label:"Tempo maior ou igual a 16,70 segundos"},
+  {v:2, label:"Tempo entre 13,70 e 16,69 segundos"},
+  {v:3, label:"Tempo entre 11,20 e 13,69 segundos"},
+  {v:4, label:"Tempo igual ou menor que 11,19 segundos"}
+];
+
+function renderOptions(name, opcoes){
+  return opcoes.map(o => `
+    <label class="opt" data-q="${name}" data-v="${o.v}">
+      <input type="radio" name="${name}" value="${o.v}"><span class="pts">${o.v} pt${o.v===1?'':'s'}</span>${o.label}
+    </label>
+  `).join('');
+}
+
+const container = document.getElementById('domains');
+container.innerHTML = `
+  <div class="question">
+    <div class="qnum">Teste 1 de 3</div>
+    <div class="dname">Equilíbrio</div>
+    <p class="qtext">Avalia a manutenção do equilíbrio estático por 10 segundos em três posições progressivas dos pés.</p>
+    <div class="options">${renderOptions('equilibrio', opcoesEquilibrio)}</div>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Teste 2 de 3</div>
+    <div class="dname">Velocidade da marcha</div>
+    <p class="qtext">Tempo para percorrer 4 metros em ritmo habitual (pode usar bengala/andador). Considerar o melhor de duas tentativas.</p>
+    <div class="options">${renderOptions('marcha', opcoesMarcha)}</div>
+    <div class="timefield">
+      <label for="tempoMarcha">Tempo registrado (opcional, em segundos)</label>
+      <input type="text" id="tempoMarcha" placeholder="Ex.: 5,4">
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Teste 3 de 3</div>
+    <div class="dname">Levantar da cadeira</div>
+    <p class="qtext">Braços cruzados sobre o peito. Primeiro, verificar se o paciente levanta uma vez sem usar os braços.</p>
+    <div class="options">
+      <label class="opt" data-q="pretest" data-v="nao"><input type="radio" name="pretest" value="nao">Não conseguiu levantar sem usar os braços — encerra este teste (0 ponto)</label>
+      <label class="opt" data-q="pretest" data-v="sim"><input type="radio" name="pretest" value="sim">Conseguiu levantar sem usar os braços — prossegue para o teste de 5 repetições</label>
+    </div>
+    <div class="subtest" id="bloco5x">
+      <p class="qtext" style="margin-top:0;">Tempo para completar 5 ciclos seguidos de levantar/sentar, o mais rápido possível.</p>
+      <div class="options">${renderOptions('cadeira', opcoesCadeira)}</div>
+      <div class="timefield">
+        <label for="tempoCadeira">Tempo registrado (opcional, em segundos)</label>
+        <input type="text" id="tempoCadeira" placeholder="Ex.: 12,8">
+      </div>
+    </div>
+  </div>
+`;
+
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(!opt) return;
+  const q = opt.dataset.q;
+  document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+  opt.classList.add('selected');
+
+  if(q === 'pretest'){
+    const bloco = document.getElementById('bloco5x');
+    if(opt.dataset.v === 'nao'){
+      bloco.style.opacity = '0.4';
+      bloco.style.pointerEvents = 'none';
+      document.querySelectorAll('label.opt[data-q="cadeira"]').forEach(l => l.classList.remove('selected'));
+    } else {
+      bloco.style.opacity = '1';
+      bloco.style.pointerEvents = 'auto';
+    }
+  }
+});
+
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function getSelecionado(name){
+  return document.querySelector(`label.opt[data-q="${name}"].selected`);
+}
+
+function calcular(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const applier = document.getElementById('applier').value.trim();
+
+  let idParts = [];
+  if(nome) idParts.push(`Paciente: ${nome}`);
+  if(data) idParts.push(`Data: ${data}`);
+  if(applier) idParts.push(`Aplicado por: ${applier}`);
+  document.getElementById('idSummary').textContent = idParts.join('  ·  ');
+
+  const eq = getSelecionado('equilibrio');
+  const marcha = getSelecionado('marcha');
+  const pretest = getSelecionado('pretest');
+  const cadeira = getSelecionado('cadeira');
+
+  const faltando = [];
+  if(!eq) faltando.push('Equilíbrio');
+  if(!marcha) faltando.push('Velocidade da marcha');
+  if(!pretest) faltando.push('Levantar da cadeira');
+
+  const scoreEq = eq ? parseInt(eq.dataset.v) : 0;
+  const scoreMarcha = marcha ? parseInt(marcha.dataset.v) : 0;
+  let scoreCadeira = 0;
+  if(pretest && pretest.dataset.v === 'sim' && cadeira){ scoreCadeira = parseInt(cadeira.dataset.v); }
+  if(pretest && pretest.dataset.v === 'sim' && !cadeira){ faltando.push('Levantar da cadeira (5 repetições)'); }
+
+  const total = scoreEq + scoreMarcha + scoreCadeira;
+
+  document.getElementById('scoreValue').textContent = total + ' / 12';
+  document.getElementById('b-equilibrio').textContent = scoreEq;
+  document.getElementById('b-marcha').textContent = scoreMarcha;
+  document.getElementById('b-cadeira').textContent = scoreCadeira;
+
+  const faixa = classificacoes.find(c => total >= c.min && total <= c.max);
+  const catEl = document.getElementById('category');
+  catEl.textContent = faixa.label;
+  catEl.style.color = faixa.cor;
+  document.getElementById('note').textContent = faixa.nota;
+
+  const incompleteNote = document.getElementById('incompleteNote');
+  incompleteNote.textContent = faltando.length > 0
+    ? `Atenção: ${faltando.join(', ')} ficou(aram) sem avaliação. A pontuação foi calculada considerando 0 ponto nesse(s) item(ns).`
+    : '';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function montarResultadoTexto(){
+  const idSummary = document.getElementById('idSummary').textContent;
+  const total = document.getElementById('scoreValue').textContent;
+  const cat = document.getElementById('category').textContent;
+  const nota = document.getElementById('note').textContent;
+  const bEq = document.getElementById('b-equilibrio').textContent;
+  const bMarcha = document.getElementById('b-marcha').textContent;
+  const bCadeira = document.getElementById('b-cadeira').textContent;
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  return `SPPB — Short Physical Performance Battery\n${idSummary ? idSummary + '\n' : ''}Equilíbrio: ${bEq} pts · Marcha: ${bMarcha} pts · Levantar: ${bCadeira} pts\nPontuação total: ${total}\nClassificação: ${cat}\n${nota}${incomplete ? '\n' + incomplete : ''}`;
+}
+
+function baixarPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('SPPB — Short Physical Performance Battery', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Cognisa · Panteão Vital · Hefesto · Uso exclusivo médico', marginL, 20);
+  y = 36;
+
+  const nome = document.getElementById('pname').value.trim() || 'Não informado';
+  const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+  const applier = document.getElementById('applier').value.trim() || 'Não informado';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data de aplicação: ${data}`, 11, false, 1);
+  addWrapped(`Aplicado por: ${applier}`, 11, false, 5);
+
+  const eq = getSelecionado('equilibrio');
+  const marcha = getSelecionado('marcha');
+  const pretest = getSelecionado('pretest');
+  const cadeira = getSelecionado('cadeira');
+  const tempoMarcha = document.getElementById('tempoMarcha').value;
+  const tempoCadeira = document.getElementById('tempoCadeira').value;
+
+  addWrapped('Bateria de testes', 13, true, 3, [184,145,90]);
+  addWrapped(`1. Equilíbrio: ${eq ? eq.textContent.replace(/^\d+ pts?/, '').trim() : 'Não avaliado'} — ${eq ? eq.dataset.v : 0} pt`, 10.5, false, 2.5);
+  let linhaMarcha = `2. Velocidade da marcha: ${marcha ? marcha.textContent.replace(/^\d+ pts?/, '').trim() : 'Não avaliado'} — ${marcha ? marcha.dataset.v : 0} pt`;
+  if(tempoMarcha) linhaMarcha += ` (tempo registrado: ${tempoMarcha}s)`;
+  addWrapped(linhaMarcha, 10.5, false, 2.5);
+
+  if(pretest && pretest.dataset.v === 'nao'){
+    addWrapped('3. Levantar da cadeira: não conseguiu levantar sem usar os braços — 0 pt', 10.5, false, 2.5);
+  } else {
+    let linhaCadeira = `3. Levantar da cadeira: ${cadeira ? cadeira.textContent.replace(/^\d+ pts?/, '').trim() : 'Não avaliado'} — ${cadeira ? cadeira.dataset.v : 0} pt`;
+    if(tempoCadeira) linhaCadeira += ` (tempo registrado: ${tempoCadeira}s)`;
+    addWrapped(linhaCadeira, 10.5, false, 2.5);
+  }
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  const total = document.getElementById('scoreValue').textContent;
+  const categoria = document.getElementById('category').textContent;
+  const nota = document.getElementById('note').textContent;
+  addWrapped(`Pontuação total: ${total}`, 12, true, 1);
+  addWrapped(`Classificação: ${categoria}`, 12, true, 3);
+  addWrapped(nota, 10, false, 4);
+
+  const incomplete = document.getElementById('incompleteNote').textContent;
+  if(incomplete){ addWrapped(incomplete, 10, false, 4, [168,75,58]); }
+
+  addWrapped('Nota: este instrumento requer aplicação estruturada por profissional de saúde treinado. O escore é um dado de apoio diagnóstico e deve ser interpretado no contexto clínico completo do paciente.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  const nomeArquivo = nome !== 'Não informado' ? `SPPB_${nome.replace(/\s+/g,'-')}.pdf` : 'SPPB.pdf';
+  doc.save(nomeArquivo);
+}
+
+function enviarWhatsApp(){
+  const texto = montarResultadoTexto();
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copiarResultado(){
+  const texto = montarResultadoTexto();
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+</script>
+
+</body>
+</html>
