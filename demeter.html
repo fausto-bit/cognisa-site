@@ -9,147 +9,172 @@
 <meta property="og:title" content="Deméter — Cognisa">
 <meta property="og:description" content="Nutrição, microbioma e o que colocar no prato — orientações práticas e sinais de alerta do domínio Deméter, no Panteão Vital.">
 <meta property="og:url" content="https://cognisa.med.br/demeter.html">
-<meta property="og:image" content="https://cognisa.med.br/img/demeter.png">
 <meta property="og:locale" content="pt_BR">
-<link rel="icon" href="img/selo-panteao.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
-    --ivory:#F4F1EA; --ink:#1A1A17;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.65;}
-  a{color:inherit;}
-  .wrap{max-width:720px;margin:0 auto;padding:0 24px 60px;}
-
-  .top{background:var(--teal);color:var(--ivory);padding:44px 24px 36px;text-align:center;}
-  .top .backlink{display:inline-block;font-size:13px;color:var(--gold-soft);margin-bottom:18px;text-decoration:none;}
-  .top img.symbol{width:110px;height:110px;object-fit:contain;margin-bottom:16px;filter:drop-shadow(0 4px 14px rgba(0,0,0,.25));}
-  .top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px;}
-  .top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(32px,6vw,48px);margin-bottom:8px;}
-  .top .tagline{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:17px;color:var(--gold-soft);max-width:480px;margin:0 auto;}
-
-  h2{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:24px;color:var(--teal);margin:38px 0 12px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
-  p{margin-bottom:14px;font-size:15.5px;color:#2c2c27;}
-  ul{margin:0 0 14px 20px;}
-  li{margin-bottom:8px;font-size:15px;color:#2c2c27;}
-  .quote-block{background:#fff;border-left:4px solid var(--gold);border-radius:6px;padding:16px 20px;margin:20px 0;font-family:'Cormorant Garamond', serif;font-style:italic;font-size:16px;color:var(--teal);}
-
-  .playlist-cta{
-    margin-top:36px;background:var(--teal);color:var(--ivory);border-radius:14px;padding:26px 28px;text-align:center;
-  }
-  .playlist-cta p{color:var(--gold-soft);font-size:14px;margin-bottom:14px;}
-  .playlist-cta a.btn{
-    display:inline-block;background:var(--gold);color:var(--teal);font-weight:700;font-size:14px;
-    padding:11px 26px;border-radius:8px;text-decoration:none;
-  }
-  .playlist-cta a.btn:hover{background:var(--gold-soft);}
-
-  .other-gods{margin-top:40px;text-align:center;}
-  .other-gods .label{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8778;margin-bottom:12px;}
-  .other-gods .row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
-  .other-gods a{display:block;width:52px;height:52px;border-radius:50%;overflow:hidden;background:var(--teal);padding:8px;text-decoration:none;transition:.15s;}
-  .other-gods a:hover{transform:translateY(-3px);}
-  .other-gods img{width:100%;height:100%;object-fit:contain;}
-
-  footer{background:#16302B;color:#C9C4B4;padding:40px 24px 26px;margin-top:50px;text-align:center;}
-  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--gold-soft);margin-bottom:10px;}
-  footer .links a{color:#C9C4B4;margin:0 8px;text-decoration:none;}
-  footer .links a:hover{color:var(--gold-soft);}
-  footer .copyright{font-size:11px;color:#71705f;margin-top:14px;}
-
-  /* telegram cta */
-  .telegram-cta{
-    display:inline-flex;align-items:center;gap:8px;
-    background:#B8915A;color:#1F3B36;
-    font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;
-    padding:14px 32px;border-radius:999px;text-decoration:none;
-    margin-top:14px;transition:background .2s ease;
-  }
-  .telegram-cta:hover{ background:#A17D4C; }
-  .telegram-cta svg{ flex-shrink:0; }
+body{margin:0;background:#F4F1EA;font-family:'DM Sans',system-ui,sans-serif;color:#1F3B36;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;margin:0}
+  a{text-decoration:none;color:inherit}
+  .nav-link{opacity:.82;letter-spacing:.04em;transition:opacity .15s}
+  .nav-link:hover{opacity:1}
+  .cta-gold{transition:background .18s,color .18s}
+  .cta-gold:hover{background:#B8915A;color:#142823}
+  .cta-line{transition:opacity .18s}
+  .cta-line:hover{opacity:.72}
+  .other-link{transition:opacity .15s}
+  .other-link:hover{opacity:.65}
+  .footer-link{opacity:.78;transition:opacity .15s}
+  .footer-link:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+  @media (max-width:768px){.cg-domains,.cg-newsletter,.cg-footer{grid-template-columns:1fr!important;}}
 </style>
 </head>
 <body>
+<div style="width:100%;min-height:100vh;background:#F4F1EA;">
 
-<div class="top">
-  <a class="backlink" href="index.html">← Voltar para a Home</a>
-  <img class="symbol" src="img/demeter.png" alt="Símbolo de Deméter">
-  <div class="eyebrow">Panteão Vital</div>
-  <h1>Deméter</h1>
-  <div class="tagline">"A deusa da colheita sabia: o que você planta no corpo hoje, colhe em vinte anos."</div>
-</div>
-
-<div class="wrap">
-
-  <h2>O que este espaço representa</h2>
-  <p>Deméter é a deusa da colheita e da nutrição da terra. Aqui você encontra orientações práticas sobre alimentação, proteína, hidratação e microbioma — os fundamentos nutricionais que sustentam músculo, cognição e imunidade ao longo dos anos.</p>
-
-  <h2>Por que isso importa</h2>
-  <p>A nutrição no envelhecimento tem exigências diferentes das que valiam aos 30 anos. A principal mudança: a necessidade de <strong>proteína aumenta</strong>, justamente na fase em que o apetite naturalmente diminui.</p>
-  <p>Outro ponto pouco discutido é o <strong>microbioma</strong> — o conjunto de bactérias que vive no intestino e influencia digestão, imunidade e até o humor. Um microbioma pobre em diversidade está associado a mais inflamação e pior recuperação de doenças.</p>
-  <p>Com a idade, o mecanismo da sede fica menos sensível, o que faz muitas pessoas se desidratarem sem perceber — e isso afeta desde a energia até a função cognitiva.</p>
-
-  <h2>Orientações práticas</h2>
-  <ul>
-    <li><strong>Priorize proteína em todas as refeições principais</strong> — ovos, carnes, peixes, leguminosas e laticínios ajudam a preservar massa muscular.</li>
-    <li><strong>Não espere sentir sede para beber água</strong> — estabeleça um hábito regular de hidratação ao longo do dia.</li>
-    <li><strong>Diversifique fontes de fibra</strong> — frutas, verduras, grãos integrais e leguminosas variados alimentam um microbioma mais saudável.</li>
-    <li><strong>Desconfie de restrições alimentares muito rígidas sem orientação</strong> — cortar grupos alimentares inteiros pode gerar déficits importantes.</li>
-    <li><strong>Observe perda de peso não intencional</strong> — emagrecer sem tentar não é um sinal positivo depois dos 60.</li>
-    <li><strong>Considere o horário das refeições</strong> — manter uma rotina alimentar regular ajuda o metabolismo e o sono.</li>
-  </ul>
-
-  <h2>Sinais de alerta — procure seu médico</h2>
-  <ul>
-    <li>Perda de peso não intencional nos últimos meses</li>
-    <li>Redução importante do apetite sem explicação aparente</li>
-    <li>Sinais de desidratação: boca seca persistente, confusão mental, tontura</li>
-    <li>Dificuldade para mastigar ou engolir que está limitando a alimentação</li>
-    <li>Diarreia ou alterações digestivas persistentes</li>
-  </ul>
-
-
-  <div class="playlist-cta">
-    <p>Vídeos complementares sobre deméter</p>
-    <a class="btn" href="https://youtube.com/playlist?list=PLX0iDs8tFWgo&si=XbvDJcjX942j3w9v" target="_blank">Ver playlist no YouTube →</a>
-  </div>
-
-  <div class="other-gods">
-    <div class="label">Outros deuses do Panteão</div>
-    <div class="row">
-      <a href="apolo.html" title="Apolo"><img src="img/apolo.png" alt="Apolo"></a>
-      <a href="hermes.html" title="Hermes"><img src="img/hermes.png" alt="Hermes"></a>
-      <a href="atena.html" title="Atena"><img src="img/atena.png" alt="Atena"></a>
-      <a href="hefesto.html" title="Hefesto"><img src="img/hefesto.png" alt="Hefesto"></a>
-      <a href="hestia.html" title="Héstia"><img src="img/hestia.png" alt="Héstia"></a>
+  <!-- NAV -->
+  <div style="width:100%;background:#1F3B36;">
+    <div style="max-width:1200px;margin:0 auto;padding:20px clamp(16px,6vw,64px);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <a href="index.html" style="display:flex;align-items:center;gap:14px;">
+        <svg width="30" height="30" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="27" stroke="#B8915A" stroke-width="1.2"/>
+          <path d="M30 12 C22 20, 22 40, 30 48" stroke="#B8915A" stroke-width="1.2" fill="none"/>
+          <path d="M30 12 C38 20, 38 40, 30 48" stroke="#B8915A" stroke-width="1.2" fill="none"/>
+          <circle cx="30" cy="30" r="3.5" fill="#B8915A"/>
+        </svg>
+        <div style="color:#F4F1EA;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.08em;">COGNISA</div>
+      </a>
+      <div style="display:flex;flex-wrap:wrap;gap:16px 24px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#F4F1EA;">
+        <a href="index.html#dominios" class="nav-link">Domínios</a>
+        <a href="formularios.html" class="nav-link">Formulários</a>
+        <a href="sobre.html" class="nav-link">Sobre</a>
+        <a href="contato.html" class="nav-link">Contato</a>
+      </div>
     </div>
   </div>
-</div>
 
-<section style="max-width:600px;margin:48px auto;padding:32px;background:#1F3B36;border-radius:12px;text-align:center;">
-  <h3 style="color:#F4F1EA;font-family:'Cormorant Garamond', serif;font-size:1.5rem;margin-bottom:8px;">
-    Receba o Café com o Doutor
-  </h3>
-  <p style="color:#F4F1EA;font-family:'DM Sans', sans-serif;font-size:0.95rem;margin-bottom:20px;">
-    Conteúdo sobre longevidade direto na sua caixa de entrada.
-  </p>
-  <a href="https://faustoazamba.substack.com/?utm_campaign=pub&utm_medium=web" target="_blank" style="display:inline-block;background:#B8915A;color:#1F3B36;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.95rem;padding:14px 32px;border-radius:8px;text-decoration:none;">Assinar no Substack →</a>
-  <a href="https://t.me/faustodr" class="telegram-cta" target="_blank" rel="noopener">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-    Prefere receber as atualizações do Panteão Vital direto no Telegram? Entre no canal.
-  </a>
-</section>
-
-<footer>
-  <div class="mote">"Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente."</div>
-  <div class="links">
-    <a href="index.html">Home</a> · <a href="formularios.html">Formulários</a> · <a href="sobre.html">Sobre</a> · <a href="contato.html">Contato</a> · <a href="https://cafecomodoutor.com.br" target="_blank" rel="noopener">Café com o Doutor</a>
+  <!-- HERO -->
+  <div style="width:100%;background:#1F3B36;border-top:1px solid rgba(244,241,234,0.12);">
+    <div style="max-width:900px;margin:0 auto;padding:88px clamp(16px,6vw,64px) 76px;text-align:center;">
+      <a href="index.html" style="display:inline-block;color:#B8915A;font-size:12px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:28px;">← Voltar para a Home</a>
+      <div style="color:#B8915A;font-size:13px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:18px;">Panteão Vital · Domínio V</div>
+      <h1 style="color:#F4F1EA;font-size:clamp(16px,6vw,64px);line-height:1.05;margin-bottom:24px;">Deméter</h1>
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;line-height:1.5;color:#E3DFD3;max-width:620px;margin:0 auto;">"A deusa da colheita sabia: o que você planta no corpo hoje, colhe em vinte anos."</p>
+    </div>
   </div>
-  <div class="copyright">© Cognisa — Dr. Fausto Azambuja Machado, 2026</div>
-</footer>
 
+  <!-- BODY -->
+  <div style="width:100%;background:#F4F1EA;">
+    <div style="max-width:700px;margin:0 auto;padding:72px clamp(16px,6vw,64px) 24px;">
+
+      <div style="margin-bottom:48px;">
+        <h2 style="font-size:15px;color:#B8915A;text-transform:uppercase;letter-spacing:.1em;padding-bottom:12px;border-bottom:1px solid rgba(31,59,54,0.18);margin-bottom:18px;">O que este espaço representa</h2>
+        <p style="font-size:16px;line-height:1.75;color:#3A4844;">Deméter é a deusa da colheita e da nutrição da terra. Aqui você encontra orientações práticas sobre alimentação, proteína, hidratação e microbioma — os fundamentos nutricionais que sustentam músculo, cognição e imunidade ao longo dos anos.</p>
+      </div>
+
+      <div style="margin-bottom:48px;">
+        <h2 style="font-size:15px;color:#B8915A;text-transform:uppercase;letter-spacing:.1em;padding-bottom:12px;border-bottom:1px solid rgba(31,59,54,0.18);margin-bottom:18px;">Por que isso importa</h2>
+        <p style="font-size:16px;line-height:1.75;color:#3A4844;margin-bottom:14px;">A nutrição no envelhecimento tem exigências diferentes das que valiam aos 30 anos. A principal mudança: a necessidade de <strong>proteína aumenta</strong>, justamente na fase em que o apetite naturalmente diminui.</p>
+<p style="font-size:16px;line-height:1.75;color:#3A4844;margin-bottom:14px;">Outro ponto pouco discutido é o <strong>microbioma</strong> — o conjunto de bactérias que vive no intestino e influencia digestão, imunidade e até o humor. Um microbioma pobre em diversidade está associado a mais inflamação e pior recuperação de doenças.</p>
+<p style="font-size:16px;line-height:1.75;color:#3A4844;margin-bottom:14px;">Com a idade, o mecanismo da sede fica menos sensível, o que faz muitas pessoas se desidratarem sem perceber — e isso afeta desde a energia até a função cognitiva.</p>
+      </div>
+
+      <div style="margin-bottom:48px;">
+        <h2 style="font-size:15px;color:#B8915A;text-transform:uppercase;letter-spacing:.1em;padding-bottom:12px;border-bottom:1px solid rgba(31,59,54,0.18);margin-bottom:18px;">Orientações práticas</h2>
+        <div style="display:flex;flex-direction:column;">
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Priorize proteína em todas as refeições principais</strong> — ovos, carnes, peixes, leguminosas e laticínios ajudam a preservar massa muscular.</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Não espere sentir sede para beber água</strong> — estabeleça um hábito regular de hidratação ao longo do dia.</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Diversifique fontes de fibra</strong> — frutas, verduras, grãos integrais e leguminosas variados alimentam um microbioma mais saudável.</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Desconfie de restrições alimentares muito rígidas sem orientação</strong> — cortar grupos alimentares inteiros pode gerar déficits importantes.</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Observe perda de peso não intencional</strong> — emagrecer sem tentar não é um sinal positivo depois dos 60.</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#B8915A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;"><strong>Considere o horário das refeições</strong> — manter uma rotina alimentar regular ajuda o metabolismo e o sono.</div></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <h2 style="font-size:15px;color:#A84B3A;text-transform:uppercase;letter-spacing:.1em;padding-bottom:12px;border-bottom:1px solid rgba(31,59,54,0.18);margin-bottom:18px;">Sinais de alerta — procure seu médico</h2>
+        <div style="display:flex;flex-direction:column;">
+          <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#A84B3A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;">Perda de peso não intencional nos últimos meses</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#A84B3A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;">Redução importante do apetite sem explicação aparente</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#A84B3A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;">Sinais de desidratação: boca seca persistente, confusão mental, tontura</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#A84B3A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;">Dificuldade para mastigar ou engolir que está limitando a alimentação</div></div>
+<div style="display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(31,59,54,0.1);"><div style="color:#A84B3A;flex-shrink:0;">—</div><div style="font-size:15px;line-height:1.65;color:#3A4844;">Diarreia ou alterações digestivas persistentes</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PLAYLIST CTA -->
+  <div style="width:100%;background:#142823;">
+    <div style="max-width:700px;margin:0 auto;padding:56px clamp(16px,6vw,64px);text-align:center;">
+      <div style="color:#B8915A;font-size:13px;text-transform:uppercase;letter-spacing:.14em;margin-bottom:18px;">Vídeos complementares sobre deméter</div>
+      <a href="https://youtube.com/playlist?list=PLX0iDs8tFWgo&si=XbvDJcjX942j3w9v" target="_blank" class="cta-gold" style="display:inline-block;padding:15px 32px;border:1px solid #B8915A;color:#B8915A;font-size:13px;text-transform:uppercase;letter-spacing:.1em;">Ver playlist no YouTube →</a>
+    </div>
+  </div>
+
+  <!-- OTHER DOMAINS -->
+  <div style="width:100%;background:#F4F1EA;">
+    <div style="max-width:700px;margin:0 auto;padding:56px clamp(16px,6vw,64px);text-align:center;">
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#8A9490;margin-bottom:20px;">Outros domínios do Panteão</div>
+      <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;">
+        <a href="apolo.html" class="other-link" style="font-size:14px;color:#1F3B36;border-bottom:1px solid rgba(31,59,54,0.25);padding-bottom:2px;">Apolo</a>
+<a href="hermes.html" class="other-link" style="font-size:14px;color:#1F3B36;border-bottom:1px solid rgba(31,59,54,0.25);padding-bottom:2px;">Hermes</a>
+<a href="atena.html" class="other-link" style="font-size:14px;color:#1F3B36;border-bottom:1px solid rgba(31,59,54,0.25);padding-bottom:2px;">Atena</a>
+<a href="hefesto.html" class="other-link" style="font-size:14px;color:#1F3B36;border-bottom:1px solid rgba(31,59,54,0.25);padding-bottom:2px;">Hefesto</a>
+<a href="hestia.html" class="other-link" style="font-size:14px;color:#1F3B36;border-bottom:1px solid rgba(31,59,54,0.25);padding-bottom:2px;">Héstia</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <div style="width:100%;background:#F4F1EA;">
+    <div style="max-width:1200px;margin:0 auto;padding:24px clamp(16px,6vw,64px) 96px;">
+      <div class="cg-newsletter" style="display:grid;grid-template-columns:1.3fr 1fr;gap:1px;background:rgba(31,59,54,0.15);border:1px solid rgba(31,59,54,0.15);">
+        <div style="background:#F4F1EA;padding:52px 48px;">
+          <h2 style="font-size:30px;margin-bottom:14px;">Receba o Café com o Doutor</h2>
+          <p style="font-size:15px;line-height:1.7;color:#5C6B64;margin-bottom:28px;max-width:420px;">Conteúdo sobre longevidade, direto na sua caixa de entrada.</p>
+          <a href="https://faustoazamba.substack.com" class="cta-line" style="font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#1F3B36;border-bottom:1px solid #B8915A;padding-bottom:4px;">Assinar no Substack →</a>
+        </div>
+        <div style="background:#EAE4D6;padding:52px 48px;">
+          <h2 style="font-size:22px;margin-bottom:14px;">Canal no Telegram</h2>
+          <p style="font-size:14px;line-height:1.7;color:#5C6B64;margin-bottom:28px;">Atualizações do Panteão Vital direto no seu telefone.</p>
+          <a href="https://t.me/faustodr" class="cta-line" style="font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#1F3B36;border-bottom:1px solid #B8915A;padding-bottom:4px;">Entrar no canal →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="width:100%;background:#1F3B36;">
+    <div style="max-width:1200px;margin:0 auto;padding:72px clamp(16px,6vw,64px) 40px;">
+      <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:#E3DFD3;max-width:560px;margin-bottom:56px;">"Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente."</p>
+      <div class="cg-footer" style="display:grid;grid-template-columns:repeat(3,1fr);gap:48px;padding-bottom:48px;border-bottom:1px solid rgba(244,241,234,0.12);">
+        <div>
+          <div style="color:#F4F1EA;font-size:15px;margin-bottom:8px;">Dr. Fausto Azambuja Machado</div>
+          <div style="color:#9CA9A2;font-size:13px;line-height:1.8;">Geriatra &amp; Internista<br>CRM-MG 39.242<br>RQE Geriatria 15.603 · RQE Clínica 15.602</div>
+        </div>
+        <div>
+          <div style="color:#F4F1EA;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Consultórios</div>
+          <div style="color:#9CA9A2;font-size:13px;line-height:1.8;">Pampulha — Av. Alfredo Camarate, 259<br>Centro — Av. Alfredo Balena, 189</div>
+        </div>
+        <div>
+          <div style="color:#F4F1EA;font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Links</div>
+          <div style="display:flex;flex-direction:column;gap:8px;color:#9CA9A2;font-size:13px;">
+            <a href="sobre.html" class="footer-link">Sobre</a>
+            <a href="contato.html" class="footer-link">Contato</a>
+            <a href="https://youtube.com/@drfaustogeriatra" class="footer-link">YouTube</a>
+            <a href="https://cafecomodoutor.com.br" class="footer-link">Café com o Doutor</a>
+          </div>
+        </div>
+      </div>
+      <div style="padding-top:28px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;">
+        <p style="color:#7C8A82;font-size:12px;line-height:1.7;max-width:640px;margin:0;">Este conteúdo é educativo e não substitui consulta médica presencial. As orientações e formulários aqui disponíveis são ferramentas de apoio e triagem.</p>
+        <p style="color:#7C8A82;font-size:12px;margin:0;white-space:nowrap;">© Cognisa — Dr. Fausto Azambuja Machado, 2026</p>
+      </div>
+    </div>
+  </div>
+
+</div>
 </body>
 </html>
