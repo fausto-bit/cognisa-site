@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Casa Mais Segura — Cognisa</title>
+<meta name="description" content="Checklist para prevenir quedas e continuar se movimentando com segurança em casa. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Minha Casa Mais Segura — Cognisa">
+<meta property="og:description" content="Checklist para prevenir quedas e continuar se movimentando com segurança em casa. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-minha-casa-mais-segura.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .note-box{background:#EFEAE0;border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:#5c5c56;font-weight:600;}
+  .warn-box{background:#fff;border:1.5px solid var(--warn);border-left:6px solid var(--warn);border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:var(--teal);font-weight:600;}
+  .quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--teal);text-align:center;margin:20px 0;line-height:1.5;}
+
+  .plan-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .plan-row span.num{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gold);font-size:18px;width:20px;}
+  .plan-row input{flex:1;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .alert-box{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:24px 0;font-size:13.5px;color:var(--teal);}
+  .alert-box strong{color:var(--alert);display:block;margin-bottom:6px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Minha Casa Mais Segura</h1>
+  <p>Checklist para prevenir quedas e continuar se movimentando com segurança.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/minha-casa-mais-segura.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material é uma ferramenta de apoio e triagem. Não substitui avaliação médica presencial.
+  </div>
+
+  <div class="idfields">
+    <label for="pname">Nome</label>
+    <input type="text" id="pname">
+  </div>
+
+  <div class="section-title">1. Primeiro, sobre mim</div>
+  <div class="card" data-section="1. Primeiro, sobre mim">
+    <label class="chk"><input type="checkbox"><span>Caí nos últimos 12 meses</span></label>
+    <label class="chk"><input type="checkbox"><span>Caí duas ou mais vezes</span></label>
+    <label class="chk"><input type="checkbox"><span>Já tive uma queda com ferimento</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho medo de cair</span></label>
+    <label class="chk"><input type="checkbox"><span>Já deixei de sair ou fazer alguma atividade por medo de cair</span></label>
+    <label class="chk"><input type="checkbox"><span>Às vezes sinto tontura ao me levantar</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para me levantar de uma cadeira</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso apoiar as mãos para levantar</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso bengala ou andador</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade de visão mesmo usando meus óculos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dormência ou perda de sensibilidade nos pés</span></label>
+  </div>
+
+  <div class="section-title">2. Meus medicamentos</div>
+  <div class="card" data-section="2. Meus medicamentos">
+    <label class="chk"><input type="checkbox"><span>Uso cinco ou mais medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso medicamento para dormir</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso calmante/ansiolítico</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso medicamento que pode baixar minha pressão</span></label>
+    <label class="chk"><input type="checkbox"><span>Já senti tontura, sonolência ou desequilíbrio depois de tomar algum remédio</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha lista de medicamentos não é revisada há algum tempo</span></label>
+    <div class="note-box">Não suspenda medicamentos por conta própria. Leve esta informação ao seu médico.</div>
+  </div>
+
+  <div class="section-title">3. Caminhando pela casa</div>
+  <div class="card" data-section="3. Caminhando pela casa">
+    <label class="chk"><input type="checkbox"><span>Existem tapetes soltos</span></label>
+    <label class="chk"><input type="checkbox"><span>Há fios ou objetos no caminho</span></label>
+    <label class="chk"><input type="checkbox"><span>Alguns corredores ficam escuros à noite</span></label>
+    <label class="chk"><input type="checkbox"><span>Existem degraus pouco visíveis</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso subir em bancos ou cadeiras para alcançar objetos</span></label>
+    <label class="chk"><input type="checkbox"><span>O piso fica escorregadio quando molhado</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para circular com bengala/andador</span></label>
+  </div>
+
+  <div class="section-title">4. Banheiro</div>
+  <div class="card" data-section="4. Banheiro">
+    <label class="chk"><input type="checkbox"><span>Não há barras de apoio onde preciso</span></label>
+    <label class="chk"><input type="checkbox"><span>O piso do box fica escorregadio</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para sentar ou levantar do vaso sanitário</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso me apoiar em pia, toalheiro ou box</span></label>
+    <label class="chk"><input type="checkbox"><span>Tomo banho sozinho(a) mesmo tendo dificuldade de equilíbrio</span></label>
+    <label class="chk"><input type="checkbox"><span>O caminho até o banheiro fica escuro durante a noite</span></label>
+    <div class="warn-box">Atenção: toalheiro não é barra de apoio.</div>
+  </div>
+
+  <div class="section-title">5. Quarto e noite</div>
+  <div class="card" data-section="5. Quarto e noite">
+    <label class="chk"><input type="checkbox"><span>Levanto durante a noite para urinar</span></label>
+    <label class="chk"><input type="checkbox"><span>Levanto rapidamente da cama</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso procurar o interruptor no escuro</span></label>
+    <label class="chk"><input type="checkbox"><span>O caminho entre a cama e o banheiro tem obstáculos</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso chinelo frouxo ou sem fixação no calcanhar</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para sentar ou levantar da cama</span></label>
+  </div>
+
+  <div class="section-title">6. Escadas e área externa</div>
+  <div class="card" data-section="6. Escadas e área externa">
+    <label class="chk"><input type="checkbox"><span>Escadas não têm corrimão adequado</span></label>
+    <label class="chk"><input type="checkbox"><span>Os degraus têm pouca iluminação/contraste</span></label>
+    <label class="chk"><input type="checkbox"><span>Existem pisos irregulares</span></label>
+    <label class="chk"><input type="checkbox"><span>Há desníveis difíceis de perceber</span></label>
+    <label class="chk"><input type="checkbox"><span>Caminho em áreas externas sem apoio quando me sinto inseguro(a)</span></label>
+  </div>
+
+  <div class="section-title">7. O que protege contra quedas</div>
+  <div class="card" data-section="7. O que protege contra quedas">
+    <label class="chk"><input type="checkbox"><span>Faço atividade física regularmente</span></label>
+    <label class="chk"><input type="checkbox"><span>Faço exercícios de força</span></label>
+    <label class="chk"><input type="checkbox"><span>Faço exercícios de equilíbrio</span></label>
+    <label class="chk"><input type="checkbox"><span>Continuo caminhando e realizando minhas atividades</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso meus óculos quando preciso</span></label>
+    <label class="chk"><input type="checkbox"><span>Meu calçado fica firme nos pés</span></label>
+    <label class="chk"><input type="checkbox"><span>Meu dispositivo de apoio está ajustado para mim</span></label>
+    <div class="quote">Prevenir quedas não significa parar de andar.<br>O objetivo é tornar o movimento mais seguro e preservar sua independência.</div>
+  </div>
+
+  <div class="section-title">Meu plano: 3 coisas que vou mudar</div>
+  <div class="card" data-section="Meu plano: 3 coisas que vou mudar">
+    <div class="plan-row"><span class="num">1.</span><input type="text" data-label="1"></div>
+    <div class="plan-row"><span class="num">2.</span><input type="text" data-label="2"></div>
+    <div class="plan-row"><span class="num">3.</span><input type="text" data-label="3"></div>
+  </div>
+
+  <div class="section-title">Quero conversar com meu médico sobre</div>
+  <div class="card" data-section="Quero conversar com meu médico sobre">
+    <label class="chk"><input type="checkbox"><span>Quedas</span></label>
+    <label class="chk"><input type="checkbox"><span>Tontura</span></label>
+    <label class="chk"><input type="checkbox"><span>Medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Visão</span></label>
+    <label class="chk"><input type="checkbox"><span>Força/equilíbrio</span></label>
+    <label class="chk"><input type="checkbox"><span>Bengala/andador</span></label>
+    <input type="text" id="outroConversa" placeholder="Outro..." data-label="Outro" style="width:100%;margin-top:8px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;">
+  </div>
+
+  <div class="alert-box">
+    <strong>Procure avaliação médica após uma queda, especialmente se houver:</strong>
+    trauma na cabeça · perda de consciência · dor importante · dificuldade nova para caminhar · uso de anticoagulantes
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Minha Casa Mais Segura</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('input[type=text][data-label]').forEach(inp => {
+      const val = inp.value.trim();
+      if(val) itens.push(`${inp.dataset.label}. ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  const texto = linhas.join('\n') || 'Nenhum item marcado ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Minha Casa Mais Segura', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\.|^Meu plano|^Quero conversar/.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Procure avaliação médica após uma queda, especialmente se houver: trauma na cabeça, perda de consciência, dor importante, dificuldade nova para caminhar ou uso de anticoagulantes.', 9.5, true, 4, [168,75,58]);
+  addWrapped('Este material é uma ferramenta de apoio e triagem. Não substitui avaliação médica presencial.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Minha-Casa-Mais-Segura_${nome.replace(/\s+/g,'-')}.pdf` : 'Minha-Casa-Mais-Segura.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

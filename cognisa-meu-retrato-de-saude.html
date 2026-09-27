@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meu Retrato de Saúde — Cognisa</title>
+<meta name="description" content="Informações importantes sobre sua saúde para levar às consultas e atendimentos — memória, mobilidade, alimentação, medicamentos e mais. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Meu Retrato de Saúde — Cognisa">
+<meta property="og:description" content="Informações importantes sobre sua saúde para levar às consultas e atendimentos — memória, mobilidade, alimentação, medicamentos e mais. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-meu-retrato-de-saude.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:800px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+  .subsection-title{font-family:'Cormorant Garamond', serif;font-size:16px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.03em;margin:0 0 10px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .radiogrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;font-size:13.5px;cursor:pointer;background:#FBFAF7;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .measures{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;margin-top:4px;}
+  .measures .field{max-width:140px;}
+  .measures label{display:block;font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+  .measures input{width:100%;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  table.table3{width:100%;border-collapse:collapse;font-size:13px;}
+  table.table3 th{background:#EFEAE0;text-align:left;padding:8px 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.02em;color:var(--teal);}
+  table.table3 td{padding:8px 6px;border-bottom:1px solid #EEE8DA;vertical-align:middle;}
+  .opts3{display:flex;gap:5px;flex-wrap:wrap;}
+  label.opt3{border:1.5px solid #DDD6C7;border-radius:6px;padding:6px 9px;font-size:11.5px;cursor:pointer;background:#FBFAF7;white-space:nowrap;}
+  label.opt3.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:600;}
+
+  table.medtable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  table.medtable th{background:#EFEAE0;text-align:left;padding:7px 6px;font-size:10.5px;text-transform:uppercase;color:var(--teal);}
+  table.medtable td{padding:3px;border-bottom:1px solid #EEE8DA;}
+  table.medtable input{width:100%;border:1px solid #DDD6C7;border-radius:4px;padding:6px;font-size:12px;background:#FBFAF7;}
+  .medtable-wrap{overflow-x:auto;}
+
+  textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:14.5px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--gold);}
+
+  .inlinenum{display:inline-flex;align-items:center;gap:6px;}
+  .inlinenum input{width:70px;padding:7px 8px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Meu Retrato de Saúde</h1>
+  <p>Informações importantes sobre minha saúde para levar às consultas e atendimentos.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/meu-retrato-de-saude.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material é uma ferramenta de apoio e organização. Não substitui avaliação médica presencial.
+  </div>
+
+  <div class="section-title">1. Sobre mim</div>
+  <div class="card">
+    <div class="idfields" style="box-shadow:none;padding:0;margin-bottom:0;">
+      <div class="full"><label for="pname">Nome</label><input type="text" id="pname"></div>
+      <div><label for="pdob">Data de nascimento</label><input type="text" id="pdob" placeholder="dd/mm/aaaa"></div>
+      <div><label for="pcontact">Telefone de familiar/contato</label><input type="text" id="pcontact"></div>
+      <div class="full"><label for="pcompanion">Pessoa que costuma me acompanhar nas consultas</label><input type="text" id="pcompanion"></div>
+      <div class="full"><label for="pknows">Quem mais conhece minha rotina e minha saúde</label><input type="text" id="pknows"></div>
+    </div>
+    <div class="measures">
+      <div class="field"><label for="ppeso">Peso aprox. (kg)</label><input type="number" id="ppeso" step="0.1"></div>
+      <div class="field"><label for="paltura">Altura (m)</label><input type="number" id="paltura" step="0.01"></div>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="subsection-title" style="margin-bottom:6px;">Moro</div>
+      <div class="radiogrid" data-q="Moro" id="moroGroup">
+        <label class="opt" data-v="Sozinho(a)"><input type="radio" name="moro">Sozinho(a)</label>
+        <label class="opt" data-v="Com familiar"><input type="radio" name="moro">Com familiar</label>
+        <label class="opt" data-v="Com cuidador"><input type="radio" name="moro">Com cuidador</label>
+        <label class="opt" data-v="Instituição"><input type="radio" name="moro">Instituição</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">2. Como estou no dia a dia</div>
+  <div class="card" data-section="2. Memória e comunicação">
+    <div class="subsection-title">Memória e comunicação</div>
+    <label class="chk"><input type="checkbox"><span>Minha memória não atrapalha meu dia a dia</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho alguns esquecimentos, mas continuo independente</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso de ajuda por causa da memória</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho diagnóstico de demência ou outro problema de memória</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para me comunicar</span></label>
+  </div>
+  <div class="card" data-section="2. Humor (últimas semanas)">
+    <div class="subsection-title">Humor (nas últimas semanas)</div>
+    <label class="chk"><input type="checkbox"><span>Tenho me sentido bem na maior parte do tempo</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho ficado triste ou desanimado(a) com frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Perdi interesse ou prazer nas coisas que costumava gostar</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho chorado mais ou me sentido sem esperança</span></label>
+  </div>
+
+  <div class="section-title">3. Como me movimento</div>
+  <div class="card" data-section="3. Para me locomover normalmente">
+    <div class="subsection-title">Para me locomover normalmente</div>
+    <label class="chk"><input type="checkbox"><span>Ando sozinho(a), sem apoio</span></label>
+    <label class="chk"><input type="checkbox"><span>Ando sozinho(a), mas tenho medo ou risco de cair</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso bengala</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso andador</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso da ajuda de outra pessoa</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso cadeira de rodas</span></label>
+    <label class="chk"><input type="checkbox"><span>Passo a maior parte do tempo na cama</span></label>
+  </div>
+  <div class="card">
+    <div class="subsection-title" style="margin-bottom:6px;">Nos últimos 12 meses</div>
+    <div class="radiogrid" data-q="Quedas nos últimos 12 meses" id="quedasGroup">
+      <label class="opt" data-v="Não caí"><input type="radio" name="quedas">Não caí</label>
+      <label class="opt" data-v="Caí uma vez"><input type="radio" name="quedas">Caí uma vez</label>
+      <label class="opt" data-v="Caí duas ou mais vezes"><input type="radio" name="quedas">Caí duas ou mais vezes</label>
+      <label class="opt" data-v="Quase caio com frequência"><input type="radio" name="quedas">Quase caio com frequência</label>
+    </div>
+  </div>
+
+  <div class="section-title">4. O que consigo fazer sozinho</div>
+  <div class="card">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 10px;">Para cada atividade, marque a coluna que melhor descreve sua situação.</p>
+    <div class="medtable-wrap">
+      <table class="table3">
+        <thead><tr><th>Atividade</th><th colspan="3">Situação</th></tr></thead>
+        <tbody id="atividadesBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-title">5. Urina e intestino</div>
+  <div class="card" data-section="5. Sobre a urina">
+    <div class="subsection-title">Sobre a urina</div>
+    <label class="chk"><input type="checkbox"><span>Não tenho perda de urina</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho pequenos escapes ocasionalmente</span></label>
+    <label class="chk"><input type="checkbox"><span>Perco urina frequentemente</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso proteção/absorvente</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso fralda durante a noite</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso fralda durante o dia e a noite</span></label>
+  </div>
+  <div class="card" data-section="5. Intestino">
+    <div class="subsection-title">Intestino</div>
+    <label class="chk"><input type="checkbox"><span>Sem dificuldade importante</span></label>
+    <label class="chk"><input type="checkbox"><span>Prisão de ventre frequente</span></label>
+    <label class="chk"><input type="checkbox"><span>Perda involuntária de fezes</span></label>
+  </div>
+
+  <div class="section-title">6. Visão e audição</div>
+  <div class="card" data-section="6. Visão">
+    <div class="subsection-title">Visão</div>
+    <label class="chk"><input type="checkbox"><span>Enxergo bem sem óculos</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso óculos e enxergo bem com eles</span></label>
+    <label class="chk"><input type="checkbox"><span>Mesmo com óculos, tenho dificuldade que atrapalha meu dia a dia</span></label>
+  </div>
+  <div class="card" data-section="6. Audição">
+    <div class="subsection-title">Audição</div>
+    <label class="chk"><input type="checkbox"><span>Escuto bem</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho alguma dificuldade</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso aparelho auditivo</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha dificuldade para ouvir atrapalha conversas</span></label>
+  </div>
+
+  <div class="section-title">7. Alimentação</div>
+  <div class="card" data-section="7. Alimentação">
+    <label class="chk"><input type="checkbox"><span>Como normalmente</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho pouco apetite</span></label>
+    <label class="chk"><input type="checkbox"><span>Perdi peso sem querer recentemente</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para mastigar</span></label>
+    <label class="chk"><input type="checkbox"><span>Engasgo ou tenho dificuldade para engolir</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso de ajuda para me alimentar</span></label>
+    <div class="measures" style="margin-top:14px;">
+      <div class="field"><label for="perdakg">Perdi aprox. (kg)</label><input type="number" id="perdakg" step="0.1"></div>
+      <div class="field"><label for="perdameses">Em quantos meses</label><input type="number" id="perdameses"></div>
+    </div>
+  </div>
+
+  <div class="section-title">8. E então: meus medicamentos</div>
+  <div class="card">
+    <div class="medtable-wrap">
+      <table class="medtable">
+        <thead><tr><th style="width:26%">Medicamento</th><th style="width:20%">Dose / forma</th><th style="width:18%">Quanto tomo</th><th style="width:16%">Horário</th><th style="width:20%">Para quê</th></tr></thead>
+        <tbody id="medsBody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="subsection-title" style="margin-bottom:6px;">Como organizo meus medicamentos</div>
+      <div class="radiogrid" data-q="Como organizo meus medicamentos" id="organizoGroup">
+        <label class="opt" data-v="Eu mesmo(a) organizo meus medicamentos"><input type="radio" name="organizo">Eu mesmo(a) organizo</label>
+        <label class="opt" data-v="Alguém me ajuda"><input type="radio" name="organizo">Alguém me ajuda</label>
+        <label class="opt" data-v="Outra pessoa organiza e administra meus medicamentos"><input type="radio" name="organizo">Outra pessoa organiza e administra</label>
+      </div>
+    </div>
+    <div class="idfields" style="box-shadow:none;padding:0;margin:14px 0 0;grid-template-columns:1fr;">
+      <div class="full"><label for="alergias">Alergias ou reações a medicamentos</label><input type="text" id="alergias"></div>
+    </div>
+  </div>
+
+  <div class="section-title">9. O que é mais importante para mim agora?</div>
+  <div class="card" data-section="9. O que é mais importante para mim agora">
+    <label class="chk"><input type="checkbox"><span>Continuar independente</span></label>
+    <label class="chk"><input type="checkbox"><span>Melhorar minha memória</span></label>
+    <label class="chk"><input type="checkbox"><span>Caminhar melhor / evitar quedas</span></label>
+    <label class="chk"><input type="checkbox"><span>Ter menos dor</span></label>
+    <label class="chk"><input type="checkbox"><span>Dormir melhor</span></label>
+    <label class="chk"><input type="checkbox"><span>Melhorar alimentação/peso</span></label>
+    <label class="chk"><input type="checkbox"><span>Tomar menos medicamentos, se possível</span></label>
+    <label class="chk"><input type="checkbox"><span>Permanecer em minha casa</span></label>
+    <label class="chk"><input type="checkbox"><span>Ter mais disposição</span></label>
+    <textarea id="outroImportante" rows="2" placeholder="Outro..." data-label="Outro (o que é importante)" style="margin-top:10px;"></textarea>
+  </div>
+
+  <div class="section-title">Há algo mais que você gostaria que seu médico soubesse?</div>
+  <div class="card" data-section="Algo mais para o médico saber">
+    <textarea id="algoMais" rows="4" data-label="Algo mais para o médico saber"></textarea>
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Meu Retrato de Saúde</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const atividades = ["Tomar banho","Vestir-me","Ir ao banheiro","Comer","Caminhar dentro de casa","Preparar uma refeição simples","Organizar meus medicamentos","Fazer compras","Cuidar do meu dinheiro","Sair de casa sozinho(a)"];
+const atividadesOpts = ["Sozinho(a)","Com alguma ajuda","Preciso que façam por mim"];
+
+function renderAtividades(){
+  const body = document.getElementById('atividadesBody');
+  atividades.forEach((nome, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${nome}</td>
+      <td colspan="3">
+        <div class="opts3" data-q="${nome}">
+          ${atividadesOpts.map(o => `<label class="opt3" data-v="${o}">${o}</label>`).join('')}
+        </div>
+      </td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+const medFields = ['Medicamento','Dose / forma','Quanto tomo','Horário','Para quê'];
+function renderMeds(){
+  const body = document.getElementById('medsBody');
+  for(let i=0;i<6;i++){
+    const tr = document.createElement('tr');
+    tr.innerHTML = medFields.map(f => `<td><input type="text" data-medrow="${i}" data-medfield="${f}"></td>`).join('');
+    body.appendChild(tr);
+  }
+}
+
+renderAtividades();
+renderMeds();
+
+document.addEventListener('click', (e) => {
+  const opt3 = e.target.closest('label.opt3');
+  if(opt3){
+    const group = opt3.closest('.opts3');
+    group.querySelectorAll('label.opt3').forEach(l => l.classList.remove('selected'));
+    opt3.classList.add('selected');
+    return;
+  }
+  const opt = e.target.closest('label.opt');
+  if(opt){
+    const group = opt.closest('.radiogrid');
+    group.querySelectorAll('label.opt').forEach(l => l.classList.remove('selected'));
+    opt.classList.add('selected');
+  }
+});
+
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+  const dob = document.getElementById('pdob').value.trim();
+  if(dob) linhas.push(`Data de nascimento: ${dob}`);
+  const contact = document.getElementById('pcontact').value.trim();
+  if(contact) linhas.push(`Telefone de familiar/contato: ${contact}`);
+  const companion = document.getElementById('pcompanion').value.trim();
+  if(companion) linhas.push(`Acompanhante nas consultas: ${companion}`);
+  const knows = document.getElementById('pknows').value.trim();
+  if(knows) linhas.push(`Quem mais conhece minha rotina: ${knows}`);
+  const peso = document.getElementById('ppeso').value;
+  const altura = document.getElementById('paltura').value;
+  if(peso) linhas.push(`Peso aprox.: ${peso} kg`);
+  if(altura) linhas.push(`Altura: ${altura} m`);
+  const moroSel = document.querySelector('#moroGroup label.opt.selected');
+  if(moroSel) linhas.push(`Moro: ${moroSel.dataset.v}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('textarea[data-label]').forEach(t => {
+      const val = t.value.trim();
+      if(val) itens.push(`${t.dataset.label}: ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  const quedasSel = document.querySelector('#quedasGroup label.opt.selected');
+  if(quedasSel) linhas.push(`\nQuedas nos últimos 12 meses: ${quedasSel.dataset.v}`);
+
+  let ativLinhas = [];
+  document.querySelectorAll('#atividadesBody .opts3').forEach(g => {
+    const sel = g.querySelector('label.opt3.selected');
+    if(sel) ativLinhas.push(`${g.dataset.q}: ${sel.dataset.v}`);
+  });
+  if(ativLinhas.length){
+    linhas.push('\n4. O que consigo fazer sozinho');
+    linhas.push(ativLinhas.join('\n'));
+  }
+
+  const perdakg = document.getElementById('perdakg').value;
+  const perdameses = document.getElementById('perdameses').value;
+  if(perdakg) linhas.push(`Perdi aproximadamente ${perdakg} kg em ${perdameses || '?'} meses`);
+
+  let medLinhas = [];
+  for(let i=0;i<6;i++){
+    const row = document.querySelectorAll(`input[data-medrow="${i}"]`);
+    const vals = medFields.map(f => {
+      const inp = Array.from(row).find(r => r.dataset.medfield === f);
+      return inp ? inp.value.trim() : '';
+    });
+    if(vals.some(v => v)){
+      medLinhas.push(`${vals[0] || '(sem nome)'} — ${vals[1]} — ${vals[2]} — ${vals[3]} — ${vals[4]}`);
+    }
+  }
+  if(medLinhas.length){
+    linhas.push('\n8. Meus medicamentos');
+    linhas.push(medLinhas.join('\n'));
+  }
+  const organizoSel = document.querySelector('#organizoGroup label.opt.selected');
+  if(organizoSel) linhas.push(`Como organizo: ${organizoSel.dataset.v}`);
+  const alergias = document.getElementById('alergias').value.trim();
+  if(alergias) linhas.push(`Alergias ou reações a medicamentos: ${alergias}`);
+
+  const texto = linhas.join('\n') || 'Nenhum item preenchido ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Meu Retrato de Saúde', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\./.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Este material é uma ferramenta de apoio e organização. Não substitui avaliação médica presencial.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Meu-Retrato-de-Saude_${nome.replace(/\s+/g,'-')}.pdf` : 'Meu-Retrato-de-Saude.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

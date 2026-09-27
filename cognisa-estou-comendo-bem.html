@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estou Comendo Bem? — Cognisa</title>
+<meta name="description" content="Um guia para observar sua alimentação, seu peso e sinais de que seu corpo pode estar recebendo mais ou menos do que precisa. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Estou Comendo Bem? — Cognisa">
+<meta property="og:description" content="Um guia para observar sua alimentação, seu peso e sinais de que seu corpo pode estar recebendo mais ou menos do que precisa. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-estou-comendo-bem.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .radiogrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;font-size:13.5px;cursor:pointer;background:#FBFAF7;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .measures{display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;}
+  .measures .field{max-width:160px;}
+  .measures label{display:block;font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+  .measures input{width:100%;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .inlinefield{margin-top:12px;}
+  .inlinefield label{display:block;font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+  .inlinefield input{width:100%;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .note-box{background:#EFEAE0;border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:#5c5c56;font-style:italic;}
+  .alert-box{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:var(--teal);}
+
+  textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:14.5px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--gold);}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Estou Comendo Bem?</h1>
+  <p>Um guia para observar sua alimentação, seu peso e sinais de que seu corpo pode estar recebendo mais ou menos do que precisa.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/estou-comendo-bem.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material não substitui avaliação médica ou nutricional.
+  </div>
+
+  <div class="idfields">
+    <label for="pname">Nome</label>
+    <input type="text" id="pname">
+  </div>
+
+  <div class="section-title">1. Como está minha alimentação e meu apetite?</div>
+  <div class="card" data-section="1. Como está minha alimentação e meu apetite (últimas semanas)">
+    <label class="chk"><input type="checkbox"><span>Como normalmente e considero minha alimentação equilibrada</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho comido menos do que costumava</span></label>
+    <label class="chk"><input type="checkbox"><span>Meu apetite diminuiu</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho pulado refeições</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso ser lembrado(a) ou estimulado(a) a comer</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho comido além do que gostaria ou mesmo sem estar com fome</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para controlar doces, sobremesas ou alimentos muito açucarados</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para preparar ou conseguir minhas refeições</span></label>
+    <div class="inlinefield"><label for="refeicoesDia">Quantas refeições costumo fazer por dia</label><input type="number" id="refeicoesDia"></div>
+  </div>
+
+  <div class="section-title">2. Meu peso mudou?</div>
+  <div class="card" data-section="2. Meu peso mudou">
+    <div class="measures">
+      <div class="field"><label for="pesoAtual">Peso atual aprox. (kg)</label><input type="number" id="pesoAtual" step="0.1"></div>
+      <div class="field"><label for="pesoAntes">Peso há 3–6 meses (kg)</label><input type="number" id="pesoAntes" step="0.1"></div>
+    </div>
+    <div style="margin-top:14px;">
+      <label class="chk"><input type="checkbox"><span>Meu peso está mais ou menos estável</span></label>
+      <label class="chk"><input type="checkbox"><span>Perdi peso porque estava tentando emagrecer</span></label>
+      <label class="chk"><input type="checkbox"><span>Perdi peso sem querer</span></label>
+      <label class="chk"><input type="checkbox"><span>Minhas roupas ficaram mais largas</span></label>
+      <label class="chk"><input type="checkbox"><span>Não sei se perdi peso</span></label>
+    </div>
+    <div class="note-box">Perder peso sem querer depois dos 60 merece atenção — mesmo quando a pessoa estava acima do peso.</div>
+  </div>
+
+  <div class="section-title">3. Estou colocando proteína no prato?</div>
+  <div class="card" data-section="3. Estou colocando proteína no prato">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 10px;">No meu dia costuma haver:</p>
+    <label class="chk"><input type="checkbox"><span>Ovos</span></label>
+    <label class="chk"><input type="checkbox"><span>Leite, iogurte ou queijo</span></label>
+    <label class="chk"><input type="checkbox"><span>Feijão, lentilha, ervilha ou grão-de-bico</span></label>
+    <label class="chk"><input type="checkbox"><span>Carne, frango ou peixe</span></label>
+    <div class="inlinefield"><label for="outraProteina">Outra fonte de proteína</label><input type="text" id="outraProteina"></div>
+    <div style="margin-top:14px;">
+      <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">Costumo comer alguma fonte de proteína</label>
+      <div class="radiogrid" id="proteinaGroup" style="margin-top:0;">
+        <label class="opt" data-v="Em várias refeições do dia"><input type="radio" name="proteina">Em várias refeições do dia</label>
+        <label class="opt" data-v="Apenas em uma refeição"><input type="radio" name="proteina">Apenas em uma refeição</label>
+        <label class="opt" data-v="Nem todos os dias"><input type="radio" name="proteina">Nem todos os dias</label>
+        <label class="opt" data-v="Não sei identificar quais alimentos são fontes de proteína"><input type="radio" name="proteina">Não sei identificar</label>
+      </div>
+    </div>
+    <div class="note-box">Comer proteína apenas no almoço pode ser pouco para algumas pessoas idosas.</div>
+  </div>
+
+  <div class="section-title">4. Tenho alguma dificuldade para comer?</div>
+  <div class="card" data-section="4. Tenho alguma dificuldade para comer">
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para mastigar</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha prótese dentária incomoda ou está mal adaptada</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dor na boca ou nos dentes</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha boca fica muito seca</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para engolir</span></label>
+    <label class="chk"><input type="checkbox"><span>Tusso ou engasgo enquanto como ou bebo</span></label>
+    <label class="chk"><input type="checkbox"><span>A comida parece ficar parada na garganta</span></label>
+    <label class="chk"><input type="checkbox"><span>Demoro muito para terminar uma refeição</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso de ajuda para comer</span></label>
+  </div>
+
+  <div class="section-title">5. Estou bebendo líquidos?</div>
+  <div class="card" data-section="5. Estou bebendo líquidos">
+    <label class="chk"><input type="checkbox"><span>Bebo água ao longo do dia</span></label>
+    <label class="chk"><input type="checkbox"><span>Frequentemente esqueço de beber água</span></label>
+    <label class="chk"><input type="checkbox"><span>Quase não sinto sede</span></label>
+    <label class="chk"><input type="checkbox"><span>Evito beber para não precisar ir ao banheiro</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso que alguém me ofereça líquidos</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha urina frequentemente fica muito escura</span></label>
+  </div>
+
+  <div class="section-title">6. Meu intestino também conta</div>
+  <div class="card" data-section="6. Meu intestino também conta">
+    <label class="chk"><input type="checkbox"><span>Meu intestino funciona regularmente</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho prisão de ventre com frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho diarreia frequente ou persistente</span></label>
+    <label class="chk"><input type="checkbox"><span>Percebi mudança recente no funcionamento do meu intestino</span></label>
+    <label class="chk"><input type="checkbox"><span>Minhas fezes ficaram muito escuras ou pretas</span></label>
+    <label class="chk"><input type="checkbox"><span>Percebi sangue nas fezes</span></label>
+    <label class="chk"><input type="checkbox"><span>Percebi muco ("catarro") nas fezes</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dor ou desconforto abdominal frequente</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso laxantes frequentemente</span></label>
+    <div class="alert-box">Sangue nas fezes, fezes pretas, diarreia persistente ou uma mudança importante e recente do hábito intestinal merecem avaliação médica.</div>
+    <div style="margin-top:14px;">
+      <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">Costumo comer frutas, verduras, legumes ou feijão todos os dias</label>
+      <div class="radiogrid" id="frutasGroup" style="margin-top:0;">
+        <label class="opt" data-v="Sim"><input type="radio" name="frutas">Sim</label>
+        <label class="opt" data-v="Às vezes"><input type="radio" name="frutas">Às vezes</label>
+        <label class="opt" data-v="Raramente"><input type="radio" name="frutas">Raramente</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">7. Estou conseguindo cuidar da minha alimentação?</div>
+  <div class="card" data-section="7. Estou conseguindo cuidar da minha alimentação">
+    <label class="chk"><input type="checkbox"><span>Faço minhas próprias compras</span></label>
+    <label class="chk"><input type="checkbox"><span>Alguém faz as compras para mim</span></label>
+    <label class="chk"><input type="checkbox"><span>Preparo minhas refeições</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso de ajuda para cozinhar</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade financeira para comprar alimentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Às vezes fico sozinho(a) e acabo não preparando uma refeição</span></label>
+    <label class="chk"><input type="checkbox"><span>Comer sozinho(a) diminui minha vontade de comer</span></label>
+  </div>
+
+  <div class="section-title">8. E minha força?</div>
+  <div class="card" data-section="8. E minha força">
+    <label class="chk"><input type="checkbox"><span>Tenho percebido perda de força</span></label>
+    <label class="chk"><input type="checkbox"><span>Está mais difícil levantar de uma cadeira</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para subir escadas</span></label>
+    <label class="chk"><input type="checkbox"><span>Está mais difícil carregar compras ou objetos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho caminhado menos</span></label>
+    <label class="chk"><input type="checkbox"><span>Minhas pernas ou braços parecem mais finos</span></label>
+    <div class="note-box">Peso não conta toda a história. Perda de força e de massa muscular também merece atenção.</div>
+  </div>
+
+  <div class="section-title">9. O que quero melhorar agora?</div>
+  <div class="card" data-section="9. O que quero melhorar agora">
+    <label class="chk"><input type="checkbox"><span>Recuperar meu apetite</span></label>
+    <label class="chk"><input type="checkbox"><span>Evitar perder mais peso</span></label>
+    <label class="chk"><input type="checkbox"><span>Perder peso de forma saudável</span></label>
+    <label class="chk"><input type="checkbox"><span>Ganhar ou preservar músculos e força</span></label>
+    <label class="chk"><input type="checkbox"><span>Melhorar a qualidade da minha alimentação</span></label>
+    <label class="chk"><input type="checkbox"><span>Diminuir doces e alimentos muito açucarados</span></label>
+    <label class="chk"><input type="checkbox"><span>Comer proteína com mais regularidade</span></label>
+    <label class="chk"><input type="checkbox"><span>Beber líquidos adequadamente</span></label>
+    <label class="chk"><input type="checkbox"><span>Melhorar meu intestino</span></label>
+    <label class="chk"><input type="checkbox"><span>Resolver dificuldade para mastigar</span></label>
+    <label class="chk"><input type="checkbox"><span>Investigar engasgos/dificuldade para engolir</span></label>
+    <label class="chk"><input type="checkbox"><span>Organizar melhor minhas refeições</span></label>
+    <div class="inlinefield"><label for="outroMelhorar">Outro</label><input type="text" id="outroMelhorar"></div>
+  </div>
+
+  <div class="section-title">Meu pequeno plano</div>
+  <div class="card">
+    <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">Uma mudança que consigo começar esta semana</label>
+    <textarea id="mudancaSemana" rows="3"></textarea>
+    <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin:14px 0 6px;">Algo sobre minha alimentação que quero contar ao médico</label>
+    <textarea id="contarMedico" rows="3"></textarea>
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Estou Comendo Bem?</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(opt){
+    const group = opt.closest('.radiogrid');
+    group.querySelectorAll('label.opt').forEach(l => l.classList.remove('selected'));
+    opt.classList.add('selected');
+  }
+});
+
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('input[type=text],input[type=number]').forEach(inp => {
+      const val = inp.value.trim();
+      const label = inp.previousElementSibling && inp.previousElementSibling.tagName === 'LABEL' ? inp.previousElementSibling.textContent.trim() : (inp.closest('.inlinefield') ? inp.closest('.inlinefield').querySelector('label').textContent.trim() : (inp.closest('.field') ? inp.closest('.field').querySelector('label').textContent.trim() : null));
+      if(val && label) itens.push(`${label}: ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  const proteinaSel = document.querySelector('#proteinaGroup label.opt.selected');
+  if(proteinaSel) linhas.push(`Costumo comer proteína: ${proteinaSel.dataset.v}`);
+  const frutasSel = document.querySelector('#frutasGroup label.opt.selected');
+  if(frutasSel) linhas.push(`Como frutas/verduras/legumes/feijão todos os dias: ${frutasSel.dataset.v}`);
+
+  const mudanca = document.getElementById('mudancaSemana').value.trim();
+  if(mudanca) linhas.push(`\nMudança que consigo começar esta semana: ${mudanca}`);
+  const contar = document.getElementById('contarMedico').value.trim();
+  if(contar) linhas.push(`Algo sobre alimentação para contar ao médico: ${contar}`);
+
+  const texto = linhas.join('\n') || 'Nenhum item preenchido ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Estou Comendo Bem?', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\.|^Mudança que|^Algo sobre/.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Este material não substitui avaliação médica ou nutricional.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Estou-Comendo-Bem_${nome.replace(/\s+/g,'-')}.pdf` : 'Estou-Comendo-Bem.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

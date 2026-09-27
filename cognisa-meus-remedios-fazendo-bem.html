@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meus Remédios Estão Me Fazendo Bem? — Cognisa</title>
+<meta name="description" content="Um guia para organizar seus medicamentos e perceber situações que merecem ser revistas com o médico. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Meus Remédios Estão Me Fazendo Bem? — Cognisa">
+<meta property="og:description" content="Um guia para organizar seus medicamentos e perceber situações que merecem ser revistas com o médico. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-meus-remedios-fazendo-bem.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:800px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .inlinefield{margin-top:10px;}
+  .inlinefield label{display:block;font-size:12px;color:var(--gold);font-weight:700;text-transform:uppercase;margin-bottom:6px;}
+  .inlinefield input{width:100%;padding:8px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .note-box{background:#EFEAE0;border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:#5c5c56;font-style:italic;}
+  .alert-box{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:16px 0;font-size:13.5px;color:var(--teal);}
+  .alert-box strong{display:block;margin-bottom:6px;color:var(--alert);}
+
+  table.medtable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  table.medtable th{background:#EFEAE0;text-align:left;padding:7px 6px;font-size:10.5px;text-transform:uppercase;color:var(--teal);}
+  table.medtable td{padding:3px;border-bottom:1px solid #EEE8DA;}
+  table.medtable input{width:100%;border:1px solid #DDD6C7;border-radius:4px;padding:6px;font-size:12px;background:#FBFAF7;}
+  .medtable-wrap{overflow-x:auto;}
+
+  .fixedq{background:#FBFAF7;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-size:14px;}
+  .fixedq b{color:var(--gold);margin-right:6px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Meus Remédios Estão Me Fazendo Bem?</h1>
+  <p>Um guia para organizar seus medicamentos e perceber situações que merecem ser revistas.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/meus-remedios-fazendo-bem.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material não substitui avaliação médica.
+  </div>
+
+  <div class="idfields">
+    <label for="pname">Nome</label>
+    <input type="text" id="pname">
+  </div>
+
+  <div class="section-title">1. O que eu realmente estou tomando?</div>
+  <div class="card" data-section="1. O que eu realmente estou tomando">
+    <label class="chk"><input type="checkbox"><span>Trouxe minha lista atualizada</span></label>
+    <label class="chk"><input type="checkbox"><span>Trouxe as receitas</span></label>
+    <label class="chk"><input type="checkbox"><span>Trouxe as caixas ou fotos dos medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Incluí vitaminas, suplementos, fitoterápicos e medicamentos sem receita</span></label>
+    <div class="medtable-wrap" style="margin-top:14px;">
+      <table class="medtable">
+        <thead><tr><th style="width:28%">Medicamento</th><th style="width:20%">Dose</th><th style="width:22%">Horário</th><th style="width:30%">Para que tomo?</th></tr></thead>
+        <tbody id="medsBody"></tbody>
+      </table>
+    </div>
+    <div class="note-box">A lista deve mostrar o que você realmente toma — não apenas o que aparece na receita.</div>
+  </div>
+
+  <div class="section-title">2. Consigo cuidar dos meus medicamentos?</div>
+  <div class="card" data-section="2. Consigo cuidar dos meus medicamentos">
+    <label class="chk"><input type="checkbox"><span>Organizo e tomo sozinho(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso caixa organizadora</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso alarme ou lembrete</span></label>
+    <label class="chk"><input type="checkbox"><span>Às vezes esqueço doses</span></label>
+    <label class="chk"><input type="checkbox"><span>Às vezes tomo duas vezes sem querer</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para ler as embalagens</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para abrir ou dividir comprimidos</span></label>
+    <label class="chk"><input type="checkbox"><span>Não sei se estou tomando alguns deles corretamente</span></label>
+    <label class="chk"><input type="checkbox"><span>Outra pessoa separa meus medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Outra pessoa precisa me entregar cada dose</span></label>
+  </div>
+
+  <div class="section-title">3. Algum remédio pode estar me incomodando?</div>
+  <div class="card" data-section="3. Algum remédio pode estar me incomodando">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 10px;">Depois que comecei ou mudei algum medicamento, percebi:</p>
+    <label class="chk"><input type="checkbox"><span>Tontura ou sensação de desmaio</span></label>
+    <label class="chk"><input type="checkbox"><span>Sonolência durante o dia</span></label>
+    <label class="chk"><input type="checkbox"><span>Confusão ou piora da atenção</span></label>
+    <label class="chk"><input type="checkbox"><span>Quedas ou desequilíbrio</span></label>
+    <label class="chk"><input type="checkbox"><span>Fraqueza</span></label>
+    <label class="chk"><input type="checkbox"><span>Náusea ou perda de apetite</span></label>
+    <label class="chk"><input type="checkbox"><span>Prisão de ventre</span></label>
+    <label class="chk"><input type="checkbox"><span>Diarreia</span></label>
+    <label class="chk"><input type="checkbox"><span>Dificuldade para urinar</span></label>
+    <label class="chk"><input type="checkbox"><span>Boca muito seca</span></label>
+    <label class="chk"><input type="checkbox"><span>Inchaço</span></label>
+    <div class="inlinefield"><label for="outroSintoma">Outro</label><input type="text" id="outroSintoma"></div>
+    <div class="inlinefield"><label for="medRelacionado">Qual medicamento você acha que pode estar relacionado</label><input type="text" id="medRelacionado"></div>
+    <div class="inlinefield"><label for="quandoComecou">Quando isso começou</label><input type="text" id="quandoComecou"></div>
+  </div>
+
+  <div class="section-title">4. Tenho medicamentos que merecem uma conversa?</div>
+  <div class="card" data-section="4. Tenho medicamentos que merecem uma conversa">
+    <label class="chk"><input type="checkbox"><span>Uso 5 ou mais medicamentos regularmente</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso remédio para dormir</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso calmante ou ansiolítico</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso mais de um medicamento para dor</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso anticoagulante</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso insulina ou medicamento que pode baixar muito a glicose</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso medicamentos prescritos por vários profissionais diferentes</span></label>
+    <label class="chk"><input type="checkbox"><span>Não sei para que serve algum dos meus medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho medicamentos antigos em casa que às vezes volto a tomar</span></label>
+    <label class="chk"><input type="checkbox"><span>Uso medicamentos por conta própria</span></label>
+    <div class="note-box">Isso não significa que algum deles esteja errado. Significa apenas que vale revisar se todos continuam necessários, na dose adequada e funcionando bem juntos.</div>
+  </div>
+
+  <div class="section-title">5. Alguma coisa mudou e ninguém reviu meus remédios?</div>
+  <div class="card" data-section="5. Alguma coisa mudou e ninguém reviu meus remédios">
+    <label class="chk"><input type="checkbox"><span>Fui internado(a) recentemente</span></label>
+    <label class="chk"><input type="checkbox"><span>Recebi um novo diagnóstico</span></label>
+    <label class="chk"><input type="checkbox"><span>Perdi bastante peso</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha alimentação mudou muito</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha função dos rins mudou</span></label>
+    <label class="chk"><input type="checkbox"><span>Comecei a cair ou sentir tonturas</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha memória ou autonomia mudou</span></label>
+    <label class="chk"><input type="checkbox"><span>Um médico acrescentou medicamentos e não sei se outro foi retirado</span></label>
+    <label class="chk"><input type="checkbox"><span>Faz muito tempo que ninguém revisa todos os meus medicamentos juntos</span></label>
+  </div>
+
+  <div class="section-title">6. Tenho remédios repetidos ou que não sei por que ainda uso?</div>
+  <div class="card" data-section="6. Tenho remédios repetidos ou que não sei por que ainda uso">
+    <label class="chk"><input type="checkbox"><span>Tenho dois medicamentos que parecem servir para a mesma coisa</span></label>
+    <label class="chk"><input type="checkbox"><span>Não lembro por que comecei algum deles</span></label>
+    <label class="chk"><input type="checkbox"><span>Continuo usando um medicamento iniciado durante uma internação</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho medicamento prescrito há muitos anos que nunca foi revisto</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho receitas diferentes com orientações diferentes</span></label>
+    <div class="inlinefield"><label for="medDuvida">Qual medicamento mais me deixa em dúvida</label><input type="text" id="medDuvida"></div>
+  </div>
+
+  <div class="alert-box">
+    <strong>7. O que eu NÃO devo fazer</strong>
+    Não pare, reduza, aumente ou substitua um medicamento por conta própria. Revisar medicamentos não significa simplesmente "tomar menos". Às vezes a melhor decisão é manter; outras vezes pode ser necessário ajustar, substituir ou retirar gradualmente. Algumas medicações não devem ser interrompidas de repente.
+  </div>
+
+  <div class="section-title">8. As três perguntas que quero levar à consulta</div>
+  <div class="card">
+    <div class="fixedq"><b>1.</b>Ainda preciso de todos estes medicamentos?</div>
+    <div class="fixedq"><b>2.</b>Algum deles pode estar causando algo que estou sentindo?</div>
+    <div class="fixedq"><b>3.</b>Existe alguma maneira de simplificar meu tratamento com segurança?</div>
+    <div class="inlinefield"><label for="medPrincipal">O medicamento sobre o qual mais quero conversar é</label><input type="text" id="medPrincipal"></div>
+  </div>
+
+  <div class="section-title">Meu pequeno plano</div>
+  <div class="card" data-section="Meu pequeno plano">
+    <label class="chk"><input type="checkbox"><span>Vou atualizar minha lista</span></label>
+    <label class="chk"><input type="checkbox"><span>Vou separar minhas receitas</span></label>
+    <label class="chk"><input type="checkbox"><span>Vou fotografar minhas caixas</span></label>
+    <label class="chk"><input type="checkbox"><span>Vou anotar o que estou sentindo</span></label>
+    <label class="chk"><input type="checkbox"><span>Vou levar todos os medicamentos para revisão</span></label>
+    <div class="inlinefield"><label for="outroPlano">Outro</label><input type="text" id="outroPlano"></div>
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Meus Remédios Estão Me Fazendo Bem?</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const medFields = ['Medicamento','Dose','Horário','Para que tomo?'];
+function renderMeds(){
+  const body = document.getElementById('medsBody');
+  for(let i=0;i<7;i++){
+    const tr = document.createElement('tr');
+    tr.innerHTML = medFields.map(f => `<td><input type="text" data-medrow="${i}" data-medfield="${f}"></td>`).join('');
+    body.appendChild(tr);
+  }
+}
+renderMeds();
+
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('.inlinefield input').forEach(inp => {
+      const val = inp.value.trim();
+      const label = inp.closest('.inlinefield').querySelector('label').textContent.trim();
+      if(val) itens.push(`${label}: ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  let medLinhas = [];
+  for(let i=0;i<7;i++){
+    const row = document.querySelectorAll(`input[data-medrow="${i}"]`);
+    const vals = medFields.map(f => {
+      const inp = Array.from(row).find(r => r.dataset.medfield === f);
+      return inp ? inp.value.trim() : '';
+    });
+    if(vals.some(v => v)){
+      medLinhas.push(`${vals[0] || '(sem nome)'} — ${vals[1]} — ${vals[2]} — ${vals[3]}`);
+    }
+  }
+  if(medLinhas.length){
+    linhas.push('\n1. Lista de medicamentos');
+    linhas.push(medLinhas.join('\n'));
+  }
+
+  const medPrincipal = document.getElementById('medPrincipal').value.trim();
+  if(medPrincipal) linhas.push(`\nO medicamento sobre o qual mais quero conversar: ${medPrincipal}`);
+
+  const texto = linhas.join('\n') || 'Nenhum item preenchido ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Meus Remédios Estão Me Fazendo Bem?', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\.|^Meu pequeno plano|^O medicamento/.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Não pare, reduza, aumente ou substitua um medicamento por conta própria.', 9.5, true, 4, [168,75,58]);
+  addWrapped('Este material não substitui avaliação médica.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Meus-Remedios-Fazendo-Bem_${nome.replace(/\s+/g,'-')}.pdf` : 'Meus-Remedios-Fazendo-Bem.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

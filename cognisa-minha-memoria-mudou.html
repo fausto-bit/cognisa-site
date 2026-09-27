@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minha Memória Mudou? — Cognisa</title>
+<meta name="description" content="Um guia para observar mudanças na memória, no pensamento e no dia a dia, e levar situações concretas ao médico. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Minha Memória Mudou? — Cognisa">
+<meta property="og:description" content="Um guia para observar mudanças na memória, no pensamento e no dia a dia, e levar situações concretas ao médico. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-minha-memoria-mudou.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .crossref{font-size:13px;font-style:italic;color:#8a8578;margin:0 0 24px;background:#fff;border-radius:8px;padding:12px 16px;box-shadow:0 1px 3px rgba(31,59,54,.06);}
+  .crossref a{color:var(--gold);font-weight:700;text-decoration:none;}
+  .crossref a:hover{text-decoration:underline;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .radiogrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;font-size:13.5px;cursor:pointer;background:#FBFAF7;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .note-box{background:#EFEAE0;border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:#5c5c56;font-style:italic;}
+
+  .situacao{border-top:1px dashed #DDD6C7;padding-top:14px;margin-top:14px;}
+  .situacao:first-child{border-top:none;padding-top:0;margin-top:0;}
+  .situacao label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .situacao input{width:100%;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;margin-bottom:8px;}
+
+  textarea{width:100%;font-family:'DM Sans',sans-serif;font-size:14.5px;padding:10px 12px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);resize:vertical;}
+  textarea:focus{outline:none;border-color:var(--gold);}
+
+  .warn-box{background:#fff;border:1.5px solid var(--warn);border-left:6px solid var(--warn);border-radius:6px;padding:16px 18px;margin:16px 0;font-size:13.5px;color:var(--teal);}
+  .warn-box strong{display:block;margin-bottom:4px;color:var(--teal);}
+  .alert-box{background:#fff;border:1.5px solid var(--alert);border-left:6px solid var(--alert);border-radius:6px;padding:16px 18px;margin:16px 0;font-size:13.5px;color:var(--teal);}
+  .alert-box strong{display:block;margin-bottom:4px;color:var(--alert);}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Minha Memória Mudou?</h1>
+  <p>Um guia para observar mudanças na memória, no pensamento e no dia a dia.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/minha-memoria-mudou.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="crossref">Já preencheu o <a href="materiais/meu-retrato-de-saude">"Meu Retrato de Saúde"</a>? Este material aprofunda especificamente a parte de memória.</div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material não fornece diagnóstico nem substitui avaliação médica.
+  </div>
+
+  <div class="idfields">
+    <div><label for="pname">Nome</label><input type="text" id="pname"></div>
+    <div><label for="pby">Preenchido por</label><input type="text" id="pby"></div>
+  </div>
+
+  <div class="section-title">1. Quem percebeu a mudança?</div>
+  <div class="card" data-section="1. Quem percebeu a mudança">
+    <label class="chk"><input type="checkbox"><span>Eu percebi primeiro</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha família percebeu</span></label>
+    <label class="chk"><input type="checkbox"><span>Outras pessoas comentaram</span></label>
+    <label class="chk"><input type="checkbox"><span>Não sei dizer</span></label>
+  </div>
+  <div class="card">
+    <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;">Há quanto tempo</label>
+    <div class="radiogrid" id="tempoGroup">
+      <label class="opt" data-v="Começou de repente"><input type="radio" name="tempo">Começou de repente</label>
+      <label class="opt" data-v="Foi acontecendo aos poucos"><input type="radio" name="tempo">Foi acontecendo aos poucos</label>
+    </div>
+  </div>
+
+  <div class="section-title">2. O que tem acontecido?</div>
+  <div class="card" data-section="2. O que tem acontecido">
+    <label class="chk"><input type="checkbox"><span>Repito perguntas ou histórias sem perceber</span></label>
+    <label class="chk"><input type="checkbox"><span>Esqueço compromissos com frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Esqueço conversas recentes</span></label>
+    <label class="chk"><input type="checkbox"><span>Perco objetos e tenho dificuldade para encontrá-los</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho mais dificuldade para encontrar palavras</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para acompanhar conversas</span></label>
+    <label class="chk"><input type="checkbox"><span>Fico confuso(a) com datas ou horários</span></label>
+    <label class="chk"><input type="checkbox"><span>Já me desorientei em lugar conhecido</span></label>
+  </div>
+
+  <div class="section-title">3. A memória está interferindo na minha independência?</div>
+  <div class="card" data-section="3. A memória está interferindo na minha independência">
+    <label class="chk"><input type="checkbox"><span>Esqueço de tomar medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para organizar meus medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Cometi erros com contas ou pagamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho mais dificuldade para fazer compras</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade com celular, aplicativos ou equipamentos que antes utilizava</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para preparar refeições que antes fazia</span></label>
+    <label class="chk"><input type="checkbox"><span>Preciso de ajuda para marcar ou lembrar compromissos</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade para sair sozinho(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Alguém assumiu tarefas que antes eram minhas</span></label>
+  </div>
+
+  <div class="section-title">4. Nem toda dificuldade de memória começa na memória</div>
+  <div class="card" data-section="4. Nem toda dificuldade de memória começa na memória">
+    <label class="chk"><input type="checkbox"><span>Tenho me sentido triste ou desanimado(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho estado muito ansioso(a) ou preocupado(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Estou dormindo mal</span></label>
+    <label class="chk"><input type="checkbox"><span>Sinto muito sono durante o dia</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha audição atrapalha conversas</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha visão está pior</span></label>
+    <label class="chk"><input type="checkbox"><span>Comecei ou mudei algum medicamento recentemente</span></label>
+    <label class="chk"><input type="checkbox"><span>Tive doença, internação ou cirurgia recentemente</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho usado álcool com frequência</span></label>
+    <div class="note-box">Sono, humor, audição, visão, doenças e medicamentos também podem afetar a atenção e a memória.</div>
+  </div>
+
+  <div class="section-title">5. Mudaram também meu jeito ou meu comportamento?</div>
+  <div class="card" data-section="5. Mudaram também meu jeito ou meu comportamento">
+    <label class="chk"><input type="checkbox"><span>Estou mais irritado(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Fiquei mais apático(a) ou sem iniciativa</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho me isolado mais</span></label>
+    <label class="chk"><input type="checkbox"><span>Fiquei mais desconfiado(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho atitudes que minha família considera diferentes do meu habitual</span></label>
+    <textarea id="outraMudanca" rows="2" placeholder="Minha família percebe outra mudança..." data-label="Minha família percebe outra mudança" style="margin-top:10px;"></textarea>
+  </div>
+
+  <div class="section-title">6. Três situações que quero contar ao médico</div>
+  <div class="card">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 14px;">Exemplos ajudam mais do que dizer apenas "minha memória está ruim". Anote situações concretas que aconteceram no dia a dia.</p>
+    <div class="situacao"><label>1. O que aconteceu</label><input type="text" id="sit1o"><label>Quando</label><input type="text" id="sit1q"></div>
+    <div class="situacao"><label>2. O que aconteceu</label><input type="text" id="sit2o"><label>Quando</label><input type="text" id="sit2q"></div>
+    <div class="situacao"><label>3. O que aconteceu</label><input type="text" id="sit3o"><label>Quando</label><input type="text" id="sit3q"></div>
+  </div>
+
+  <div class="section-title">7. Quem convive comigo percebeu alguma coisa?</div>
+  <div class="card">
+    <label style="display:block;font-size:14px;margin-bottom:8px;color:#4a4a44;">O que mudou em relação a como essa pessoa era antes?</label>
+    <textarea id="perceberamAlgo" rows="4"></textarea>
+  </div>
+
+  <div class="warn-box">
+    <strong>Quando vale procurar avaliação</strong>
+    Mudanças progressivas, interferência nas atividades cotidianas, desorientação, alterações importantes de comportamento ou preocupação da família merecem avaliação profissional.
+  </div>
+  <div class="alert-box">
+    <strong>Atenção</strong>
+    Confusão que surge de repente (em horas ou poucos dias) é diferente de uma mudança progressiva — merece avaliação médica rápida.
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Minha Memória Mudou?</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(opt){
+    const group = opt.closest('.radiogrid');
+    group.querySelectorAll('label.opt').forEach(l => l.classList.remove('selected'));
+    opt.classList.add('selected');
+  }
+});
+
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  const by = document.getElementById('pby').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+  if(by) linhas.push(`Preenchido por: ${by}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('textarea[data-label]').forEach(t => {
+      const val = t.value.trim();
+      if(val) itens.push(`${t.dataset.label}: ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  const tempoSel = document.querySelector('#tempoGroup label.opt.selected');
+  if(tempoSel) linhas.push(`\nHá quanto tempo: ${tempoSel.dataset.v}`);
+
+  let situacoes = [];
+  for(let i=1;i<=3;i++){
+    const o = document.getElementById(`sit${i}o`).value.trim();
+    const q = document.getElementById(`sit${i}q`).value.trim();
+    if(o || q) situacoes.push(`${i}. ${o || '(sem descrição)'} — Quando: ${q || '?'}`);
+  }
+  if(situacoes.length){
+    linhas.push('\n6. Três situações que quero contar ao médico');
+    linhas.push(situacoes.join('\n'));
+  }
+
+  const perceberam = document.getElementById('perceberamAlgo').value.trim();
+  if(perceberam) linhas.push(`\n7. O que quem convive comigo percebeu: ${perceberam}`);
+
+  const texto = linhas.join('\n') || 'Nenhum item preenchido ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Minha Memória Mudou?', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\.|^Há quanto tempo/.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Confusão que surge de repente (em horas ou poucos dias) merece avaliação médica rápida.', 9.5, true, 4, [168,75,58]);
+  addWrapped('Este material não fornece diagnóstico nem substitui avaliação médica.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Minha-Memoria-Mudou_${nome.replace(/\s+/g,'-')}.pdf` : 'Minha-Memoria-Mudou.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

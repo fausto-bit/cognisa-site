@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuidar de Quem Cuida — Cognisa</title>
+<meta name="description" content="Um espaço para o cuidador se reconhecer no cuidado que oferece — sobrecarga, rede de apoio e um pequeno plano. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Cuidar de Quem Cuida — Cognisa">
+<meta property="og:description" content="Um espaço para o cuidador se reconhecer no cuidado que oferece — sobrecarga, rede de apoio e um pequeno plano. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-cuidar-de-quem-cuida.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+
+  .material-intro{background:#fff;border-radius:10px;padding:20px 24px;margin:28px 0;box-shadow:0 1px 3px rgba(31,59,54,.08);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+  .material-intro p{margin:0;font-size:14px;color:#4a4a44;max-width:480px;}
+  .material-intro a.pdfbtn{flex-shrink:0;background:transparent;color:var(--teal);border:1.5px solid var(--gold);font-weight:700;font-size:13px;padding:10px 20px;border-radius:8px;text-decoration:none;white-space:nowrap;}
+  .material-intro a.pdfbtn:hover{background:var(--gold);color:#fff;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:0 0 28px;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .card{background:#fff;border-radius:10px;padding:18px 22px;margin-bottom:14px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+
+  label.chk{display:flex;align-items:flex-start;gap:10px;padding:7px 0;font-size:14.5px;color:var(--ink);cursor:pointer;}
+  label.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+  label.chk span{flex:1;}
+
+  .radiogrid{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 16px;font-size:13.5px;cursor:pointer;background:#FBFAF7;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .fieldrow{margin-bottom:14px;}
+  .fieldrow label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .fieldrow input{width:100%;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14.5px;}
+
+  .quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--teal);text-align:center;margin:20px 0;line-height:1.5;}
+
+  .plan-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .plan-row span.num{font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gold);font-size:18px;width:20px;}
+  .plan-row input{flex:1;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;font-size:14px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);display:none;}
+  .result.show{display:block;}
+  .result h3{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold-soft);margin:0 0 14px;text-align:center;}
+  .result pre{white-space:pre-wrap;font-family:'DM Sans',sans-serif;font-size:13.5px;line-height:1.7;color:var(--ivory);margin:0 0 8px;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Materiais para Você · Cognisa</div>
+  <h1>Cuidar de Quem Cuida</h1>
+  <p>Um espaço para você se reconhecer no cuidado que oferece — antes de seguir em frente.</p>
+</header>
+
+<div class="wrap">
+
+  <div class="material-intro">
+    <p>Preencha online e leve o resumo pronto, ou baixe o PDF em branco para preencher à mão.</p>
+    <a class="pdfbtn" href="materiais/pdf/cuidar-de-quem-cuida.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este material não substitui avaliação médica ou psicológica. Foi criado para ajudar você a se reconhecer no cuidado que oferece.
+  </div>
+
+  <div class="idfields">
+    <label for="pname">Nome</label>
+    <input type="text" id="pname">
+  </div>
+
+  <div class="section-title">1. Como estou cuidando</div>
+  <div class="card">
+    <div class="fieldrow"><label for="quemcuido">Quem eu cuido</label><input type="text" id="quemcuido"></div>
+    <div class="fieldrow"><label for="tempo">Há quanto tempo</label><input type="text" id="tempo"></div>
+    <div style="margin-bottom:14px;">
+      <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">Moro com a pessoa que cuido</label>
+      <div class="radiogrid" id="moroGroup">
+        <label class="opt" data-v="Sim"><input type="radio" name="moro">Sim</label>
+        <label class="opt" data-v="Não"><input type="radio" name="moro">Não</label>
+      </div>
+    </div>
+    <div>
+      <label style="display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">No cuidado do dia a dia</label>
+      <div class="radiogrid" id="responsavelGroup">
+        <label class="opt" data-v="Sou o(a) principal responsável pelo cuidado"><input type="radio" name="responsavel">Sou o(a) principal responsável</label>
+        <label class="opt" data-v="Divido o cuidado com outras pessoas"><input type="radio" name="responsavel">Divido o cuidado com outras pessoas</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">2. Como esse cuidado está me afetando</div>
+  <div class="card" data-section="2. Como esse cuidado está me afetando">
+    <label class="chk"><input type="checkbox"><span>Cansaço físico frequente</span></label>
+    <label class="chk"><input type="checkbox"><span>Dificuldade para dormir</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho ficado mais irritado(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Tristeza ou desânimo</span></label>
+    <label class="chk"><input type="checkbox"><span>Sinto culpa com frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho pouco tempo para mim mesmo(a)</span></label>
+    <label class="chk"><input type="checkbox"><span>Larguei atividades que eu gostava</span></label>
+    <label class="chk"><input type="checkbox"><span>Me sinto sozinho(a) nessa tarefa</span></label>
+    <label class="chk"><input type="checkbox"><span>Isso tem afetado meu trabalho</span></label>
+    <label class="chk"><input type="checkbox"><span>Isso tem afetado minhas finanças</span></label>
+  </div>
+
+  <div class="section-title">3. Quem cuida comigo</div>
+  <div class="card">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 12px;">Um mapa simples da minha rede de apoio.</p>
+    <div class="fieldrow"><label for="familia">Família</label><input type="text" id="familia"></div>
+    <div class="fieldrow"><label for="amigos">Amigos</label><input type="text" id="amigos"></div>
+    <div class="fieldrow"><label for="cuidadorprof">Cuidador(a) profissional</label><input type="text" id="cuidadorprof"></div>
+    <div class="fieldrow"><label for="profsaude">Profissionais de saúde</label><input type="text" id="profsaude"></div>
+  </div>
+
+  <div class="section-title">4. O que eu não preciso fazer sozinho(a)</div>
+  <div class="card" data-section="4. O que eu não preciso fazer sozinho(a)">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 10px;">Tarefas que poderiam ser divididas com outra pessoa.</p>
+    <label class="chk"><input type="checkbox"><span>Levar às consultas médicas</span></label>
+    <label class="chk"><input type="checkbox"><span>Organizar ou comprar medicamentos</span></label>
+    <label class="chk"><input type="checkbox"><span>Fazer compras de casa</span></label>
+    <label class="chk"><input type="checkbox"><span>Fazer companhia / conversar</span></label>
+    <label class="chk"><input type="checkbox"><span>Ajudar na higiene pessoal</span></label>
+    <label class="chk"><input type="checkbox"><span>Tarefas domésticas</span></label>
+    <label class="chk"><input type="checkbox"><span>Ficar acordado(a) à noite, quando necessário</span></label>
+    <label class="chk"><input type="checkbox"><span>Cuidar de contas e burocracia</span></label>
+  </div>
+
+  <div class="section-title">5. Sinais de que preciso pedir ajuda</div>
+  <div class="card" data-section="5. Sinais de que preciso pedir ajuda">
+    <label class="chk"><input type="checkbox"><span>Exaustão que não passa com o descanso</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho adoecido com mais frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho perdido o controle emocional com mais frequência</span></label>
+    <label class="chk"><input type="checkbox"><span>Tenho dificuldade de manter o cuidado com segurança</span></label>
+    <label class="chk"><input type="checkbox"><span>Já pensei que não vou aguentar continuar assim</span></label>
+  </div>
+
+  <div class="section-title">6. Esta casa ainda é nossa</div>
+  <div class="card" data-section="6. Esta casa ainda é nossa">
+    <label class="chk"><input type="checkbox"><span>Ainda existem espaços e momentos que são meus</span></label>
+    <label class="chk"><input type="checkbox"><span>Consigo sair de casa sem sentir que tudo vai ficar desorganizado</span></label>
+    <label class="chk"><input type="checkbox"><span>Minha rotina passou a girar quase inteiramente em torno do cuidado</span></label>
+    <label class="chk"><input type="checkbox"><span>Outras pessoas da família participam das decisões</span></label>
+    <label class="chk"><input type="checkbox"><span>Consigo dizer que estou cansado(a) sem me sentir culpado(a)</span></label>
+    <div class="quote">Cuidar de alguém não deveria significar desaparecer da própria vida.</div>
+  </div>
+
+  <div class="section-title">Meu pequeno plano de cuidado</div>
+  <div class="card" data-section="Meu pequeno plano de cuidado">
+    <p style="font-size:13px;color:#8a8578;font-style:italic;margin:0 0 10px;">3 coisas que posso dividir ou mudar nesta semana:</p>
+    <div class="plan-row"><span class="num">1.</span><input type="text" data-label="1"></div>
+    <div class="plan-row"><span class="num">2.</span><input type="text" data-label="2"></div>
+    <div class="plan-row"><span class="num">3.</span><input type="text" data-label="3"></div>
+    <div class="fieldrow" style="margin-top:10px;"><label for="comquem">Com quem posso conversar sobre isso</label><input type="text" id="comquem"></div>
+  </div>
+
+  <div class="actions">
+    <button id="calcBtn" onclick="gerarResultado()">Gerar resumo</button>
+  </div>
+
+  <div class="result" id="result">
+    <h3>Resumo — Cuidar de Quem Cuida</h3>
+    <pre id="resultText"></pre>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+document.addEventListener('click', (e) => {
+  const opt = e.target.closest('label.opt');
+  if(opt){
+    const group = opt.closest('.radiogrid');
+    group.querySelectorAll('label.opt').forEach(l => l.classList.remove('selected'));
+    opt.classList.add('selected');
+  }
+});
+
+function gerarResultado(){
+  const nome = document.getElementById('pname').value.trim();
+  let linhas = [];
+  if(nome) linhas.push(`Nome: ${nome}`);
+
+  const quemcuido = document.getElementById('quemcuido').value.trim();
+  if(quemcuido) linhas.push(`Quem eu cuido: ${quemcuido}`);
+  const tempo = document.getElementById('tempo').value.trim();
+  if(tempo) linhas.push(`Há quanto tempo: ${tempo}`);
+  const moroSel = document.querySelector('#moroGroup label.opt.selected');
+  if(moroSel) linhas.push(`Moro com a pessoa que cuido: ${moroSel.dataset.v}`);
+  const respSel = document.querySelector('#responsavelGroup label.opt.selected');
+  if(respSel) linhas.push(`No cuidado do dia a dia: ${respSel.dataset.v}`);
+
+  document.querySelectorAll('.card[data-section]').forEach(card => {
+    const secTitle = card.dataset.section;
+    let itens = [];
+    card.querySelectorAll('label.chk').forEach(lbl => {
+      const input = lbl.querySelector('input[type=checkbox]');
+      if(input && input.checked){
+        itens.push('☑ ' + lbl.querySelector('span').textContent.trim());
+      }
+    });
+    card.querySelectorAll('input[type=text][data-label]').forEach(inp => {
+      const val = inp.value.trim();
+      if(val) itens.push(`${inp.dataset.label}. ${val}`);
+    });
+    if(itens.length){
+      linhas.push(`\n${secTitle}`);
+      linhas.push(itens.join('\n'));
+    }
+  });
+
+  const rede = [];
+  const familia = document.getElementById('familia').value.trim();
+  if(familia) rede.push(`Família: ${familia}`);
+  const amigos = document.getElementById('amigos').value.trim();
+  if(amigos) rede.push(`Amigos: ${amigos}`);
+  const cuidadorprof = document.getElementById('cuidadorprof').value.trim();
+  if(cuidadorprof) rede.push(`Cuidador(a) profissional: ${cuidadorprof}`);
+  const profsaude = document.getElementById('profsaude').value.trim();
+  if(profsaude) rede.push(`Profissionais de saúde: ${profsaude}`);
+  if(rede.length){
+    linhas.push('\n3. Quem cuida comigo');
+    linhas.push(rede.join('\n'));
+  }
+
+  const comquem = document.getElementById('comquem').value.trim();
+  if(comquem) linhas.push(`Com quem posso conversar sobre isso: ${comquem}`);
+
+  const texto = linhas.join('\n') || 'Nenhum item preenchido ainda.';
+  document.getElementById('resultText').textContent = texto;
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'center'});
+  return texto;
+}
+
+function addWatermark(doc){
+  const pageCount = doc.internal.getNumberOfPages();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  for(let i = 1; i <= pageCount; i++){
+    doc.setPage(i);
+    doc.saveGraphicsState();
+    doc.setGState(new doc.GState({opacity: 0.09}));
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(60);
+    doc.setTextColor(31,59,54);
+    doc.text('cognisa.med.br', pageWidth/2, pageHeight/2, { angle: 45, align: 'center' });
+    doc.restoreGraphicsState();
+  }
+}
+
+function baixarPDF(){
+  const texto = gerarResultado();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    const lines = doc.splitTextToSize(text, maxWidth);
+    lines.forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(16);
+  doc.text('Cuidar de Quem Cuida', marginL, 13);
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.text('Materiais para Você · Cognisa', marginL, 20);
+  y = 36;
+
+  texto.split('\n').forEach(linha => {
+    if(!linha.trim()){ y += 3; return; }
+    const isSectionTitle = /^\d\.|^Meu pequeno plano/.test(linha.trim());
+    addWrapped(linha, isSectionTitle ? 13 : 11, isSectionTitle, isSectionTitle ? 3 : 2, isSectionTitle ? [184,145,90] : null);
+  });
+
+  y += 4;
+  addWrapped('Este material não substitui avaliação médica ou psicológica. Foi criado para ajudar você a se reconhecer no cuidado que oferece.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  addWatermark(doc);
+
+  const nome = document.getElementById('pname').value.trim();
+  const nomeArquivo = nome ? `Cuidar-de-Quem-Cuida_${nome.replace(/\s+/g,'-')}.pdf` : 'Cuidar-de-Quem-Cuida.pdf';
+  doc.save(nomeArquivo);
+}
+
+function copiarResultado(){
+  const texto = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(texto).then(() => {
+    alert('Resultado copiado para a área de transferência.');
+  });
+}
+
+function enviarWhatsApp(){
+  const texto = document.getElementById('resultText').textContent;
+  const numero = '553125140626';
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
