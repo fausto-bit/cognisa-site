@@ -1,5 +1,13 @@
 {
   "rewrites": [
     { "source": "/materiais/:slug", "destination": "/materiais/:slug.html" }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.cognisa.med.br" }],
+      "destination": "https://cognisa.med.br/:path*",
+      "permanent": true
+    }
   ]
 }
