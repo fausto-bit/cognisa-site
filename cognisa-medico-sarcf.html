@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.jpg">
+<title>SARC-F (Médico) — Cognisa</title>
+<meta name="description" content="SARC-F — rastreio de sarcopenia — versão médico, pré-preenchida, para aplicação rápida durante a consulta. PDF, copiar e WhatsApp.">
+<link rel="canonical" href="https://cognisa.med.br/cognisa-medico-sarcf.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="SARC-F (Médico) — Cognisa">
+<meta property="og:description" content="SARC-F — rastreio de sarcopenia — versão médico, pré-preenchida, para aplicação rápida durante a consulta. PDF, copiar e WhatsApp.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-medico-sarcf.html">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question .dname{font-size:18px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .question p.qtext{font-size:15px;margin:0 0 14px;color:#4a4a44;}
+  .options{display:flex;flex-direction:column;gap:8px;}
+  label.opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:10px 14px;cursor:pointer;transition:.15s;display:block;background:#FBFAF7;font-size:13.5px;}
+  label.opt:hover{border-color:var(--gold);}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:500;}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #printBtn{background:var(--gold);color:var(--teal);}
+  #printBtn:hover{background:var(--gold-soft);}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Formulário Médico · Hefesto</div>
+    <h1>SARC-F</h1>
+  </div>
+  <a class="backlink" href="formularios-medico.html">← Formulários Médicos</a>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <input type="text" id="filledby" placeholder="Nome do profissional">
+    </div>
+  </div>
+
+  <div class="hint">
+    <strong>Pré-preenchido como "Nenhuma dificuldade" em todos os itens</strong> — clique apenas no que estiver alterado.
+  </div>
+
+  <div class="section-title">Rastreio de sarcopenia</div>
+
+  <div id="questions"></div>
+
+  <div class="result" id="result">
+    <div class="score-label">Escore total</div>
+    <div class="score" id="scoreValue">0 / 10</div>
+    <div class="category" id="category">Baixo risco</div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+
+</div>
+
+<script>
+  const questions = [
+    { title:"Força", sub:"Quanta dificuldade para levantar/carregar 5 kg?", opts:["Nenhuma dificuldade","Alguma dificuldade","Muita dificuldade ou incapaz"] },
+    { title:"Auxílio para caminhar", sub:"Quanta dificuldade para atravessar um cômodo?", opts:["Nenhuma dificuldade","Alguma dificuldade","Muita dificuldade, usa apoio ou é incapaz"] },
+    { title:"Levantar-se da cadeira", sub:"Quanta dificuldade para se levantar de uma cadeira ou cama?", opts:["Nenhuma dificuldade","Alguma dificuldade","Muita dificuldade ou precisa de ajuda"] },
+    { title:"Subir escadas", sub:"Quanta dificuldade para subir um lance de 10 degraus?", opts:["Nenhuma dificuldade","Alguma dificuldade","Muita dificuldade ou incapaz"] },
+    { title:"Quedas", sub:"Quantas vezes caiu no último ano?", opts:["Nenhuma","1 a 3 quedas","4 ou mais quedas"] }
+  ];
+
+  function formatarData(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderQuestions(){
+    const container = document.getElementById('questions');
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.innerHTML = `
+        <div class="qnum">Item ${i+1} de 5</div>
+        <div class="dname">${q.title}</div>
+        <p class="qtext">${q.sub}</p>
+        <div class="options">
+          ${q.opts.map((label, val) => `<label class="opt${val===0?' selected':''}" data-q="${i}" data-v="${val}"><input type="radio" name="q${i}" value="${val}" ${val===0?'checked':''}>${label}</label>`).join('')}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('label.opt');
+      if(!opt) return;
+      const q = opt.dataset.q;
+      document.querySelectorAll(`label.opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+      opt.classList.add('selected');
+      calcular();
+    });
+  }
+
+  function calcular(){
+    let total = 0;
+    questions.forEach((q, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      if (sel) total += parseInt(sel.dataset.v, 10);
+    });
+
+    let categoria = '', cor = '';
+    if (total >= 4) { categoria = 'Risco de sarcopenia (≥ 4)'; cor = 'var(--alert)'; }
+    else { categoria = 'Baixo risco (< 4)'; cor = 'var(--ok)'; }
+
+    document.getElementById('scoreValue').textContent = total + ' / 10';
+    const catEl = document.getElementById('category');
+    catEl.textContent = categoria;
+    catEl.style.color = cor;
+    return total;
+  }
+
+  function idSummary(){
+    const nome = document.getElementById('pname').value.trim();
+    const data = formatarData(document.getElementById('pdate').value);
+    const preenchidoPor = document.getElementById('filledby').value.trim();
+    let parts = [];
+    if(nome) parts.push(`Paciente: ${nome}`);
+    if(data) parts.push(`Data: ${data}`);
+    if(preenchidoPor) parts.push(`Preenchido por: ${preenchidoPor}`);
+    return parts.join('  ·  ');
+  }
+
+  function itensArray(){
+    return questions.map((q, i) => {
+      const sel = document.querySelector(`label.opt[data-q="${i}"].selected`);
+      const resposta = sel ? sel.textContent.trim() : 'Não respondido';
+      return { nome: q.title, resposta };
+    });
+  }
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const summary = idSummary();
+    const scoreLabel = document.querySelector('#result .score-label').textContent.trim();
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const cat = document.getElementById('category').textContent.trim();
+    const itens = itensArray().map(it => `${it.nome}: ${it.resposta}`).join('\n');
+    const texto = `${titulo}\n${summary ? summary + '\n' : ''}\n${itens}\n\n${scoreLabel}: ${score}\nClassificação: ${cat}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
+  }
+
+  function enviarWhatsApp(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const summary = idSummary();
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const cat = document.getElementById('category').textContent.trim();
+    const texto = `${titulo}\n${summary ? summary + '\n' : ''}Pontuação: ${score}\nClassificação: ${cat}`;
+    const numero = '553125140626';
+    const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
+  }
+
+  function baixarPDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const marginL = 18;
+    let y = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - marginL * 2;
+
+    function addWrapped(text, size, bold, gap, color){
+      doc.setFontSize(size);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+      const lines = doc.splitTextToSize(text, maxWidth);
+      lines.forEach(line => {
+        if(y > 280){ doc.addPage(); y = 20; }
+        doc.text(line, marginL, y);
+        y += size * 0.5;
+      });
+      y += gap;
+    }
+
+    doc.setFillColor(31,59,54);
+    doc.rect(0,0,pageWidth,26,'F');
+    doc.setTextColor(244,241,234);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.text('SARC-F (Médico)', marginL, 13);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.text('Cognisa · Formulário Médico · Hefesto', marginL, 20);
+    y = 36;
+
+    const nome = document.getElementById('pname').value.trim() || 'Não informado';
+    const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+    const preenchidoPor = document.getElementById('filledby').value.trim() || 'Não informado';
+    addWrapped(`Paciente: ${nome}`, 11, false, 1);
+    addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+    addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
+
+    addWrapped('Respostas', 13, true, 3, [184,145,90]);
+    itensArray().forEach((it, i) => addWrapped(`${i+1}. ${it.nome}: ${it.resposta}`, 10.5, false, 2.5));
+
+    addWrapped('Resultado', 13, true, 3, [184,145,90]);
+    const score = document.getElementById('scoreValue').textContent.trim();
+    const cat = document.getElementById('category').textContent.trim();
+    addWrapped(`Pontuação total: ${score}`, 12, true, 1);
+    addWrapped(`Classificação: ${cat}`, 12, true, 4);
+
+    addWrapped('Aviso importante: este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.', 9.5, false, 4, [90,90,80]);
+    addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+    const nomeArquivo = nome !== 'Não informado' ? `SARC-F_${nome.replace(/\s+/g,'-')}.pdf` : 'SARC-F.pdf';
+    doc.save(nomeArquivo);
+  }
+
+  renderQuestions();
+  calcular();
+</script>
+
+</body>
+</html>
