@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.jpg">
+<title>NPI-Q (Médico) — Cognisa</title>
+<meta name="description" content="Inventário Neuropsiquiátrico (NPI-Q) — versão médico, pré-preenchida, para aplicação rápida durante a consulta. PDF, copiar e WhatsApp.">
+<link rel="canonical" href="https://cognisa.med.br/cognisa-medico-npiq.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="NPI-Q (Médico) — Cognisa">
+<meta property="og:description" content="Inventário Neuropsiquiátrico (NPI-Q) — versão médico, pré-preenchida, para aplicação rápida durante a consulta. PDF, copiar e WhatsApp.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-medico-npiq.html">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.5;}
+  .wrap{max-width:780px;margin:0 auto;padding:0 24px 80px;}
+
+  header.top{
+    background:var(--teal);color:var(--ivory);
+    padding:28px 24px;display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;
+  }
+  header.top h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:24px;}
+  header.top .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .backlink{color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:20px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .hint{background:#EFEAE0;border-radius:6px;padding:10px 14px;margin:24px 0;font-size:13px;color:#5c5c56;}
+  .hint strong{color:var(--teal);}
+
+  .domain{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .domain .dnum{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .domain .dname{font-size:17px;font-weight:700;color:var(--teal);margin:2px 0 4px;}
+  .domain p.dtext{font-size:14px;margin:0 0 14px;color:#4a4a44;}
+
+  .yn{display:flex;gap:10px;margin-bottom:10px;}
+  label.yn-opt{border:1.5px solid #DDD6C7;border-radius:8px;padding:9px 18px;font-size:13.5px;cursor:pointer;background:#FBFAF7;flex:1;text-align:center;}
+  label.yn-opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:600;}
+  input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+
+  .subfields{display:none;grid-template-columns:1fr 1fr;gap:14px;padding-top:10px;border-top:1px dashed #DDD6C7;}
+  .subfields.show{display:grid;}
+  .subfields .field label{display:block;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .subfields select{width:100%;font-size:14px;padding:8px 9px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;}
+  @media (max-width:480px){.subfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result .scores{display:flex;justify-content:center;gap:36px;flex-wrap:wrap;margin:6px 0 10px;}
+  .result .score{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #printBtn{background:var(--gold);color:var(--teal);}
+  #printBtn:hover{background:var(--gold-soft);}
+  #copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="eyebrow">Cognisa · Formulário Médico · Atena</div>
+    <h1>NPI-Q</h1>
+  </div>
+  <a class="backlink" href="formularios-medico.html">← Formulários Médicos</a>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <input type="text" id="filledby" placeholder="Nome do profissional/cuidador">
+    </div>
+  </div>
+
+  <div class="hint">
+    <strong>Pré-preenchido como "Não" (ausente) em todos os 12 itens</strong> — clique em "Sim" só no que estiver presente, e escolha gravidade/estresse.
+  </div>
+
+  <div class="section-title">No último mês, o paciente apresentou...</div>
+
+  <div id="domains"></div>
+
+  <div class="result" id="result">
+    <div class="scores">
+      <div><div class="score-label">Gravidade</div><div class="score" id="scoreGravidade">0 / 36</div></div>
+      <div><div class="score-label">Estresse cuidador</div><div class="score" id="scoreEstresse">0 / 60</div></div>
+    </div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+
+</div>
+
+<script>
+  const domains = [
+    {name:"Delírios", text:"Acredita em coisas que não são verdadeiras?"},
+    {name:"Alucinações", text:"Vê ou ouve coisas que não estão realmente presentes?"},
+    {name:"Agitação/Agressividade", text:"Resiste a ajuda, ou é difícil de lidar em certos momentos?"},
+    {name:"Depressão/Disforia", text:"Parece triste ou deprimido, chora ou diz que está triste?"},
+    {name:"Ansiedade", text:"Fica nervoso, preocupado ou assustado sem motivo aparente?"},
+    {name:"Euforia/Exaltação", text:"Parece feliz demais ou animado sem motivo aparente?"},
+    {name:"Apatia/Indiferença", text:"Perdeu interesse no mundo ao redor, ou menos motivado a iniciar atividades?"},
+    {name:"Desinibição", text:"Age de forma impulsiva, ou diz coisas que normalmente não diria em público?"},
+    {name:"Irritabilidade/Labilidade", text:"Fica impaciente/irritado com facilidade, ou o humor muda rapidamente?"},
+    {name:"Comportamento motor aberrante", text:"Fica andando de um lado a outro, mexendo em objetos sem propósito claro?"},
+    {name:"Sono/Comportamento noturno", text:"Acorda à noite, se levanta cedo demais, ou dorme excessivamente de dia?"},
+    {name:"Apetite/Alimentação", text:"Teve mudança de apetite, de peso, ou mudou hábitos alimentares?"}
+  ];
+
+  function formatarData(iso){
+    if(!iso) return '';
+    const [ano, mes, dia] = iso.split('-');
+    return `${dia}/${mes}/${ano}`;
+  }
+
+  function renderDomains(){
+    const container = document.getElementById('domains');
+    domains.forEach((d, i) => {
+      const div = document.createElement('div');
+      div.className = 'domain';
+      div.innerHTML = `
+        <div class="dnum">Item ${i+1} de 12</div>
+        <div class="dname">${d.name}</div>
+        <p class="dtext">${d.text}</p>
+        <div class="yn">
+          <label class="yn-opt selected" data-q="${i}" data-v="nao"><input type="radio" name="yn${i}" value="nao" checked>Não</label>
+          <label class="yn-opt" data-q="${i}" data-v="sim"><input type="radio" name="yn${i}" value="sim">Sim</label>
+        </div>
+        <div class="subfields" id="sub${i}">
+          <div class="field">
+            <label>Gravidade</label>
+            <select id="sev${i}">
+              <option value="1">Leve</option>
+              <option value="2">Moderada</option>
+              <option value="3">Severa</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Estresse para o cuidador</label>
+            <select id="dis${i}">
+              <option value="0">Nenhum</option>
+              <option value="1">Mínimo</option>
+              <option value="2">Leve</option>
+              <option value="3">Moderado</option>
+              <option value="4">Severo</option>
+              <option value="5">Muito severo/extremo</option>
+            </select>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    document.addEventListener('click', (e) => {
+      const opt = e.target.closest('label.yn-opt');
+      if(opt){
+        const q = opt.dataset.q;
+        document.querySelectorAll(`label.yn-opt[data-q="${q}"]`).forEach(l => l.classList.remove('selected'));
+        opt.classList.add('selected');
+        const sub = document.getElementById(`sub${q}`);
+        if(opt.dataset.v === 'sim'){ sub.classList.add('show'); } else { sub.classList.remove('show'); }
+        calcular();
+      }
+    });
+
+    container.querySelectorAll('select').forEach(sel => sel.addEventListener('change', calcular));
+  }
+
+  function calcular(){
+    let gravidadeTotal = 0, estresseTotal = 0;
+    domains.forEach((d, i) => {
+      const sel = document.querySelector(`label.yn-opt[data-q="${i}"].selected`);
+      if (sel && sel.dataset.v === 'sim') {
+        gravidadeTotal += parseInt(document.getElementById(`sev${i}`).value, 10);
+        estresseTotal += parseInt(document.getElementById(`dis${i}`).value, 10);
+      }
+    });
+
+    document.getElementById('scoreGravidade').textContent = gravidadeTotal + ' / 36';
+    document.getElementById('scoreEstresse').textContent = estresseTotal + ' / 60';
+    return { gravidadeTotal, estresseTotal };
+  }
+
+  function idSummary(){
+    const nome = document.getElementById('pname').value.trim();
+    const data = formatarData(document.getElementById('pdate').value);
+    const preenchidoPor = document.getElementById('filledby').value.trim();
+    let parts = [];
+    if(nome) parts.push(`Paciente: ${nome}`);
+    if(data) parts.push(`Data: ${data}`);
+    if(preenchidoPor) parts.push(`Preenchido por: ${preenchidoPor}`);
+    return parts.join('  ·  ');
+  }
+
+  function itensArray(){
+    return domains.map((d, i) => {
+      const sel = document.querySelector(`label.yn-opt[data-q="${i}"].selected`);
+      const presente = sel && sel.dataset.v === 'sim';
+      if (!presente) return { nome: d.name, resposta: 'Não' };
+      const sevLabel = document.getElementById(`sev${i}`).selectedOptions[0].text;
+      const disLabel = document.getElementById(`dis${i}`).selectedOptions[0].text;
+      return { nome: d.name, resposta: `Sim — gravidade ${sevLabel}, estresse do cuidador ${disLabel}` };
+    });
+  }
+
+  function copiarResultado(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const summary = idSummary();
+    const gravidade = document.getElementById('scoreGravidade').textContent.trim();
+    const estresse = document.getElementById('scoreEstresse').textContent.trim();
+    const itens = itensArray().map(it => `${it.nome}: ${it.resposta}`).join('\n');
+    const texto = `${titulo}\n${summary ? summary + '\n' : ''}\n${itens}\n\nGravidade: ${gravidade}\nEstresse do cuidador: ${estresse}`;
+    navigator.clipboard.writeText(texto).then(() => alert('Resultado copiado para a área de transferência.'));
+  }
+
+  function enviarWhatsApp(){
+    const titulo = document.querySelector('header.top h1').textContent.trim();
+    const summary = idSummary();
+    const gravidade = document.getElementById('scoreGravidade').textContent.trim();
+    const estresse = document.getElementById('scoreEstresse').textContent.trim();
+    const texto = `${titulo}\n${summary ? summary + '\n' : ''}Gravidade: ${gravidade}\nEstresse do cuidador: ${estresse}`;
+    const numero = '553125140626';
+    const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+    window.open(url, '_blank');
+  }
+
+  function baixarPDF(){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+    const marginL = 18;
+    let y = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - marginL * 2;
+
+    function addWrapped(text, size, bold, gap, color){
+      doc.setFontSize(size);
+      doc.setFont('helvetica', bold ? 'bold' : 'normal');
+      if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+      const lines = doc.splitTextToSize(text, maxWidth);
+      lines.forEach(line => {
+        if(y > 280){ doc.addPage(); y = 20; }
+        doc.text(line, marginL, y);
+        y += size * 0.5;
+      });
+      y += gap;
+    }
+
+    doc.setFillColor(31,59,54);
+    doc.rect(0,0,pageWidth,26,'F');
+    doc.setTextColor(244,241,234);
+    doc.setFont('helvetica','bold');
+    doc.setFontSize(16);
+    doc.text('NPI-Q (Médico)', marginL, 13);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(10);
+    doc.text('Cognisa · Formulário Médico · Atena', marginL, 20);
+    y = 36;
+
+    const nome = document.getElementById('pname').value.trim() || 'Não informado';
+    const data = formatarData(document.getElementById('pdate').value) || 'Não informada';
+    const preenchidoPor = document.getElementById('filledby').value.trim() || 'Não informado';
+    addWrapped(`Paciente: ${nome}`, 11, false, 1);
+    addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+    addWrapped(`Preenchido por: ${preenchidoPor}`, 11, false, 5);
+
+    addWrapped('Itens avaliados', 13, true, 3, [184,145,90]);
+    itensArray().forEach((it, i) => addWrapped(`${i+1}. ${it.nome}: ${it.resposta}`, 10, false, 2));
+
+    addWrapped('Resultado', 13, true, 3, [184,145,90]);
+    const gravidade = document.getElementById('scoreGravidade').textContent.trim();
+    const estresse = document.getElementById('scoreEstresse').textContent.trim();
+    addWrapped(`Gravidade total: ${gravidade}`, 12, true, 1);
+    addWrapped(`Estresse total do cuidador: ${estresse}`, 12, true, 4);
+
+    addWrapped('Aviso importante: este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.', 9.5, false, 4, [90,90,80]);
+    addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+    const nomeArquivo = nome !== 'Não informado' ? `NPI-Q_${nome.replace(/\s+/g,'-')}.pdf` : 'NPI-Q.pdf';
+    doc.save(nomeArquivo);
+  }
+
+  renderDomains();
+  calcular();
+</script>
+
+</body>
+</html>
