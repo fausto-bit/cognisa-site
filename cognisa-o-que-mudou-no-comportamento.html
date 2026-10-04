@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="img/favicon.jpg">
+<title>O que mudou no comportamento? — Materiais para Você · Cognisa</title>
+<meta name="description" content="Roteiro para familiares e cuidadores de pessoas com alterações de memória e confusão: organize o que mudou no comportamento e leve à consulta. Material do ecossistema Cognisa.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="O que mudou no comportamento? — Cognisa">
+<meta property="og:description" content="Roteiro para familiares e cuidadores de pessoas com alterações de memória e confusão: organize o que mudou no comportamento e leve à consulta. Material do ecossistema Cognisa.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-o-que-mudou-no-comportamento.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#1F3B36; --gold:#B8915A; --ivory:#F4F1EA; --ink:#26302d; --muted:#667069;
+  --line:#e2d9c6; --card:#ffffff; --wa:#1c6b4a; --red:#9b3426;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ivory);color:var(--ink);font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding:0 18px 56px}
+
+.hero{background:var(--teal);color:var(--ivory);padding:26px 0 30px;border-bottom:4px solid var(--gold)}
+.hero .wrap{padding-bottom:0}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.16em;color:var(--gold)}
+h1{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(2.2rem,8vw,3.2rem);line-height:1.02;margin-top:10px}
+.sub{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;font-size:clamp(1.15rem,4.3vw,1.45rem);line-height:1.25;color:#e3d2b3;margin-top:8px}
+
+.blank{margin-top:-18px;background:var(--card);border:1.5px solid var(--gold);border-radius:14px;padding:16px 18px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;box-shadow:0 2px 0 rgba(184,145,90,.25)}
+.blank p{flex:1 1 260px;font-size:15.5px;line-height:1.4}
+.blank b{color:var(--teal)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 20px;border-radius:12px;border:2px solid var(--teal);background:var(--teal);color:#fff;font:700 16px 'DM Sans',system-ui,sans-serif;cursor:pointer;text-decoration:none;line-height:1.2}
+.btn.out{background:#fff;color:var(--teal)}
+.btn.wa{background:var(--wa);border-color:var(--wa)}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.btn:hover{filter:brightness(1.08)}
+
+.open{margin:26px 0 4px;border-left:6px solid var(--gold);padding:4px 0 4px 16px;font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:clamp(1.5rem,5.6vw,1.95rem);line-height:1.15;color:var(--teal)}
+.intro{margin:10px 0 6px;font-size:17px}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 22px;margin-top:18px}
+.card.gold{border:1.5px solid var(--gold);background:#fffdf8}
+.card.red{border:1.5px solid var(--red);border-left-width:7px;background:#fffaf7}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.n{flex:none;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:21px;line-height:1;padding-bottom:2px}
+h2{font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:1.7rem;line-height:1.1;color:var(--teal)}
+.card.red h2{color:var(--red)}
+.hint{font-size:15px;color:var(--muted);margin:2px 0 6px}
+.lab{display:block;font-weight:700;color:var(--teal);font-size:16px;margin:18px 0 8px}
+fieldset{border:0}
+legend{font-weight:700;color:var(--teal);font-size:16px;margin:18px 0 8px;padding:0}
+
+.f2{display:grid;grid-template-columns:1fr 190px;gap:14px}
+@media (max-width:560px){.f2{grid-template-columns:1fr}}
+input[type=text],input[type=date],textarea{width:100%;min-height:48px;padding:10px 12px;border:1.5px solid #b9ae98;border-radius:10px;background:#fff;color:var(--ink);font:400 17px 'DM Sans',system-ui,sans-serif}
+textarea{min-height:92px;resize:vertical}
+input:focus-visible,textarea:focus-visible{outline:3px solid var(--gold);outline-offset:1px;border-color:var(--teal)}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative;display:block}
+.chip input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
+.chip span{display:flex;align-items:center;gap:10px;min-height:48px;padding:9px 16px 9px 12px;border:1.5px solid var(--teal);border-radius:12px;background:#fff;color:var(--teal);font-weight:500;line-height:1.25}
+.chip span::before{content:'';flex:none;width:20px;height:20px;border:2px solid currentColor;display:grid;place-items:center;font-size:14px;font-weight:700;line-height:1}
+.chip.rd span::before{border-radius:50%}
+.chip.ck span::before{border-radius:5px}
+.chip input:checked + span{background:var(--teal);color:#fff}
+.chip.ck input:checked + span::before{content:'✓'}
+.chip.rd input:checked + span::before{background:radial-gradient(circle,#fff 0 4px,transparent 4.5px)}
+.chip input:focus-visible + span{outline:3px solid var(--gold);outline-offset:2px}
+.card.red .chip span{border-color:var(--red);color:var(--red)}
+.card.red .chip input:checked + span{background:var(--red);color:#fff}
+
+.item{display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.item .t{font-weight:500}
+@media (max-width:640px){.item{grid-template-columns:1fr}}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:620px){.cols2{grid-template-columns:1fr}}
+.cols2 .chip span{height:100%}
+
+.nowmsg{margin-top:16px;padding:14px 16px;border-radius:12px;background:var(--red);color:#fff;font-weight:500;font-size:17px;line-height:1.4}
+.nowmsg[hidden]{display:none}
+.dis{font-size:16px;margin-top:14px}
+.dis b{color:var(--teal)}
+
+.done{margin-top:26px}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px}
+.more{margin-top:20px;font-size:16px}
+.more a{color:var(--teal);font-weight:700;text-decoration:underline;text-decoration-color:var(--gold);text-underline-offset:3px}
+.legal{margin-top:16px;padding:14px 16px;border-radius:12px;background:#ece5d6;font-size:15px;color:var(--ink)}
+.legal b{color:var(--teal)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--teal);color:#fff;padding:12px 20px;border-radius:12px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{margin-top:34px;padding-top:14px;border-top:2px solid var(--gold);font-size:14px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+footer b{color:var(--teal);letter-spacing:.08em}
+
+@media print{
+  body{background:#fff}
+  .blank,.actions,.toast{display:none}
+  .card{break-inside:avoid;border-color:#ccc}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">MATERIAIS PARA VOCÊ · COGNISA</div>
+    <h1>O que mudou no comportamento?</h1>
+    <p class="sub">Um roteiro para familiares e cuidadores de pessoas com alterações de memória e confusão.</p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="blank">
+    <p><b>Prefere preencher no papel?</b> Baixe o PDF em branco, imprima e leve à consulta.</p>
+    <a class="btn out" id="blankPdf" href="materiais/pdf/o-que-mudou-no-comportamento.pdf" download="O_Que_Mudou_no_Comportamento_Cognisa.pdf">Baixar PDF em branco</a>
+  </div>
+
+  <p class="open">Você não precisa saber o nome do sintoma. Conte o que viu.</p>
+  <p class="intro">Não é um teste e não tem nota. Não existe resposta certa: “não sei” e “não observei” também são respostas.</p>
+
+  <form id="f" autocomplete="off" onsubmit="return false">
+
+    <section class="card">
+      <div class="f2">
+        <div><label class="lab" for="nome" style="margin-top:0">Pessoa de quem cuido</label><input type="text" id="nome" autocomplete="off"></div>
+        <div><label class="lab" for="data" style="margin-top:0">Data</label><input type="date" id="data"></div>
+      </div>
+      <fieldset><legend>Preenchido por</legend><div class="chips" id="porQuem"></div></fieldset>
+    </section>
+
+    <section class="card red">
+      <div class="sh"><h2>Procure ajuda na hora se:</h2></div>
+      <p class="hint">Marque se alguma situação abaixo está acontecendo agora.</p>
+      <div class="cols2" id="alerta" style="margin-top:10px"></div>
+      <div class="nowmsg" id="nowmsg" role="alert" hidden><b>Não espere a consulta.</b> Chame a ambulância do seu plano de saúde ou vá ao pronto-atendimento mais próximo.</div>
+      <p class="dis">Pode ser uma doença do corpo (infecção, desidratação, efeito de remédio), não só a demência. <b>Chame a ambulância do seu plano de saúde ou vá ao pronto-atendimento.</b></p>
+      <label class="lab" for="fone">Telefone da ambulância do meu plano</label>
+      <input type="text" id="fone" inputmode="tel" autocomplete="off">
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">1</span><h2>O que mudou nos últimos dias?</h2></div>
+      <p class="hint">Marque o que se aplica. Leve as caixas dos remédios à consulta.</p>
+      <div class="cols2" id="mudou" style="margin-top:10px"></div>
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">2</span><h2>O que você observou?</h2></div>
+      <p class="hint">Para cada situação, escolha uma opção.</p>
+      <div id="obs"></div>
+      <label class="lab" for="outraMud">Outra mudança</label>
+      <input type="text" id="outraMud">
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">3</span><h2>A confusão mudou?</h2></div>
+      <div id="conf"></div>
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">4</span><h2>Um episódio que preocupou você</h2></div>
+      <p class="hint">Conte só um. Não existe resposta certa: cada cuidador reage como consegue.</p>
+      <label class="lab" for="quando">Quando foi</label>
+      <input type="text" id="quando" placeholder="Ex.: ontem à noite, domingo de manhã">
+      <fieldset><legend>Em que situação aconteceu?</legend><div class="chips" id="sit"></div></fieldset>
+      <label class="lab" for="outraSit">Outra situação</label>
+      <input type="text" id="outraSit">
+      <label class="lab" for="antes">O que aconteceu antes</label>
+      <textarea id="antes"></textarea>
+      <label class="lab" for="durante">O que aconteceu durante</label>
+      <textarea id="durante"></textarea>
+      <label class="lab" for="depois">O que aconteceu depois</label>
+      <textarea id="depois"></textarea>
+      <label class="lab" for="reacao">Como você reagiu e o que aconteceu em seguida?</label>
+      <textarea id="reacao"></textarea>
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">5</span><h2>Segurança e cuidado de você</h2></div>
+      <fieldset><legend>Nas últimas semanas (marque o que se aplica)</legend><div class="cols2" id="seg"></div></fieldset>
+      <fieldset><legend>Estou conseguindo descansar?</legend><div class="chips" id="desc"></div></fieldset>
+      <fieldset><legend>Estou conseguindo cuidar com segurança?</legend><div class="chips" id="segur"></div></fieldset>
+      <fieldset><legend>Tenho alguém para revezar comigo?</legend><div class="chips" id="rev"></div></fieldset>
+      <p class="hint" style="margin-top:14px">Se você está no limite, fale com alguém ainda hoje: um familiar, um amigo ou o seu médico.</p>
+    </section>
+
+    <section class="card">
+      <div class="sh"><span class="n">6</span><h2>O que mais preciso na consulta</h2></div>
+      <label class="lab" for="precisa">A situação em que mais preciso de ajuda</label>
+      <textarea id="precisa"></textarea>
+      <label class="lab" for="duvidas">Minhas dúvidas para o médico</label>
+      <textarea id="duvidas"></textarea>
+    </section>
+
+    <section class="card gold">
+      <div class="sh"><span class="n">7</span><h2>Meu próximo passo combinado</h2></div>
+      <p class="hint">Para preencher com o médico, durante a consulta.</p>
+      <label class="lab" for="acao">Ação combinada</label>
+      <textarea id="acao"></textarea>
+      <div class="f2" style="margin-top:4px">
+        <div><label class="lab" for="com">Com quem</label><input type="text" id="com"></div>
+        <div><label class="lab" for="revisar">Revisar em</label><input type="date" id="revisar"></div>
+      </div>
+    </section>
+
+  </form>
+
+  <div class="done">
+    <div class="actions">
+      <button class="btn" id="bPdf" type="button">Baixar PDF preenchido</button>
+      <button class="btn out" id="bCopy" type="button">Copiar resumo</button>
+      <button class="btn wa" id="bWa" type="button">Enviar por WhatsApp</button>
+      <button class="btn out" id="bClear" type="button">Limpar tudo</button>
+    </div>
+    <p class="more" id="aprofundar">Quer aprofundar? O <a href="cognisa-npiq.html">NPI-Q completo</a> e a <a href="cognisa-zarit.html">Escala de Zarit</a> (sobrecarga do cuidador) estão no cognisa.med.br. Para o cansaço de quem cuida, veja também <a href="materiais/cuidar-de-quem-cuida">Cuidar de Quem Cuida</a>.</p>
+    <p class="legal"><b>Este roteiro não dá diagnóstico</b>, não tem pontuação e não substitui a avaliação médica. Ele serve para organizar o que você viu e levar à consulta.</p>
+  </div>
+
+  <footer><span><b>COGNISA</b> · Materiais para Você</span><span>cognisa.med.br</span></footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  /* Para usar em outro consultório: troque o número abaixo (formato internacional, sem + nem espaços). */
+  var WHATSAPP_NUMBER = '553125140626';
+
+  var POR = ['Familiar','Cuidador','Outro'];
+  var ALERTA = ['A confusão apareceu em horas ou dias, ou vai e volta ao longo do dia',
+    'Está com muito mais sono que o normal, ou com febre','Houve queda ou batida na cabeça',
+    'Há risco de alguém se machucar','A pessoa falou em querer morrer ou se machucar'];
+  var MUDOU = ['Remédio novo ou dose alterada','Dor ou desconforto','Intestino preso','Urina diferente ou com ardência',
+    'Comeu ou bebeu pouco','Dormiu mal','Mudança de casa, rotina ou cuidador','Internação, visitas ou muito barulho',
+    'Está sem óculos ou aparelho de ouvido','Nada disso','Não sei'];
+  var OBS = ['Anda de um lado para o outro e não para','Irrita-se com facilidade, grita, xinga ou briga',
+    'Recusa banho, comida, remédio ou troca de roupa','Fica muito triste ou chora com facilidade',
+    'Mostra medo ou aflição e não quer ficar só','Perdeu o interesse no que gostava e quase não faz nada',
+    'Desconfia das pessoas: acha que roubam ou querem prejudicar','Vê ou ouve coisas que os outros não veem',
+    'Fala ou faz coisas inadequadas para o momento, sem perceber','Acorda à noite ou confunde o dia com a noite',
+    'Come muito mais ou muito menos que o habitual'];
+  var OBS_OP = ['Não observei','Já acontecia','Começou há pouco'];
+  var CONF = ['A confusão aumentou em horas ou dias?','A confusão piora ao entardecer ou à noite?',
+    'Tem horas boas e horas ruins no mesmo dia?','Está com mais sono que o normal ou é mais difícil de acordar?'];
+  var SNS = ['Sim','Não','Não sei'];
+  var SIT = ['Banho','Alimentação','Troca de roupa','Remédios','Fim de tarde ou noite','Barulho ou visitas','Mudança de rotina','Sozinho(a)'];
+  var SEG = ['Alguém se machucou','Caiu','Saiu de casa sem avisar','Deixou fogão ou torneira ligados','Recusou remédios','Nenhuma'];
+  var DESC = ['Sim','Mais ou menos','Não'];
+  var REV = ['Sim','Às vezes','Não'];
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  function chip(type, name, value){
+    var l = document.createElement('label');
+    l.className = 'chip ' + (type === 'radio' ? 'rd' : 'ck');
+    var i = document.createElement('input');
+    i.type = type; i.name = name; i.value = value;
+    var s = document.createElement('span'); s.textContent = value;
+    l.appendChild(i); l.appendChild(s);
+    return l;
+  }
+  function fill(id, type, name, list){
+    var box = $(id);
+    list.forEach(function(v){ box.appendChild(chip(type, name, v)); });
+  }
+
+  fill('porQuem','radio','por',POR);
+  fill('alerta','checkbox','alerta',ALERTA);
+  fill('mudou','checkbox','mudou',MUDOU);
+  fill('sit','checkbox','sit',SIT);
+  fill('seg','checkbox','seg',SEG);
+  fill('desc','radio','desc',DESC);
+  fill('segur','radio','segur',DESC);
+  fill('rev','radio','rev',REV);
+
+  function linhas(boxId, prefix, itens, opcoes){
+    var box = $(boxId);
+    itens.forEach(function(t, k){
+      var row = document.createElement('div'); row.className = 'item';
+      var tt = document.createElement('div'); tt.className = 't'; tt.textContent = t;
+      var ch = document.createElement('div'); ch.className = 'chips';
+      opcoes.forEach(function(n){ ch.appendChild(chip('radio', prefix + k, n)); });
+      row.appendChild(tt); row.appendChild(ch); box.appendChild(row);
+    });
+  }
+  linhas('obs','obs',OBS,OBS_OP);
+  linhas('conf','conf',CONF,SNS);
+
+  /* exclusividade: "Nada disso"/"Não sei" (bloco 1) e "Nenhuma" (bloco 5) */
+  function exclusivo(boxId, idxNenhum){
+    $(boxId).addEventListener('change', function(e){
+      var inputs = this.querySelectorAll('input');
+      var ehNenhum = false, k;
+      for(k = 0; k < idxNenhum.length; k++){ if(e.target === inputs[idxNenhum[k]]) ehNenhum = true; }
+      if(!e.target.checked) return;
+      Array.prototype.forEach.call(inputs, function(x, i){
+        var xNenhum = idxNenhum.indexOf(i) !== -1;
+        if(ehNenhum && x !== e.target){ x.checked = false; }
+        else if(!ehNenhum && xNenhum){ x.checked = false; }
+      });
+    });
+  }
+  exclusivo('mudou',[9,10]);
+  exclusivo('seg',[5]);
+
+  /* aviso imediato quando algum sinal de alerta é marcado */
+  $('alerta').addEventListener('change', function(){
+    $('nowmsg').hidden = !this.querySelector('input:checked');
+  });
+
+  function setToday(){
+    var d = new Date();
+    var z = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+    $('data').value = z.toISOString().slice(0,10);
+  }
+  setToday();
+
+  function one(name){
+    var el = document.querySelector('input[name="'+name+'"]:checked');
+    return el ? el.value : '';
+  }
+  function many(name){
+    return Array.prototype.map.call(document.querySelectorAll('input[name="'+name+'"]:checked'), function(x){ return x.value; });
+  }
+  function br(iso){ if(!iso) return ''; var p = iso.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+  function txt(id){ return $(id).value.replace(/\s+/g,' ').trim(); }
+  function lista(arr){ return arr.length ? arr.join('; ') : 'Não marcado'; }
+
+  function collect(){
+    var alerta = many('alerta');
+    var sit = many('sit'); if(txt('outraSit')){ sit.push('Outra: ' + txt('outraSit')); }
+    return {
+      id: [
+        ['Pessoa de quem cuido', txt('nome') || 'Não informado'],
+        ['Data', br($('data').value) || 'Não informada'],
+        ['Preenchido por', one('por') || 'Não informado']
+      ],
+      secs: [
+        { t:'Sinais de alerta', alerta:true, rows:[
+          {k:'Marcados agora', v: alerta.length ? alerta.join('; ') : 'Nenhum marcado', long:true},
+          {k:'Telefone da ambulância do meu plano', v: txt('fone') || 'Não preenchido'}
+        ]},
+        { t:'1. O que mudou nos últimos dias?', rows:[ {k:'Marcados', v: lista(many('mudou')), long:true} ]},
+        { t:'2. O que você observou?', rows: OBS.map(function(t, k){ return {k:t, v: one('obs'+k) || 'Não marcado'}; })
+            .concat([{k:'Outra mudança', v: txt('outraMud') || 'Não preenchido', long:true}]) },
+        { t:'3. A confusão mudou?', rows: CONF.map(function(t, k){ return {k:t, v: one('conf'+k) || 'Não marcado'}; }) },
+        { t:'4. Um episódio que preocupou', rows:[
+          {k:'Quando foi', v: txt('quando') || 'Não preenchido'},
+          {k:'Em que situação', v: sit.length ? sit.join('; ') : 'Não marcado', long:true},
+          {k:'Antes', v: txt('antes') || 'Não preenchido', long:true},
+          {k:'Durante', v: txt('durante') || 'Não preenchido', long:true},
+          {k:'Depois', v: txt('depois') || 'Não preenchido', long:true},
+          {k:'Como o cuidador reagiu e o que aconteceu em seguida', v: txt('reacao') || 'Não preenchido', long:true}
+        ]},
+        { t:'5. Segurança e cuidado do cuidador', rows:[
+          {k:'Nas últimas semanas', v: lista(many('seg')), long:true},
+          {k:'Estou conseguindo descansar?', v: one('desc') || 'Não marcado'},
+          {k:'Estou conseguindo cuidar com segurança?', v: one('segur') || 'Não marcado'},
+          {k:'Tenho alguém para revezar comigo?', v: one('rev') || 'Não marcado'}
+        ]},
+        { t:'6. O que mais preciso na consulta', rows:[
+          {k:'Situação em que mais preciso de ajuda', v: txt('precisa') || 'Não preenchido', long:true},
+          {k:'Minhas dúvidas para o médico', v: txt('duvidas') || 'Não preenchido', long:true}
+        ]},
+        { t:'7. Próximo passo combinado (preenchido com o médico)', rows:[
+          {k:'Ação combinada', v: txt('acao') || 'Não preenchido', long:true},
+          {k:'Revisar em', v: br($('revisar').value) || 'Não preenchido'},
+          {k:'Com quem', v: txt('com') || 'Não preenchido'}
+        ]}
+      ]
+    };
+  }
+
+  function resumo(){
+    var d = collect();
+    var L = ['O QUE MUDOU NO COMPORTAMENTO? — roteiro de observação (Cognisa)', ''];
+    d.id.forEach(function(r){ L.push(r[0] + ': ' + r[1]); });
+    d.secs.forEach(function(s){
+      L.push(''); L.push(s.t);
+      s.rows.forEach(function(r){ L.push('- ' + r.k + ': ' + r.v); });
+    });
+    L.push(''); L.push('Roteiro de observação do cotidiano, sem pontuação diagnóstica. Não substitui a avaliação médica.');
+    return L.join('\n');
+  }
+
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.classList.add('on');
+    clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('on'); }, 2400);
+  }
+
+  $('bCopy').addEventListener('click', function(){
+    var text = resumo();
+    function fallback(){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); toast('Resumo copiado'); }catch(e){ toast('Não foi possível copiar'); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast('Resumo copiado'); }, fallback);
+    } else { fallback(); }
+  });
+
+  $('bWa').addEventListener('click', function(){
+    var url = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(resumo());
+    window.open(url, '_blank', 'noopener');
+  });
+
+  $('bClear').addEventListener('click', function(){
+    if(!window.confirm('Limpar todas as respostas?')) return;
+    $('f').reset(); setToday(); $('nowmsg').hidden = true; toast('Formulário limpo');
+  });
+
+  $('bPdf').addEventListener('click', function(){
+    if(!(window.jspdf && window.jspdf.jsPDF)){ toast('Não foi possível gerar o PDF agora'); return; }
+    var d = collect();
+    var doc = new window.jspdf.jsPDF({unit:'mm', format:'a4'});
+    var TEAL=[31,59,54], GOLD=[184,145,90], INK=[38,48,45], MUTED=[102,112,105], RED=[155,52,38];
+    var M = 18, W = 210 - 2*M, TOP = 30, BOTTOM = 276, y = TOP;
+
+    function header(){
+      doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor.apply(doc, TEAL);
+      doc.text('MATERIAIS PARA VOCÊ · COGNISA', M, 14);
+      doc.setFont('helvetica','normal'); doc.setTextColor.apply(doc, MUTED);
+      doc.text('O que mudou no comportamento?', 210 - M, 14, {align:'right'});
+      doc.setDrawColor.apply(doc, GOLD); doc.setLineWidth(0.5); doc.line(M, 17, 210 - M, 17);
+    }
+    function ensure(h){ if(y + h > BOTTOM){ doc.addPage(); header(); y = TOP; } }
+
+    header();
+    doc.setFont('helvetica','bold'); doc.setFontSize(19); doc.setTextColor.apply(doc, TEAL);
+    doc.text('O que mudou no comportamento?', M, y + 4); y += 11;
+    doc.setFont('helvetica','italic'); doc.setFontSize(10.5); doc.setTextColor.apply(doc, GOLD);
+    doc.splitTextToSize('Roteiro para familiares e cuidadores de pessoas com alterações de memória e confusão.', W).forEach(function(l){ doc.text(l, M, y); y += 5; });
+    y += 3;
+
+    doc.setFontSize(10.5);
+    d.id.forEach(function(r){
+      ensure(6);
+      doc.setFont('helvetica','bold'); doc.setTextColor.apply(doc, TEAL); doc.text(r[0] + ':', M, y);
+      doc.setFont('helvetica','normal'); doc.setTextColor.apply(doc, INK); doc.text(String(r[1]), M + 48, y);
+      y += 6;
+    });
+    y += 3;
+
+    d.secs.forEach(function(s){
+      ensure(16);
+      var cor = s.alerta ? RED : TEAL;
+      doc.setFont('helvetica','bold'); doc.setFontSize(12.5); doc.setTextColor.apply(doc, cor);
+      doc.text(s.t, M, y);
+      doc.setDrawColor.apply(doc, s.alerta ? RED : GOLD); doc.setLineWidth(0.3); doc.line(M, y + 1.8, 210 - M, y + 1.8);
+      y += 8;
+      s.rows.forEach(function(r){
+        doc.setFontSize(10.5);
+        if(r.long){
+          var vl = doc.splitTextToSize(r.v, W);
+          ensure(5.2 + vl.length * 5);
+          doc.setFont('helvetica','bold'); doc.setTextColor.apply(doc, TEAL); doc.text(r.k + ':', M, y); y += 5;
+          doc.setFont('helvetica','normal'); doc.setTextColor.apply(doc, INK);
+          vl.forEach(function(line){ doc.text(line, M, y); y += 5; });
+          y += 1.5;
+        } else {
+          var kl = doc.splitTextToSize(r.k, 112), vl2 = doc.splitTextToSize(r.v, W - 116);
+          var n = Math.max(kl.length, vl2.length);
+          ensure(n * 5 + 1.5);
+          doc.setFont('helvetica','normal'); doc.setTextColor.apply(doc, INK);
+          kl.forEach(function(line, i){ doc.text(line, M, y + i*5); });
+          doc.setFont('helvetica','bold'); doc.setTextColor.apply(doc, TEAL);
+          vl2.forEach(function(line, i){ doc.text(line, M + 116, y + i*5); });
+          y += n * 5 + 1.5;
+        }
+      });
+      y += 4;
+    });
+
+    var pages = doc.getNumberOfPages();
+    for(var p = 1; p <= pages; p++){
+      doc.setPage(p);
+      doc.setDrawColor.apply(doc, GOLD); doc.setLineWidth(0.3); doc.line(M, 283, 210 - M, 283);
+      doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor.apply(doc, MUTED);
+      doc.text('Roteiro de observação do cotidiano, sem pontuação diagnóstica. Não substitui a avaliação médica.', M, 288);
+      doc.text('cognisa.med.br · ' + p + '/' + pages, 210 - M, 288, {align:'right'});
+    }
+
+    var nome = txt('nome').replace(/[^A-Za-z0-9À-ÿ ]/g,'').trim().replace(/\s+/g,'_');
+    doc.save('O_Que_Mudou_no_Comportamento' + (nome ? '_' + nome : '') + '.pdf');
+  });
+})();
+</script>
+</body>
+</html>
