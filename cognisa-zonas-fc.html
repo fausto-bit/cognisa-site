@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.jpg">
+<title>Zonas de Treinamento | Cognisa</title>
+<meta name="description" content="Zonas de treinamento por frequência cardíaca e VO₂ a partir da idade (Tanaka e Karvonen), com gráfico, parte do Panteão Vital (Cognisa).">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zonas de Treinamento — Cognisa">
+<meta property="og:description" content="Zonas de treinamento por frequência cardíaca e VO₂ a partir da idade (Tanaka e Karvonen), com gráfico, parte do Panteão Vital (Cognisa).">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-zonas-fc.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36;
+    --teal-soft:#2E5049;
+    --gold:#B8915A;
+    --ivory:#F4F1EA;
+    --card:#FFFFFF;
+    --ink:#26302D;
+    --ink-soft:#5F6B65;
+    --line:#DEDACB;
+    --danger:#A5493A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'DM Sans',sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:36px 22px 70px;}
+
+  .brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:26px;
+  }
+  .brand .name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--teal);
+    letter-spacing:.02em;
+  }
+  .brand .tag{
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+
+  header.hero{
+    background:var(--teal);
+    color:#fff;
+    border-radius:14px;
+    padding:28px 30px;
+    margin-bottom:26px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    right:-40px; top:-40px;
+    width:160px; height:160px;
+    border:1.5px solid rgba(184,145,90,.35);
+    border-radius:50%;
+  }
+  header.hero .eyebrow{
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  header.hero h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:32px;
+    margin:0 0 8px;
+    font-weight:700;
+  }
+  header.hero p{
+    margin:0;
+    font-size:13.5px;
+    color:#DCE4E1;
+    max-width:520px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:22px 24px;
+    margin-bottom:20px;
+  }
+  .card h2{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--teal);
+    margin:0 0 14px;
+  }
+
+  .id-grid{
+    display:grid;
+    grid-template-columns:1.4fr 1fr 1fr;
+    gap:14px;
+  }
+  .data-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+  .field label{
+    display:block;
+    font-size:10.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+  }
+  .field input, .field select{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:6px;
+    background:var(--ivory);
+    font-family:inherit;
+    font-size:13.5px;
+    padding:8px 10px;
+    color:var(--ink);
+  }
+  .data-grid .field input{font-size:16px;font-weight:500;padding:10px 12px;}
+  .field input:focus, .field select:focus{outline:none;border-color:var(--gold);}
+  .field .help{font-size:11.5px;color:var(--ink-soft);margin-top:5px;line-height:1.45;}
+
+  .method{margin-top:18px;}
+  .method .lbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}
+  .seg{display:inline-grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .seg button{font-family:inherit;font-size:13px;font-weight:500;padding:9px 16px;min-height:40px;border:0;background:var(--ivory);color:var(--ink-soft);cursor:pointer;}
+  .seg button + button{border-left:1px solid var(--line);}
+  .seg button[aria-pressed="true"]{background:var(--teal);color:#fff;}
+  .seg button:disabled{opacity:.45;cursor:not-allowed;}
+  .method .hint{font-size:12px;color:var(--ink-soft);margin-top:8px;}
+
+  .notice{
+    background:#FBF4E9;
+    border:1px solid var(--gold);
+    border-radius:10px;
+    padding:14px 18px;
+    font-size:12.5px;
+    color:#6B4A20;
+    margin-bottom:20px;
+  }
+
+  .result{
+    background:var(--teal);
+    color:#fff;
+    border-radius:12px;
+    padding:24px 26px;
+    margin-bottom:20px;
+  }
+  .result .label{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:6px;
+  }
+  .result .value{
+    font-family:'Cormorant Garamond',serif;
+    font-size:42px;
+    font-weight:700;
+    line-height:1;
+  }
+  .result .value span{font-size:18px;color:#CFE0DB;font-weight:500;}
+  .result .note{
+    margin-top:12px;
+    font-size:12.5px;
+    color:#DCE4E1;
+    max-width:560px;
+  }
+  .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;}
+  .kpis .src{font-size:11.5px;color:#CFE0DB;margin-top:4px;}
+
+  .chart svg{display:block;width:100%;height:auto;}
+  .chart-legend{font-size:12px;color:var(--ink-soft);margin-top:8px;}
+
+  .tablewrap{overflow-x:auto;margin-top:6px;}
+  table{border-collapse:collapse;width:100%;min-width:600px;font-size:13.5px;}
+  th{text-align:left;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:500;padding:8px 10px 8px 0;border-bottom:1px solid var(--line);}
+  td{padding:12px 10px 12px 0;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;color:var(--teal);}
+  td.num em{font-style:normal;font-weight:400;color:var(--ink-soft);}
+  .zname{display:flex;gap:10px;align-items:flex-start;}
+  .sw{width:11px;height:11px;border-radius:3px;flex:none;margin-top:5px;}
+  .zname b{display:block;color:var(--teal);}
+  .zname small{display:block;color:var(--ink-soft);font-size:12px;}
+
+  .about{font-size:12.5px;color:var(--ink-soft);}
+  .about p{margin:0 0 8px;}
+  .about p:last-child{margin:0;}
+
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .actions button{
+    font-family:'DM Sans',sans-serif;
+    font-size:13.5px;
+    font-weight:700;
+    padding:11px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    border:1.5px solid var(--teal);
+  }
+  #pdfBtn{background:var(--teal);color:#fff;}
+  #waBtn{background:#25D366;color:#fff;border-color:#25D366;}
+  #copyBtn{background:transparent;color:var(--teal);}
+  #resetBtn{background:transparent;color:var(--ink-soft);border-color:var(--line);}
+
+  footer{
+    margin-top:30px;
+    font-size:11px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    padding-top:16px;
+    line-height:1.7;
+  }
+  footer strong{color:var(--teal);}
+
+  @media (max-width:640px){
+    .id-grid, .data-grid{grid-template-columns:1fr;}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+    header.hero h1{font-size:26px;}
+    .card{padding:18px 16px;}
+    .seg{display:grid;width:100%;}
+    table{min-width:0;}
+    thead{display:none;}
+    tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;padding:14px 0;border-bottom:1px solid var(--line);}
+    tr:last-child{border-bottom:none;}
+    td{display:block;padding:0;border:none;}
+    td:first-child, td:last-child{grid-column:1/-1;}
+    td[data-label]::before{content:attr(data-label);display:block;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:2px;}
+    td.num{white-space:normal;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <div class="name">COGNISA</div>
+    <div class="tag">Panteão Vital · Hefesto</div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">Prescrição de exercício</div>
+    <h1>Zonas de Treinamento</h1>
+    <p>Informe sua idade e veja as faixas de frequência cardíaca de cada zona de treino e o consumo de oxigênio (VO₂) que elas representam.</p>
+  </header>
+
+  <div class="card">
+    <div class="id-grid">
+      <div class="field"><label for="fName">Nome do paciente</label><input type="text" id="fName"></div>
+      <div class="field"><label for="fDate">Data de preenchimento</label><input type="date" id="fDate"></div>
+      <div class="field">
+        <label for="fBy">Preenchido por</label>
+        <select id="fBy">
+          <option value="">Selecione</option>
+          <option value="Paciente">Paciente</option>
+          <option value="Cuidador">Cuidador</option>
+          <option value="Profissional de saúde">Profissional de saúde</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">
+    Só a idade é obrigatória. Se não souber a frequência cardíaca de repouso ou o VO₂, deixe em branco: o cálculo usa o que você informar e avisa o que ficou estimado.
+  </div>
+
+  <div class="card">
+    <h2>Seus dados</h2>
+    <div class="data-grid">
+      <div class="field">
+        <label for="fAge">Idade (anos)</label>
+        <input type="number" id="fAge" min="10" max="110" step="1" value="50" inputmode="numeric">
+      </div>
+      <div class="field">
+        <label for="fRest">FC de repouso (bpm)</label>
+        <input type="number" id="fRest" min="30" max="120" step="1" inputmode="numeric" placeholder="Opcional">
+        <div class="help">Meça sentado, ao acordar, contando os batimentos por 1 minuto.</div>
+      </div>
+      <div class="field">
+        <label for="fVo2">VO₂ máximo (mL/kg/min)</label>
+        <input type="number" id="fVo2" min="5" max="90" step="0.1" inputmode="decimal" placeholder="Opcional">
+        <div class="help">Só se você fez teste ergoespirométrico. No laudo aparece como "VO₂ pico".</div>
+      </div>
+    </div>
+    <div class="method">
+      <div class="lbl">Cálculo das zonas</div>
+      <div class="seg" role="group" aria-label="Cálculo das zonas">
+        <button type="button" id="mMax" aria-pressed="true">% da FC máxima</button>
+        <button type="button" id="mRes" aria-pressed="false">FC de reserva (Karvonen)</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </div>
+
+  <div class="result">
+    <div class="kpis">
+      <div><div class="label">FC máxima</div><div class="value" id="kFcmax">–</div><div class="src">Tanaka · 208 − 0,7 × idade</div></div>
+      <div><div class="label">FC de reserva</div><div class="value" id="kFcr">–</div><div class="src">máxima − repouso</div></div>
+      <div><div class="label">VO₂ máximo</div><div class="value" id="kVo2">–</div><div class="src" id="kVo2src">–</div></div>
+      <div><div class="label">METs máximos</div><div class="value" id="kMet">–</div><div class="src">VO₂ ÷ 3,5</div></div>
+    </div>
+    <div class="note">A maior parte do treino para a saúde acontece nas zonas 1 e 2, em que você ainda consegue conversar.</div>
+  </div>
+
+  <div class="card">
+    <h2>VO₂ por frequência cardíaca</h2>
+    <div class="chart" id="chart" role="img" aria-label="Gráfico do VO₂ estimado conforme a frequência cardíaca, com as cinco zonas de treinamento"></div>
+    <div class="chart-legend">Linha: VO₂ estimado a cada batimento. Pontos dourados: limite superior de cada zona.</div>
+  </div>
+
+  <div class="card">
+    <h2>Suas zonas</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Zona</th><th id="thPct">% FC máx</th><th>FC (bpm)</th><th id="thVo2">VO₂ estimado</th><th>Esforço percebido</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button id="pdfBtn" onclick="exportPDF()">Baixar PDF</button>
+    <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    <button id="copyBtn" onclick="copyResult()">Copiar resultado</button>
+    <button id="resetBtn" onclick="resetAll()">Limpar tudo</button>
+  </div>
+
+  <div class="card about" style="margin-top:20px;">
+    <p><strong>Como calculamos.</strong> FC máxima = 208 − 0,7 × idade (Tanaka, 2001). Com a FC de repouso, o VO₂ de cada zona segue a relação %FC de reserva ≈ %VO₂ de reserva (Swain, 1997); sem ela, %FC máx = 0,64 × %VO₂ máx + 37 (Swain, 1994). Sem teste ergoespirométrico, o VO₂ máximo é estimado por 15,3 × FC máx ÷ FC repouso (Uth, 2004).</p>
+    <p><strong>Atenção.</strong> Quem usa betabloqueador ou tem arritmia não deve se guiar pela frequência cardíaca: use o esforço percebido e converse com seu médico antes de treinar nas zonas 4 e 5.</p>
+  </div>
+
+  <footer>
+    <strong>Dr. Fausto Azambuja Machado</strong> — Geriatra & Internista · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602<br>
+    Este formulário é uma ferramenta de apoio e não substitui avaliação médica presencial nem o teste ergoespirométrico.
+  </footer>
+
+</div>
+
+<script>
+const zones = [
+  { n:1, name:"Recuperação ativa e saúde geral", lo:.50, hi:.60, c:"#A9C4A0", rgb:[169,196,160], pse:"1–2 · muito leve, conversa fácil" },
+  { n:2, name:"Base aeróbica, saúde mitocondrial, queima de gordura", lo:.60, hi:.70, c:"#5E8C6A", rgb:[94,140,106], pse:"3–4 · leve, conversa sustentável" },
+  { n:3, name:"Resistência aeróbica, limiar ventilatório 1", lo:.70, hi:.80, c:"#D9B45A", rgb:[217,180,90], pse:"5–6 · moderado, fala um pouco forçada" },
+  { n:4, name:"Limiar anaeróbico, tolerância ao lactato", lo:.80, hi:.90, c:"#C9803F", rgb:[201,128,63], pse:"7–8 · intenso, frases curtas" },
+  { n:5, name:"Capacidade aeróbica máxima (tiros de VO₂ máx)", lo:.90, hi:1.00, c:"#A5493A", rgb:[165,73,58], pse:"9–10 · exaustivo, esforço máximo" }
+];
+const VO2_REST = 3.5;
+let method = 'max';
+let current = null;
+
+const $ = id => document.getElementById(id);
+const fmt = (x, d = 0) => x.toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const num = el => { const v = parseFloat(String(el.value).replace(',', '.')); return isFinite(v) ? v : null; };
+
+function compute() {
+  const age = num($('fAge')), rest = num($('fRest')), vo2in = num($('fVo2'));
+  if (age === null || age < 10 || age > 110) return null;
+  const fcmax = 208 - 0.7 * age;
+  const hasRest = rest !== null && rest >= 30 && rest < fcmax - 20;
+  let vo2max = null, vo2src = 'informe a FC de repouso';
+  if (vo2in !== null && vo2in >= 5) { vo2max = vo2in; vo2src = 'mL/kg/min · ergoespirometria'; }
+  else if (hasRest) { vo2max = 15.3 * fcmax / rest; vo2src = 'mL/kg/min · estimado por Uth'; }
+  const useRes = method === 'res' && hasRest;
+  const hrAt = p => useRes ? rest + p * (fcmax - rest) : p * fcmax;
+  const vo2At = hr => {
+    if (hasRest) {
+      const pR = Math.max(0, (hr - rest) / (fcmax - rest));
+      return vo2max !== null ? VO2_REST + pR * (vo2max - VO2_REST) : pR * 100;
+    }
+    const pMax = Math.max(0, ((hr / fcmax) * 100 - 37) / 0.64);
+    return vo2max !== null ? (pMax / 100) * vo2max : pMax;
+  };
+  const zs = zones.map(z => {
+    const a = hrAt(z.lo), b = hrAt(z.hi);
+    return Object.assign({}, z, { a, b, va: vo2At(a), vb: vo2At(b) });
+  });
+  return { age, rest: hasRest ? rest : null, fcmax, vo2max, vo2src, useRes, zones: zs, vo2At, absolute: vo2max !== null };
+}
+
+function niceStep(range) {
+  const raw = range / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+  return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p;
+}
+
+function chartSVG(r) {
+  // Largura do desenho = largura real do quadro, para o texto não encolher no celular
+  const W = Math.max(320, Math.min(760, $('chart').clientWidth || 760)), H = W < 500 ? 300 : 340, L = 50, R = 12, T = 28, B = 48;
+  const xStep = W < 500 ? 20 : 10;
+  const xmin = Math.floor((r.rest !== null ? r.rest : r.fcmax * 0.4) / 5) * 5;
+  const xmax = Math.ceil(r.fcmax / 5) * 5 + 5;
+  const ytop = r.vo2At(r.fcmax), ys = niceStep(ytop);
+  let ymax = Math.ceil(ytop / ys) * ys;
+  if (ymax - ytop < ys * 0.15) ymax += ys;
+  const X = v => L + (v - xmin) / (xmax - xmin) * (W - L - R);
+  const Y = v => T + (1 - v / ymax) * (H - T - B);
+  const mute = '#5F6B65', grid = '#DEDACB', ink = '#1F3B36', gold = '#B8915A';
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="DM Sans, sans-serif">`;
+  r.zones.forEach(z => {
+    const x0 = Math.max(L, X(z.a)), x1 = Math.min(W - R, X(z.b));
+    if (x1 <= x0) return;
+    s += `<rect x="${x0}" y="${T}" width="${x1 - x0}" height="${H - T - B}" fill="${z.c}" fill-opacity=".24"/>`;
+    s += `<rect x="${x0}" y="${T}" width="${x1 - x0}" height="3" fill="${z.c}"/>`;
+    s += `<text x="${(x0 + x1) / 2}" y="${T - 9}" text-anchor="middle" font-size="12" font-weight="700" fill="${ink}">Z${z.n}</text>`;
+  });
+  for (let y = 0; y <= ymax + 1e-9; y += ys) {
+    s += `<line x1="${L}" x2="${W - R}" y1="${Y(y)}" y2="${Y(y)}" stroke="${grid}"/>`;
+    s += `<text x="${L - 8}" y="${Y(y) + 4}" text-anchor="end" font-size="11" fill="${mute}">${fmt(y)}</text>`;
+  }
+  for (let x = Math.ceil(xmin / xStep) * xStep; x <= xmax; x += xStep) {
+    s += `<text x="${X(x)}" y="${H - B + 18}" text-anchor="middle" font-size="11" fill="${mute}">${x}</text>`;
+  }
+  s += `<line x1="${L}" x2="${W - R}" y1="${H - B}" y2="${H - B}" stroke="${ink}" stroke-opacity=".5"/>`;
+  s += `<text x="${L + (W - L - R) / 2}" y="${H - 8}" text-anchor="middle" font-size="12" fill="${mute}">Frequência cardíaca (bpm)</text>`;
+  s += `<text transform="translate(14 ${T + (H - T - B) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="${mute}">${r.absolute ? 'VO₂ (mL/kg/min)' : '% do VO₂ máximo'}</text>`;
+  const pts = [];
+  for (let hr = xmin; hr <= r.fcmax; hr += 1) pts.push(`${X(hr).toFixed(1)},${Y(r.vo2At(hr)).toFixed(1)}`);
+  pts.push(`${X(r.fcmax).toFixed(1)},${Y(r.vo2At(r.fcmax)).toFixed(1)}`);
+  s += `<polyline points="${pts.join(' ')}" fill="none" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/>`;
+  r.zones.forEach(z => {
+    const label = r.absolute ? fmt(z.vb, 1) : fmt(z.vb) + '%';
+    s += `<circle cx="${X(z.b)}" cy="${Y(z.vb)}" r="4.5" fill="${gold}" stroke="#fff" stroke-width="1.5"><title>${fmt(z.b)} bpm · ${label}</title></circle>`;
+    s += `<text x="${X(z.b) - 8}" y="${Y(z.vb) - 9}" text-anchor="end" font-size="11.5" font-weight="700" fill="${ink}">${label}</text>`;
+  });
+  return s + '</svg>';
+}
+
+function render() {
+  $('mRes').disabled = num($('fRest')) === null;
+  if ($('mRes').disabled && method === 'res') setMethod('max', false);
+  const r = compute();
+  current = r;
+  if (!r) {
+    $('hint').textContent = 'Informe uma idade entre 10 e 110 anos.';
+    ['kFcmax', 'kFcr', 'kVo2', 'kMet'].forEach(id => $(id).textContent = '–');
+    $('chart').innerHTML = ''; $('tb').innerHTML = '';
+    return;
+  }
+  $('hint').textContent = r.rest === null
+    ? 'Sem a FC de repouso, o VO₂ aparece como porcentagem do máximo, a menos que você informe o VO₂ do teste.'
+    : (r.useRes ? 'Zonas pela FC de reserva: repouso + % × (máxima − repouso).' : 'Zonas por porcentagem da FC máxima.');
+  $('kFcmax').innerHTML = `${fmt(r.fcmax)}<span> bpm</span>`;
+  $('kFcr').innerHTML = r.rest !== null ? `${fmt(r.fcmax - r.rest)}<span> bpm</span>` : '–';
+  $('kVo2').textContent = r.vo2max !== null ? fmt(r.vo2max, 1) : '–';
+  $('kVo2src').textContent = r.vo2src;
+  $('kMet').textContent = r.vo2max !== null ? fmt(r.vo2max / VO2_REST, 1) : '–';
+  $('thPct').textContent = r.useRes ? '% FC reserva' : '% FC máx';
+  $('thVo2').textContent = r.absolute ? 'VO₂ (mL/kg/min) · METs' : '% VO₂ máx';
+  $('tb').innerHTML = r.zones.map(z => `
+    <tr>
+      <td><div class="zname"><span class="sw" style="background:${z.c}"></span><div><b>Zona ${z.n}</b><small>${z.name}</small></div></div></td>
+      <td class="num" data-label="${r.useRes ? '% FC reserva' : '% FC máx'}">${fmt(z.lo * 100)}–${fmt(z.hi * 100)}%</td>
+      <td class="num" data-label="FC (bpm)">${fmt(z.a)}–${fmt(z.b)}</td>
+      <td class="num" data-label="${r.absolute ? 'VO₂ (mL/kg/min)' : '% VO₂ máx'}">${r.absolute
+        ? `${fmt(z.va, 1)}–${fmt(z.vb, 1)}<br><em>${fmt(z.va / VO2_REST, 1)}–${fmt(z.vb / VO2_REST, 1)} METs</em>`
+        : `${fmt(z.va)}–${fmt(z.vb)}%`}</td>
+      <td data-label="Esforço percebido">${z.pse}</td>
+    </tr>`).join('');
+  $('chart').innerHTML = chartSVG(r);
+}
+
+function setMethod(m, rerender = true) {
+  method = m;
+  $('mMax').setAttribute('aria-pressed', m === 'max');
+  $('mRes').setAttribute('aria-pressed', m === 'res');
+  if (rerender) render();
+}
+
+function getMeta() {
+  return {
+    name: document.getElementById('fName').value || '(não informado)',
+    date: document.getElementById('fDate').value || '(não informado)',
+    by: document.getElementById('fBy').value || '(não informado)'
+  };
+}
+
+function zoneLine(r, z) {
+  return `Zona ${z.n} (${fmt(z.lo * 100)}–${fmt(z.hi * 100)}%): ${fmt(z.a)}–${fmt(z.b)} bpm` +
+    (r.absolute ? ` · VO₂ ${fmt(z.va, 1)}–${fmt(z.vb, 1)} mL/kg/min` : ` · ${fmt(z.va)}–${fmt(z.vb)}% do VO₂ máx`) +
+    ` · esforço ${z.pse.split(' ·')[0]}`;
+}
+
+function summaryLines(r) {
+  return [
+    `Idade: ${fmt(r.age)} anos`,
+    `FC máxima (Tanaka): ${fmt(r.fcmax)} bpm`,
+    r.rest !== null ? `FC de repouso: ${fmt(r.rest)} bpm · FC de reserva: ${fmt(r.fcmax - r.rest)} bpm` : 'FC de repouso: (não informada)',
+    r.vo2max !== null ? `VO₂ máximo: ${fmt(r.vo2max, 1)} mL/kg/min (${r.vo2src.split('· ')[1]}) · ${fmt(r.vo2max / VO2_REST, 1)} METs` : 'VO₂ máximo: (não informado)',
+    `Cálculo: ${r.useRes ? 'FC de reserva (Karvonen)' : '% da FC máxima'}`
+  ];
+}
+
+function buildResultText() {
+  const meta = getMeta();
+  const r = current;
+  let lines = [];
+  lines.push('Zonas de Treinamento — FC e VO₂');
+  lines.push('Cognisa · Panteão Vital · Hefesto');
+  lines.push('');
+  lines.push(`Paciente: ${meta.name}`);
+  lines.push(`Data: ${meta.date}`);
+  lines.push(`Preenchido por: ${meta.by}`);
+  lines.push('');
+  if (!r) {
+    lines.push('Idade não informada.');
+  } else {
+    summaryLines(r).forEach(l => lines.push(l));
+    lines.push('');
+    r.zones.forEach(z => lines.push(zoneLine(r, z)));
+  }
+  lines.push('');
+  lines.push('Ferramenta de apoio — não substitui avaliação médica presencial.');
+  return lines.join('\n');
+}
+
+function enviarWhatsApp() {
+  const numero = '553125140626'; // WhatsApp do consultório
+  const texto = buildResultText();
+  const url = 'https://wa.me/' + numero + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+function copyResult() {
+  const text = buildResultText();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+}
+
+function exportPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const marginX = 48;
+  let y = 56;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(31, 59, 54);
+  doc.text('Zonas de Treinamento — FC e VO2', marginX, y);
+  y += 18;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(95, 107, 101);
+  doc.text('Cognisa · Panteão Vital · Hefesto', marginX, y);
+  y += 26;
+
+  const meta = getMeta();
+  doc.setFontSize(11);
+  doc.setTextColor(38, 48, 45);
+  doc.text(`Paciente: ${meta.name}`, marginX, y); y += 16;
+  doc.text(`Data: ${meta.date}`, marginX, y); y += 16;
+  doc.text(`Preenchido por: ${meta.by}`, marginX, y); y += 24;
+
+  doc.setDrawColor(222, 218, 203);
+  doc.line(marginX, y, 548, y);
+  y += 20;
+
+  const r = current;
+  if (!r) {
+    doc.text('Idade não informada.', marginX, y);
+  } else {
+    summaryLines(r).forEach(l => { doc.text(l.replace(/₂/g, '2'), marginX, y); y += 16; });
+    y += 10;
+    r.zones.forEach(z => {
+      doc.setFillColor(z.rgb[0], z.rgb[1], z.rgb[2]);
+      doc.rect(marginX, y - 9, 10, 10, 'F');
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(31, 59, 54);
+      doc.text(`Zona ${z.n} — ${fmt(z.a)}–${fmt(z.b)} bpm`, marginX + 18, y);
+      y += 14;
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(95, 107, 101);
+      const sub = `${z.name}. ` + (r.absolute
+        ? `VO2 ${fmt(z.va, 1)}–${fmt(z.vb, 1)} mL/kg/min (${fmt(z.va / VO2_REST, 1)}–${fmt(z.vb / VO2_REST, 1)} METs).`
+        : `${fmt(z.va)}–${fmt(z.vb)}% do VO2 máx.`) + ` Esforço percebido ${z.pse}.`;
+      const subLines = doc.splitTextToSize(sub.replace(/₂/g, '2'), 482);
+      doc.text(subLines, marginX + 18, y);
+      y += subLines.length * 14 + 10;
+    });
+  }
+
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9);
+  doc.setTextColor(95, 107, 101);
+  const legal = doc.splitTextToSize('Dr. Fausto Azambuja Machado — Geriatra & Internista · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602. Ferramenta de apoio; não substitui avaliação médica presencial nem o teste ergoespirométrico.', 500);
+  doc.text(legal, marginX, 800);
+
+  const fname = (meta.name !== '(não informado)' ? meta.name.replace(/\s+/g, '_') : 'paciente');
+  doc.save(`Zonas_FC_${fname}.pdf`);
+}
+
+function resetAll() {
+  ['fName', 'fDate', 'fBy', 'fRest', 'fVo2'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fAge').value = '';
+  setMethod('max');
+}
+
+document.getElementById('mMax').addEventListener('click', () => setMethod('max'));
+document.getElementById('mRes').addEventListener('click', () => setMethod('res'));
+['fAge', 'fRest', 'fVo2'].forEach(id => document.getElementById(id).addEventListener('input', render));
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(render, 150); });
+
+render();
+</script>
+</body>
+</html>
