@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.jpg">
+<title>Síndrome Metabólica + FIB-4 (Médico) — Cognisa</title>
+<meta name="description" content="Síndrome metabólica (critérios harmonizados 2009) e índice FIB-4 para fibrose hepática — versão médico. PDF, copiar e WhatsApp.">
+<link rel="canonical" href="https://cognisa.med.br/cognisa-medico-metabolismo.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Síndrome Metabólica + FIB-4 (Médico) — Cognisa">
+<meta property="og:description" content="Síndrome metabólica (critérios harmonizados 2009) e índice FIB-4 para fibrose hepática — versão médico. PDF, copiar e WhatsApp.">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-medico-metabolismo.html">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --teal:#1F3B36; --teal-light:#2C5048; --gold:#B8915A; --gold-soft:#D9BD93;
+    --ivory:#F4F1EA; --ink:#1A1A17; --ok:#5B7A5B; --warn:#B8863A; --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.5;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(28px,5vw,38px);margin:0 0 8px;}
+  header.top p{margin:0;color:var(--gold-soft);font-size:15px;max-width:540px;margin:0 auto;}
+  .backlink{display:inline-block;margin-top:14px;color:var(--gold-soft);text-decoration:none;font-size:13px;font-weight:500;}
+  .backlink:hover{color:var(--ivory);}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:14px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:13px;color:#5c5c56;background:#EFEAE0;border-radius:6px;padding:10px 14px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label, .q-input label.lbl{display:block;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select, .q-input input[type=number], .q-input select{width:100%;font-family:'DM Sans',sans-serif;font-size:15px;padding:9px 10px;border:1.5px solid #DDD6C7;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus, .idfields select:focus, .q-input input:focus, .q-input select:focus{outline:none;border-color:var(--gold);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;} .q-input{grid-template-columns:1fr !important;}}
+
+  .question{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(31,59,54,.08);}
+  .question .qnum{font-family:'Cormorant Garamond', serif;font-size:14px;font-weight:700;color:var(--gold);letter-spacing:.05em;}
+  .question p.qtext{font-size:16px;margin:4px 0 6px;color:var(--ink);font-weight:500;}
+  .question p.qhelp{font-size:13px;color:#6b6b63;margin:0 0 14px;}
+  .q-input{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;align-items:end;}
+  .chk{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;color:#4a4a44;margin-top:12px;cursor:pointer;}
+  .chk input{margin-top:3px;accent-color:var(--teal);}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:22px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:56px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .category{font-size:19px;font-weight:700;margin:12px 0 4px;}
+  .result .note{margin-top:14px;font-size:13.5px;color:var(--gold-soft);max-width:480px;margin-left:auto;margin-right:auto;}
+  .result .incomplete{margin-top:14px;font-size:13px;color:#F0D9B8;}
+  .result .crit{margin:18px auto 0;max-width:480px;text-align:left;font-size:13.5px;border-top:1px solid rgba(244,241,234,.18);padding-top:14px;}
+  .result .crit div{display:flex;justify-content:space-between;gap:12px;padding:3px 0;}
+  .result .crit span.s-pos{color:#F0B8A8;font-weight:700;} .result .crit span.s-neg{color:#BFD6BF;} .result .crit span.s-na{color:#C9C3B4;font-style:italic;}
+  .result .fib{margin-top:22px;padding-top:18px;border-top:1px solid rgba(244,241,234,.18);}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  #calcBtn{background:var(--gold);color:var(--teal);}
+  #calcBtn:hover{background:var(--gold-soft);}
+  #printBtn,#copyBtn{background:transparent;color:var(--ivory);border:1.5px solid var(--gold-soft);}
+  #printBtn:hover,#copyBtn:hover{background:rgba(255,255,255,.08);}
+  #waBtn{background:#25D366;color:#fff;border:1.5px solid #25D366;}
+  #waBtn:hover{background:#1EBE5A;}
+
+  footer{text-align:center;font-size:12px;color:#7a776a;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:15px;color:var(--teal);margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Formulário Médico · Dionísio</div>
+  <h1>Síndrome Metabólica + FIB-4</h1>
+  <p>Critérios harmonizados (IDF/AHA/NHLBI, 2009) e índice FIB-4 para risco de fibrose hepática</p>
+  <a class="backlink" href="formularios-medico.html">← Formulários Médicos</a>
+</header>
+
+<div class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.
+  </div>
+
+  <div class="blank-note">
+    Critério de cintura para a América do Sul (consenso harmonizado 2009): <strong>≥ 90 cm em homens e ≥ 80 cm em mulheres</strong>. Marcar "em tratamento" torna o critério positivo, independentemente do valor. Dado em branco = critério não avaliado.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <input type="text" id="filledby" placeholder="Nome do profissional">
+    </div>
+  </div>
+
+  <div class="section-title">Os cinco critérios</div>
+
+  <div class="question">
+    <div class="qnum">Sexo</div>
+    <p class="qtext">Sexo biológico</p>
+    <p class="qhelp">Necessário porque os pontos de corte da cintura e do HDL são diferentes para homens e mulheres.</p>
+    <div class="q-input">
+      <div>
+        <select id="sex">
+          <option value="">Selecione</option>
+          <option value="M">Masculino</option>
+          <option value="F">Feminino</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Critério 1 de 5</div>
+    <p class="qtext">Circunferência da cintura</p>
+    <p class="qhelp">Positivo: ≥ 90 cm (homens) ou ≥ 80 cm (mulheres).</p>
+    <div class="q-input">
+      <div><label class="lbl" for="waist">Cintura (cm)</label><input type="number" id="waist" min="40" max="250" step="0.5" inputmode="decimal"></div>
+    </div>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Critério 2 de 5</div>
+    <p class="qtext">Triglicerídeos</p>
+    <p class="qhelp">Positivo: ≥ 150 mg/dL, ou uso de remédio para triglicerídeos.</p>
+    <div class="q-input">
+      <div><label class="lbl" for="tg">Triglicerídeos (mg/dL)</label><input type="number" id="tg" min="20" max="3000" step="1" inputmode="decimal"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="tgMed"> Em tratamento medicamentoso para triglicerídeos altos</label>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Critério 3 de 5</div>
+    <p class="qtext">HDL-colesterol ("colesterol bom")</p>
+    <p class="qhelp">Positivo: &lt; 40 mg/dL (homens) ou &lt; 50 mg/dL (mulheres), ou uso de remédio para elevar o HDL.</p>
+    <div class="q-input">
+      <div><label class="lbl" for="hdl">HDL (mg/dL)</label><input type="number" id="hdl" min="5" max="200" step="1" inputmode="decimal"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="hdlMed"> Em tratamento medicamentoso para HDL baixo</label>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Critério 4 de 5</div>
+    <p class="qtext">Pressão arterial</p>
+    <p class="qhelp">Positivo: pressão sistólica ≥ 130 ou diastólica ≥ 85 mmHg, ou uso de remédio para pressão alta.</p>
+    <div class="q-input">
+      <div><label class="lbl" for="sbp">Sistólica ("máxima", mmHg)</label><input type="number" id="sbp" min="60" max="300" step="1" inputmode="numeric"></div>
+      <div><label class="lbl" for="dbp">Diastólica ("mínima", mmHg)</label><input type="number" id="dbp" min="30" max="200" step="1" inputmode="numeric"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="bpMed"> Em tratamento medicamentoso para pressão alta</label>
+  </div>
+
+  <div class="question">
+    <div class="qnum">Critério 5 de 5</div>
+    <p class="qtext">Glicemia de jejum</p>
+    <p class="qhelp">Positivo: ≥ 100 mg/dL, ou diagnóstico de diabetes / uso de remédio para glicose.</p>
+    <div class="q-input">
+      <div><label class="lbl" for="glu">Glicemia de jejum (mg/dL)</label><input type="number" id="glu" min="30" max="800" step="1" inputmode="decimal"></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="gluMed"> Tem diabetes ou usa remédio para controlar a glicose</label>
+  </div>
+
+  <div class="section-title">FIB-4 (risco de fibrose hepática avançada)</div>
+  <div class="blank-note">
+    FIB-4 = idade × AST ÷ (plaquetas × √ALT). Aplicável a adultos com esteatose hepática ou risco metabólico. Validado entre 35 e 65 anos; a partir de 65 anos usa-se o corte inferior de 2,0 (o de 1,3 gera falsos-positivos). Dado em branco = índice não calculado.
+  </div>
+  <div class="question">
+    <div class="q-input">
+      <div><label class="lbl" for="age">Idade (anos)</label><input type="number" id="age" min="18" max="120" step="1" inputmode="numeric"></div>
+      <div><label class="lbl" for="plt">Plaquetas (× 10³/mm³)</label><input type="number" id="plt" min="10" max="1500" step="1" inputmode="decimal"></div>
+      <div><label class="lbl" for="ast">AST / TGO (U/L)</label><input type="number" id="ast" min="1" max="3000" step="1" inputmode="decimal"></div>
+      <div><label class="lbl" for="alt">ALT / TGP (U/L)</label><input type="number" id="alt" min="1" max="3000" step="1" inputmode="decimal"></div>
+    </div>
+  </div>
+  <div class="result show" id="result">
+    <div id="idSummary" style="font-size:14px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Critérios positivos</div>
+    <div class="score" id="scoreValue">–</div>
+    <div class="category" id="category">–</div>
+    <div class="note" id="note"></div>
+    <div class="crit" id="crit"></div>
+    <div class="incomplete" id="incompleteNote"></div>
+    <div class="fib">
+      <div class="score-label">FIB-4</div>
+      <div class="score" id="fibValue" style="font-size:44px;">–</div>
+      <div class="category" id="fibCategory">–</div>
+      <div class="note" id="fibNote"></div>
+    </div>
+    <div class="actions">
+      <button id="printBtn" onclick="baixarPDF()">Baixar PDF</button>
+      <button id="copyBtn" onclick="copiarResultado()">Copiar resultado</button>
+      <button id="waBtn" onclick="enviarWhatsApp()">Enviar por WhatsApp</button>
+    </div>
+  </div>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+  </footer>
+</div>
+
+<script>
+const MODE = 'medico';          // 'paciente' | 'medico'
+const TITULO = 'Síndrome Metabólica + FIB-4 (Médico)';
+const SUBTITULO = 'Cognisa · Formulário Médico · Dionísio';
+const ARQUIVO = 'SindromeMetabolica_FIB4';
+
+// Pontos de corte (consenso harmonizado IDF/AHA/NHLBI 2009; cintura para a América do Sul).
+// Se o Dr. Fausto preferir NCEP ATP III (102 cm H / 88 cm M), alterar apenas estas duas linhas.
+const CUT = {waistM:90, waistF:80, tg:150, hdlM:40, hdlF:50, sbp:130, dbp:85, glu:100};
+
+function $(id){ return document.getElementById(id); }
+function num(id){
+  const el = $(id); if(!el) return null;
+  const v = el.value.trim().replace(',', '.');
+  if(v === '') return null;
+  const n = parseFloat(v);
+  return isNaN(n) ? null : n;
+}
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+function fmt(n, d){ return n.toFixed(d).replace('.', ','); }
+
+function avaliarCriterios(){
+  const sex = $('sex').value;               // 'M' | 'F' | ''
+  const out = [];
+
+  // 1. Cintura
+  const waist = num('waist');
+  if(waist === null || !sex){
+    out.push({nome:'Cintura', st:'na', det: waist === null ? 'não informada' : 'sexo não informado'});
+  } else {
+    const lim = sex === 'M' ? CUT.waistM : CUT.waistF;
+    out.push({nome:'Cintura', st: waist >= lim ? 'pos' : 'neg', det: `${fmt(waist,1)} cm (limite ${lim})`});
+  }
+
+  // 2. Triglicerídeos
+  const tg = num('tg');
+  if($('tgMed').checked) out.push({nome:'Triglicerídeos', st:'pos', det:'em tratamento'});
+  else if(tg === null) out.push({nome:'Triglicerídeos', st:'na', det:'não informado'});
+  else out.push({nome:'Triglicerídeos', st: tg >= CUT.tg ? 'pos' : 'neg', det:`${fmt(tg,0)} mg/dL (limite ${CUT.tg})`});
+
+  // 3. HDL
+  const hdl = num('hdl');
+  if($('hdlMed').checked) out.push({nome:'HDL-colesterol', st:'pos', det:'em tratamento'});
+  else if(hdl === null || !sex) out.push({nome:'HDL-colesterol', st:'na', det: hdl === null ? 'não informado' : 'sexo não informado'});
+  else {
+    const lim = sex === 'M' ? CUT.hdlM : CUT.hdlF;
+    out.push({nome:'HDL-colesterol', st: hdl < lim ? 'pos' : 'neg', det:`${fmt(hdl,0)} mg/dL (abaixo de ${lim} é positivo)`});
+  }
+
+  // 4. Pressão arterial
+  const sbp = num('sbp'), dbp = num('dbp');
+  if($('bpMed').checked) out.push({nome:'Pressão arterial', st:'pos', det:'em tratamento'});
+  else if(sbp === null && dbp === null) out.push({nome:'Pressão arterial', st:'na', det:'não informada'});
+  else {
+    const acima = (sbp !== null && sbp >= CUT.sbp) || (dbp !== null && dbp >= CUT.dbp);
+    const det = `${sbp !== null ? fmt(sbp,0) : '?'} x ${dbp !== null ? fmt(dbp,0) : '?'} mmHg`;
+    if(acima) out.push({nome:'Pressão arterial', st:'pos', det});
+    else if(sbp !== null && dbp !== null) out.push({nome:'Pressão arterial', st:'neg', det});
+    else out.push({nome:'Pressão arterial', st:'na', det: det + ' (faltou um dos valores)'});
+  }
+
+  // 5. Glicemia
+  const glu = num('glu');
+  if($('gluMed').checked) out.push({nome:'Glicemia de jejum', st:'pos', det:'diabetes / em tratamento'});
+  else if(glu === null) out.push({nome:'Glicemia de jejum', st:'na', det:'não informada'});
+  else out.push({nome:'Glicemia de jejum', st: glu >= CUT.glu ? 'pos' : 'neg', det:`${fmt(glu,0)} mg/dL (limite ${CUT.glu})`});
+
+  return out;
+}
+
+function classificarSM(crit){
+  const pos = crit.filter(c => c.st === 'pos').length;
+  const na  = crit.filter(c => c.st === 'na').length;
+  let categoria, cor, nota;
+  if(pos >= 3){
+    categoria = 'Critérios para síndrome metabólica presentes'; cor = 'var(--alert)';
+    nota = MODE === 'paciente'
+      ? 'Três ou mais critérios positivos indicam síndrome metabólica: mais risco de diabetes, doenças do coração e gordura no fígado. Leve este resultado ao seu médico — o quadro costuma melhorar com mudança de hábitos (alimentação, músculo, sono, álcool) e, quando indicado, com tratamento.'
+      : '≥ 3 de 5 critérios. Considerar rastreio de esteatose/fibrose hepática (ver FIB-4), risco cardiovascular global, apneia do sono e avaliação de composição corporal (obesidade sarcopênica).';
+  } else if(pos + na >= 3){
+    categoria = 'Resultado indeterminado — faltam dados'; cor = 'var(--warn)';
+    nota = 'Com os dados informados ainda há menos de 3 critérios positivos, mas há critério(s) não avaliado(s) que poderiam completar o diagnóstico.';
+  } else {
+    categoria = 'Menos de 3 critérios positivos'; cor = 'var(--ok)';
+    nota = MODE === 'paciente'
+      ? 'Pelos dados informados, você não preenche os critérios de síndrome metabólica. Cada critério positivo isolado ainda merece atenção — converse com seu médico.'
+      : 'Não preenche critérios de síndrome metabólica com os dados informados. Critérios isolados positivos permanecem como fatores de risco a abordar.';
+  }
+  return {pos, na, categoria, cor, nota};
+}
+
+function classificarFIB4(){
+  const age = num('age'), ast = num('ast'), alt = num('alt'), plt = num('plt');
+  if(age === null || ast === null || alt === null || plt === null || alt <= 0 || plt <= 0)
+    return {valor:null, categoria:'Não calculado', nota:'Preencha idade, AST, ALT e plaquetas.'};
+  const v = (age * ast) / (plt * Math.sqrt(alt));
+  const baixo = age >= 65 ? 2.0 : 1.3;
+  let categoria, nota;
+  if(v < baixo){
+    categoria = 'Baixo risco de fibrose avançada';
+    nota = `Valor abaixo de ${fmt(baixo,1)} (corte para ${age >= 65 ? '≥ 65' : '< 65'} anos). Fibrose avançada improvável; reavaliar periodicamente conforme o risco metabólico.`;
+  } else if(v <= 2.67){
+    categoria = 'Risco indeterminado';
+    nota = 'Faixa intermediária. Considerar elastografia hepática (ex.: FibroScan) ou outro teste de fibrose (ex.: ELF) para esclarecer.';
+  } else {
+    categoria = 'Alto risco de fibrose avançada';
+    nota = 'Valor acima de 2,67. Encaminhar para avaliação hepatológica com confirmação por elastografia ou outro método.';
+  }
+  if(age < 35) nota += ' Atenção: índice menos validado abaixo de 35 anos.';
+  return {valor:v, categoria, nota};
+}
+
+function idSummaryText(){
+  const nome = $('pname').value.trim();
+  const data = formatarData($('pdate').value);
+  const por = $('filledby').value.trim();
+  const parts = [];
+  if(nome) parts.push(`Paciente: ${nome}`);
+  if(data) parts.push(`Data: ${data}`);
+  if(por) parts.push(`Preenchido por: ${por}`);
+  return parts.join('  ·  ');
+}
+
+let ultimo = null;
+function calcular(scroll){
+  $('idSummary').textContent = idSummaryText();
+  const crit = avaliarCriterios();
+  const sm = classificarSM(crit);
+
+  $('scoreValue').textContent = sm.pos + ' / 5';
+  const catEl = $('category'); catEl.textContent = sm.categoria; catEl.style.color = sm.cor;
+  $('note').textContent = sm.nota;
+  $('crit').innerHTML = crit.map(c => {
+    const rot = c.st === 'pos' ? 'positivo' : c.st === 'neg' ? 'negativo' : 'não avaliado';
+    return `<div><span>${c.nome} <small style="opacity:.7">— ${c.det}</small></span><span class="s-${c.st}">${rot}</span></div>`;
+  }).join('');
+  $('incompleteNote').textContent = sm.na > 0
+    ? `Atenção: ${sm.na} critério(s) ficaram sem dados (${crit.filter(c=>c.st==='na').map(c=>c.nome).join(', ')}). ${MODE === 'paciente' ? 'Informe isso ao seu médico.' : 'Resultado parcial.'}`
+    : '';
+
+  let fib = null;
+  if(MODE === 'medico'){
+    fib = classificarFIB4();
+    $('fibValue').textContent = fib.valor === null ? '–' : fmt(fib.valor, 2);
+    $('fibCategory').textContent = fib.categoria;
+    $('fibNote').textContent = fib.nota;
+  }
+  ultimo = {crit, sm, fib};
+
+  if(MODE === 'paciente'){
+    $('result').classList.add('show');
+    if(scroll) $('result').scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+
+function textoResumo(completo){
+  if(!ultimo) calcular(false);
+  const {crit, sm, fib} = ultimo;
+  const id = idSummaryText();
+  let t = `${TITULO}\n${id ? id + '\n' : ''}`;
+  if(completo) t += '\n' + crit.map(c => `${c.nome}: ${c.st === 'pos' ? 'positivo' : c.st === 'neg' ? 'negativo' : 'não avaliado'} (${c.det})`).join('\n') + '\n';
+  t += `\nCritérios positivos: ${sm.pos} / 5\nClassificação: ${sm.categoria}`;
+  if(sm.na > 0) t += `\nObs.: ${sm.na} critério(s) sem dados.`;
+  if(fib){
+    t += `\nFIB-4: ${fib.valor === null ? 'não calculado' : fmt(fib.valor, 2) + ' — ' + fib.categoria}`;
+  }
+  if(!completo) t += `\n${sm.nota}`;
+  return t;
+}
+
+function copiarResultado(){
+  calcular(false);
+  navigator.clipboard.writeText(textoResumo(true)).then(() => alert('Resultado copiado para a área de transferência.'));
+}
+
+function enviarWhatsApp(){
+  calcular(false);
+  const numero = '553125140626';
+  window.open('https://wa.me/' + numero + '?text=' + encodeURIComponent(textoResumo(false)), '_blank');
+}
+
+function baixarPDF(){
+  calcular(false);
+  const {crit, sm, fib} = ultimo;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  const marginL = 18;
+  let y = 20;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const maxWidth = pageWidth - marginL * 2;
+
+  function addWrapped(text, size, bold, gap, color){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    if(color) doc.setTextColor(...color); else doc.setTextColor(20,20,20);
+    doc.splitTextToSize(text, maxWidth).forEach(line => {
+      if(y > 280){ doc.addPage(); y = 20; }
+      doc.text(line, marginL, y);
+      y += size * 0.5;
+    });
+    y += gap;
+  }
+
+  doc.setFillColor(31,59,54);
+  doc.rect(0,0,pageWidth,26,'F');
+  doc.setTextColor(244,241,234);
+  doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text(TITULO, marginL, 13);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  doc.text(SUBTITULO, marginL, 20);
+  y = 36;
+
+  const nome = $('pname').value.trim() || 'Não informado';
+  const data = formatarData($('pdate').value) || 'Não informada';
+  const por = $('filledby').value.trim() || 'Não informado';
+  addWrapped(`Paciente: ${nome}`, 11, false, 1);
+  addWrapped(`Data de preenchimento: ${data}`, 11, false, 1);
+  addWrapped(`Preenchido por: ${por}`, 11, false, 5);
+
+  addWrapped('Critérios', 13, true, 3, [184,145,90]);
+  crit.forEach((c, i) => {
+    const rot = c.st === 'pos' ? 'POSITIVO' : c.st === 'neg' ? 'negativo' : 'não avaliado';
+    addWrapped(`${i+1}. ${c.nome}: ${rot} — ${c.det}`, 10, c.st === 'pos', 2);
+  });
+  y += 2;
+
+  addWrapped('Resultado', 13, true, 3, [184,145,90]);
+  addWrapped(`Critérios positivos: ${sm.pos} / 5`, 12, true, 1);
+  addWrapped(`Classificação: ${sm.categoria}`, 12, true, 3);
+  addWrapped(sm.nota, 10, false, 4);
+  if(sm.na > 0) addWrapped(`Atenção: ${sm.na} critério(s) sem dados — resultado parcial.`, 10, false, 4, [168,75,58]);
+
+  if(fib){
+    addWrapped('FIB-4', 13, true, 3, [184,145,90]);
+    addWrapped(fib.valor === null ? 'Não calculado' : `Valor: ${fmt(fib.valor, 2)} — ${fib.categoria}`, 12, true, 2);
+    addWrapped(fib.nota, 10, false, 4);
+  }
+
+  addWrapped(MODE === 'paciente'
+    ? 'Aviso importante: este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.'
+    : 'Aviso importante: este instrumento é de aplicação e interpretação profissional. O resultado não substitui avaliação clínica completa.', 9.5, false, 4, [90,90,80]);
+  addWrapped('Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602', 9, false, 0);
+
+  doc.save(nome !== 'Não informado' ? `${ARQUIVO}_${nome.replace(/\s+/g,'-')}.pdf` : `${ARQUIVO}.pdf`);
+}
+
+if(MODE === 'medico'){
+  document.querySelectorAll('input, select').forEach(el => {
+    el.addEventListener('input', () => calcular(false));
+    el.addEventListener('change', () => calcular(false));
+  });
+  calcular(false);
+}
+</script>
+
+</body>
+</html>

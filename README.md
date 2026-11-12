@@ -1,6 +1,6 @@
 # Cognisa — Panteão Vital
 
-Site de apoio a pacientes e cuidadores do Dr. Fausto Azambuja Machado (geriatria e clínica médica), estruturado em torno do **Panteão Vital**: seis domínios do envelhecimento com qualidade, representados por seis deuses gregos.
+Site de apoio a pacientes e cuidadores do Dr. Fausto Azambuja Machado (geriatria e clínica médica), estruturado em torno do **Panteão Vital**: sete domínios do envelhecimento com qualidade, representados por sete deuses gregos.
 
 Site estático (HTML/CSS/JS puro), sem build step — pode ser publicado diretamente via GitHub Pages.
 
@@ -18,15 +18,16 @@ Site estático (HTML/CSS/JS puro), sem build step — pode ser publicado diretam
 ├── hefesto.html              → Força, sarcopenia e prevenção de quedas
 ├── demeter.html               → Nutrição e microbioma
 ├── hestia.html                → Lar, cuidador e sobrecarga
+├── dionisio.html              → Metabolismo, fígado, álcool e prazer com medida
 ├── cognisa-*.html           → 15 formulários clínicos interativos (ver lista abaixo)
 └── img/                      → Símbolos dos deuses + selo do Panteão Vital
 ```
 
 ## Formulários incluídos
 
-**Acesso paciente/cuidador:** AUA Symptom Score, GDS-15, NPI-Q, Escala de Zarit, IMC, ABVD (Katz), AIVD (Lawton), AUDIT, MAN, SARC-F, CFI, Diário de Sono Simplificado.
+**Acesso paciente/cuidador:** Meu Metabolismo (síndrome metabólica), AUA Symptom Score, GDS-15, NPI-Q, Escala de Zarit, IMC, ABVD (Katz), AIVD (Lawton), AUDIT, MAN, SARC-F, CFI, Diário de Sono Simplificado.
 
-**Exclusivo médico:** IVCF-20, MEEM, MoCA, Classificação ASA, CURB-65, Escala de Braden, BODE Index, IVSF-10.
+**Exclusivo médico:** Síndrome Metabólica + FIB-4, IVCF-20, MEEM, MoCA, Classificação ASA, CURB-65, Escala de Braden, BODE Index, IVSF-10.
 
 Todos os formulários rodam 100% no navegador (sem backend), com exportação em PDF via [jsPDF](https://github.com/parallax/jsPDF) carregado por CDN, e opção de copiar o resultado para a área de transferência.
 
