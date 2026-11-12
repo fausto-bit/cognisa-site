@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="img/favicon.jpg">
+<title>GAD-7 — Preocupação e ansiedade — Cognisa</title>
+<meta name="description" content="GAD-7: 7 perguntas sobre preocupação e tensão nas últimas 2 semanas, para levar à consulta — formulário preenchível, parte do Panteão Vital (Cognisa).">
+<meta property="og:type" content="website">
+<meta property="og:title" content="GAD-7 — Preocupação e ansiedade — Cognisa">
+<meta property="og:description" content="GAD-7: 7 perguntas sobre preocupação e tensão nas últimas 2 semanas, para levar à consulta — formulário preenchível, parte do Panteão Vital (Cognisa).">
+<meta property="og:url" content="https://cognisa.med.br/cognisa-gad7.html">
+<meta property="og:image" content="https://cognisa.med.br/img/selo-panteao.png">
+<meta property="og:locale" content="pt_BR">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal:#1F3B36;
+    --teal-light:#2C5048;
+    --gold:#B8915A;
+    --gold-soft:#D9BD93;
+    --gold-dark:#7A5A2C; /* dourado escurecido para texto sobre fundo claro (contraste AA) */
+    --ivory:#F4F1EA;
+    --ink:#1A1A17;
+    --muted:#4A4A44;
+    --ok:#5B7A5B;
+    --warn:#B8863A;
+    --alert:#A84B3A;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ivory);color:var(--ink);font-family:'DM Sans', sans-serif;line-height:1.55;font-size:18px;}
+  .wrap{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+  header.top{background:var(--teal);color:var(--ivory);padding:36px 24px 30px;text-align:center;}
+  header.top .eyebrow{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+  header.top h1{font-family:'Cormorant Garamond', serif;font-weight:600;font-size:clamp(30px,5vw,40px);margin:0 0 8px;}
+  header.top p{margin:0 auto;color:var(--gold-soft);font-size:17px;max-width:540px;}
+
+  .disclaimer{background:#fff;border:1.5px solid var(--gold);border-left:6px solid var(--gold);border-radius:6px;padding:16px 18px;margin:28px 0;font-size:16px;color:var(--teal);}
+  .disclaimer strong{color:var(--alert);}
+
+  .blank-note{font-size:16px;color:var(--muted);background:#EFEAE0;border-radius:6px;padding:12px 16px;margin-bottom:28px;}
+
+  .idfields{background:#fff;border-radius:10px;padding:20px 22px;margin-bottom:28px;box-shadow:0 1px 3px rgba(31,59,54,.08);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .idfields .full{grid-column:1/-1;}
+  .idfields label{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--gold-dark);font-weight:700;margin-bottom:6px;}
+  .idfields input, .idfields select{width:100%;font-family:'DM Sans',sans-serif;font-size:17px;padding:11px 12px;border:1.5px solid #B9B1A0;border-radius:6px;background:#FBFAF7;color:var(--ink);}
+  .idfields input:focus-visible, .idfields select:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-color:var(--teal);}
+  @media (max-width:480px){.idfields{grid-template-columns:1fr;}}
+
+  .section-title{font-family:'Cormorant Garamond', serif;font-size:25px;font-weight:600;color:var(--teal);margin:36px 0 14px;border-bottom:2px solid var(--gold-soft);padding-bottom:6px;line-height:1.3;}
+
+  fieldset.question{border:0;background:#fff;border-radius:10px;padding:20px 22px;margin:0 0 16px;box-shadow:0 1px 3px rgba(31,59,54,.08);min-width:0;}
+  fieldset.question.missing{box-shadow:0 0 0 3px var(--alert);}
+  .question legend{padding:0;width:100%;float:left;}
+  .question legend + *{clear:both;}
+  .question .qnum{display:block;font-family:'Cormorant Garamond', serif;font-size:17px;font-weight:700;color:var(--gold-dark);letter-spacing:.05em;}
+  .question .qtext{display:block;font-size:20px;font-weight:500;margin:4px 0 14px;color:var(--ink);}
+  .question .qnote{display:block;font-size:15px;color:var(--muted);margin:-8px 0 14px;}
+  .options{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}
+  label.opt{position:relative;border:2px solid #B9B1A0;border-radius:8px;padding:14px 10px;min-height:56px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:17px;cursor:pointer;transition:.15s;background:#FBFAF7;color:var(--ink);}
+  label.opt:hover{border-color:var(--teal);}
+  label.opt input[type=radio]{position:absolute;opacity:0;width:1px;height:1px;margin:0;}
+  label.opt.selected{background:var(--teal);border-color:var(--teal);color:var(--ivory);font-weight:700;}
+  label.opt.focus{outline:3px solid var(--gold-dark);outline-offset:3px;}
+
+  .stepnav{display:none;}
+
+  .result{margin-top:32px;padding:26px;border-radius:12px;background:var(--teal);color:var(--ivory);text-align:center;display:none;}
+  .result.show{display:block;}
+  .result .score{font-family:'Cormorant Garamond', serif;font-size:60px;font-weight:700;line-height:1;color:var(--gold-soft);}
+  .result .score-label{font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:4px;}
+  .result .message{font-size:19px;margin:16px auto 0;max-width:560px;}
+  .result .fixed{font-size:16px;margin:16px auto 0;max-width:560px;color:#EDE6D6;}
+  .result .advice{font-size:17px;font-weight:700;margin:16px auto 0;max-width:560px;background:rgba(255,255,255,.08);border-left:4px solid var(--gold-soft);border-radius:6px;padding:12px 14px;text-align:left;}
+  .result .difficulty{font-size:16px;margin:14px auto 0;color:#EDE6D6;}
+  .result .local-note{font-size:14px;margin:18px auto 0;color:#D8D0BE;}
+
+  .form-error{display:none;margin-top:18px;padding:14px 16px;border-radius:8px;background:#fff;border:2px solid var(--alert);color:#7E2F22;font-size:17px;}
+  .form-error.show{display:block;}
+
+  .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;}
+  button{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;padding:14px 26px;min-height:52px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  button:focus-visible{outline:3px solid var(--gold-dark);outline-offset:3px;}
+  .result button:focus-visible{outline-color:var(--gold-soft);}
+  #calcBtn{background:var(--teal);color:var(--ivory);}
+  #calcBtn:hover{background:var(--teal-light);}
+  #printBtn{background:var(--gold-soft);color:var(--teal);}
+  #printBtn:hover{background:#E6D2B2;}
+  #copyBtn{background:transparent;color:var(--ivory);border:2px solid var(--gold-soft);}
+  #copyBtn:hover{background:rgba(255,255,255,.08);}
+  .navbtn{background:#fff;color:var(--teal);border:2px solid var(--teal);}
+  .navbtn:disabled{opacity:.45;cursor:default;}
+  #copyStatus{display:block;font-size:15px;margin-top:10px;color:var(--gold-soft);min-height:1.2em;}
+
+  footer{text-align:center;font-size:14px;color:#5F5C52;margin-top:48px;padding-top:20px;border-top:1px solid #DDD6C7;}
+  footer .mote{font-family:'Cormorant Garamond', serif;font-style:italic;font-size:17px;color:var(--teal);margin-bottom:8px;}
+  footer .credit{margin-top:12px;font-size:13px;}
+
+  /* Celular: uma pergunta por vez */
+  @media (max-width:640px){
+    body{font-size:18px;}
+    .wrap{padding:28px 16px 64px;}
+    .stepper fieldset.question{display:none;}
+    .stepper fieldset.question.current{display:block;}
+    .stepper .options{grid-template-columns:1fr;}
+    .stepper ~ .stepnav{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:8px;}
+    .stepper ~ .stepnav .navbtn{flex:1;}
+    .stepper ~ .actions #calcBtn{display:none;}
+    .stepper ~ .actions #calcBtn.last{display:inline-block;width:100%;}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt;}
+    header.top{background:#fff;color:#000;padding:0 0 8px;border-bottom:2px solid #000;}
+    header.top .eyebrow, header.top p{color:#333;}
+    .disclaimer, .blank-note, .stepnav, .actions, .form-error, #copyStatus{display:none !important;}
+    .wrap{padding:12px 0;}
+    fieldset.question{display:block !important;box-shadow:none;border:1px solid #999;padding:8px 12px;margin-bottom:6px;break-inside:avoid;}
+    .question .qtext{font-size:12pt;margin-bottom:6px;}
+    .options{grid-template-columns:repeat(4,1fr) !important;gap:4px;}
+    label.opt{min-height:0;padding:4px;font-size:10pt;border:1px solid #999;}
+    label.opt.selected{background:#fff;color:#000;border:2px solid #000;font-weight:700;}
+    label.opt.selected::before{content:"✔ ";}
+    .result{background:#fff;color:#000;border:2px solid #000;break-inside:avoid;}
+    .result .score, .result .score-label, .result .fixed, .result .difficulty, .result .local-note{color:#000;}
+    .result .advice{background:#fff;border-left-color:#000;}
+    .idfields{box-shadow:none;border:1px solid #999;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Cognisa · Panteão Vital · Atena</div>
+  <h1>GAD-7 — Preocupação e ansiedade</h1>
+  <p>7 perguntas simples sobre como você tem se sentido nas últimas 2 semanas</p>
+</header>
+
+<main class="wrap">
+
+  <div class="disclaimer">
+    <strong>Aviso importante:</strong> este instrumento é uma ferramenta de apoio e triagem. O resultado não substitui avaliação médica presencial — leve-o à sua próxima consulta.
+  </div>
+
+  <div class="blank-note">
+    Escolha, em cada pergunta, a opção que mais se parece com o que você viveu. Um familiar pode ler as perguntas em voz alta e marcar as respostas que você der. Suas respostas ficam só neste aparelho: nada é enviado nem guardado.
+  </div>
+
+  <div class="idfields">
+    <div class="full">
+      <label for="pname">Nome do paciente</label>
+      <input type="text" id="pname" placeholder="Nome completo" autocomplete="name">
+    </div>
+    <div>
+      <label for="pdate">Data do preenchimento</label>
+      <input type="date" id="pdate">
+    </div>
+    <div>
+      <label for="filledby">Preenchido por</label>
+      <select id="filledby">
+        <option value="">Selecione</option>
+        <option value="Paciente">O próprio paciente</option>
+        <option value="Cuidador/familiar">Cuidador ou familiar</option>
+        <option value="Profissional de saúde">Profissional de saúde</option>
+      </select>
+    </div>
+  </div>
+
+  <h2 class="section-title" id="stem">Nas últimas 2 semanas, com que frequência você foi incomodado(a) pelos problemas abaixo?</h2>
+
+  <div id="questions"></div>
+
+  <div class="stepnav" id="stepnav">
+    <button type="button" class="navbtn" id="prevBtn">← Anterior</button>
+    <button type="button" class="navbtn" id="nextBtn">Próxima →</button>
+  </div>
+
+  <div class="actions">
+    <button type="button" id="calcBtn">Ver resultado</button>
+  </div>
+
+  <div class="form-error" id="formError" role="alert" tabindex="-1"></div>
+
+  <section class="result" id="result" aria-labelledby="resultTitle" tabindex="-1">
+    <h2 class="sr-only" id="resultTitle">Resultado</h2>
+    <div id="idSummary" style="font-size:16px;color:var(--gold-soft);margin-bottom:16px;"></div>
+    <div class="score-label">Pontuação total</div>
+    <div class="score" id="scoreValue">–</div>
+    <p class="message" id="message"></p>
+    <p class="fixed">Este resultado não é um diagnóstico. Ele serve para organizar a conversa na consulta.</p>
+    <p class="advice" id="advice" hidden>Leve este resultado para o seu médico e, se o incômodo estiver atrapalhando o dia a dia, procure atendimento antes do retorno.</p>
+    <p class="difficulty" id="difficultyOut" hidden></p>
+    <div class="actions">
+      <button type="button" id="printBtn">Imprimir / salvar em PDF</button>
+      <button type="button" id="copyBtn">Copiar resultado</button>
+    </div>
+    <span id="copyStatus" role="status" aria-live="polite"></span>
+    <p class="local-note">Nada sai deste navegador: não há envio nem armazenamento das suas respostas.</p>
+  </section>
+
+  <footer>
+    <div class="mote">Envelhecer com excelência — mente clara, corpo ativo e cuidado inteligente.</div>
+    Dr. Fausto Azambuja Machado · CRM-MG 39.242 · RQE Geriatria 15.603 · RQE Clínica Médica 15.602
+    <div class="credit">GAD-7 desenvolvido por R. L. Spitzer, J. B. W. Williams, K. Kroenke e colegas, com apoio educacional da Pfizer. Uso livre.<br>Versão em português do Brasil: Moreno et al., 2016.</div>
+  </footer>
+</main>
+
+<script>
+// GAD-7 — versão pt-BR validada (Moreno et al., 2016). Texto conferido pelo Dr. Fausto antes de publicar.
+const OPTIONS = [
+  {v:0, label:"Nenhuma vez"},
+  {v:1, label:"Vários dias"},
+  {v:2, label:"Mais da metade dos dias"},
+  {v:3, label:"Quase todos os dias"}
+];
+
+const ITEMS = [
+  "Sentir-se nervoso(a), ansioso(a) ou muito tenso(a)",
+  "Não ser capaz de impedir ou de controlar as preocupações",
+  "Preocupar-se muito com diferentes coisas",
+  "Dificuldade para relaxar",
+  "Ficar tão agitado(a) que se torna difícil permanecer sentado(a)",
+  "Ficar facilmente aborrecido(a) ou irritado(a)",
+  "Sentir medo como se algo horrível fosse acontecer"
+];
+
+const DIFF_QUESTION = "Se você assinalou algum problema, quanto ele dificultou seu trabalho, seus cuidados em casa ou sua convivência com as pessoas?";
+const DIFF_OPTIONS = ["Nenhuma dificuldade","Pouca dificuldade","Muita dificuldade","Extrema dificuldade"];
+
+// Faixas (mesmos cortes da versão médica: 0-4, 5-9, 10-14, 15-21), com linguagem acolhedora e sem rótulo diagnóstico
+function faixa(total){
+  if(total <= 4)  return "Suas respostas mostram pouco incômodo com preocupação e tensão nas últimas 2 semanas. Que bom — continue cuidando de você.";
+  if(total <= 9)  return "Suas respostas mostram algum incômodo com preocupação ou tensão. Vale a pena contar isso na consulta.";
+  if(total <= 14) return "Suas respostas mostram que a preocupação e a tensão estão pesando bastante. Você não precisa lidar com isso sozinho(a).";
+  return "Suas respostas mostram que a preocupação e a tensão estão muito presentes no seu dia a dia. Isso merece cuidado, e há caminhos para ajudar.";
+}
+
+const N = ITEMS.length;           // 7 itens pontuados
+const TOTAL_STEPS = N + 1;        // + pergunta de dificuldade (não pontua)
+const container = document.getElementById('questions');
+
+function buildFieldset(idx, numLabel, text, options, note){
+  const fs = document.createElement('fieldset');
+  fs.className = 'question';
+  fs.id = `step${idx}`;
+  const name = idx < N ? `q${idx}` : 'dif';
+  fs.innerHTML = `
+    <legend>
+      <span class="qnum">${numLabel}</span>
+      <span class="qtext">${text}</span>
+    </legend>
+    ${note ? `<span class="qnote">${note}</span>` : ''}
+    <div class="options">
+      ${options.map((o, j) => `
+        <label class="opt">
+          <input type="radio" name="${name}" value="${o.v ?? j}" data-label="${o.label ?? o}">${o.label ?? o}
+        </label>`).join('')}
+    </div>`;
+  container.appendChild(fs);
+}
+
+ITEMS.forEach((t, i) => buildFieldset(i, `Pergunta ${i+1} de ${N}`, t, OPTIONS));
+buildFieldset(N, 'Pergunta final', DIFF_QUESTION, DIFF_OPTIONS, 'Esta pergunta não entra na pontuação. Pode deixar em branco se não se aplicar.');
+
+// Estado visual dos rótulos acompanha os radios (mouse, toque e teclado)
+container.addEventListener('change', (e) => {
+  if(e.target.type !== 'radio') return;
+  const fs = e.target.closest('fieldset');
+  fs.querySelectorAll('label.opt').forEach(l => l.classList.toggle('selected', l.contains(e.target) ));
+  fs.classList.remove('missing');
+});
+container.addEventListener('focusin', (e) => { if(e.target.type === 'radio') e.target.closest('label').classList.add('focus'); });
+container.addEventListener('focusout', (e) => { if(e.target.type === 'radio') e.target.closest('label').classList.remove('focus'); });
+
+// ---------- Uma pergunta por vez no celular ----------
+const mq = window.matchMedia('(max-width:640px)');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const calcBtn = document.getElementById('calcBtn');
+let current = 0;
+
+function showStep(i, focus){
+  current = Math.max(0, Math.min(TOTAL_STEPS - 1, i));
+  container.querySelectorAll('fieldset.question').forEach((fs, k) => fs.classList.toggle('current', k === current));
+  prevBtn.disabled = current === 0;
+  nextBtn.hidden = current === TOTAL_STEPS - 1;
+  calcBtn.classList.toggle('last', current === TOTAL_STEPS - 1);
+  if(focus && mq.matches){
+    const fs = document.getElementById(`step${current}`);
+    const target = fs.querySelector('input:checked') || fs.querySelector('input');
+    target.focus({preventScroll:true});
+    fs.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+}
+function applyMode(){
+  container.classList.toggle('stepper', mq.matches);
+  showStep(current, false);
+}
+mq.addEventListener ? mq.addEventListener('change', applyMode) : mq.addListener(applyMode);
+prevBtn.addEventListener('click', () => showStep(current - 1, true));
+nextBtn.addEventListener('click', () => showStep(current + 1, true));
+applyMode();
+
+// ---------- Cálculo ----------
+function formatarData(iso){
+  if(!iso) return '';
+  const [ano, mes, dia] = iso.split('-');
+  return `${dia}/${mes}/${ano}`;
+}
+
+function lerRespostas(){
+  return ITEMS.map((t, i) => {
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    return { texto: t, valor: sel ? parseInt(sel.value, 10) : null, resposta: sel ? sel.dataset.label : null };
+  });
+}
+function lerDificuldade(){
+  const sel = document.querySelector('input[name="dif"]:checked');
+  return sel ? sel.dataset.label : '';
+}
+
+function calcularTotal(respostas){
+  // Retorna null se algum dos 7 itens estiver sem resposta
+  if(respostas.some(r => r.valor === null)) return null;
+  return respostas.reduce((s, r) => s + r.valor, 0);
+}
+
+function idSummary(){
+  const nome = document.getElementById('pname').value.trim();
+  const data = formatarData(document.getElementById('pdate').value);
+  const por = document.getElementById('filledby').value;
+  const parts = [];
+  if(nome) parts.push(`Paciente: ${nome}`);
+  if(data) parts.push(`Data: ${data}`);
+  if(por) parts.push(`Preenchido por: ${por}`);
+  return parts.join('  ·  ');
+}
+
+const resultEl = document.getElementById('result');
+const errorEl = document.getElementById('formError');
+
+function calcular(){
+  const respostas = lerRespostas();
+  const faltando = respostas.map((r, i) => r.valor === null ? i : -1).filter(i => i >= 0);
+  container.querySelectorAll('fieldset.question').forEach(fs => fs.classList.remove('missing'));
+
+  if(faltando.length){
+    resultEl.classList.remove('show');
+    faltando.forEach(i => document.getElementById(`step${i}`).classList.add('missing'));
+    const lista = faltando.map(i => i + 1).join(', ');
+    errorEl.textContent = faltando.length === 1
+      ? `Falta responder a pergunta ${lista}. O resultado só aparece com as 7 perguntas respondidas.`
+      : `Faltam responder as perguntas ${lista}. O resultado só aparece com as 7 perguntas respondidas.`;
+    errorEl.classList.add('show');
+    if(mq.matches){ showStep(faltando[0], true); }
+    else {
+      const fs = document.getElementById(`step${faltando[0]}`);
+      fs.scrollIntoView({behavior:'smooth', block:'center'});
+      fs.querySelector('input').focus({preventScroll:true});
+    }
+    return null;
+  }
+
+  errorEl.classList.remove('show');
+  errorEl.textContent = '';
+  const total = calcularTotal(respostas);
+  document.getElementById('idSummary').textContent = idSummary();
+  document.getElementById('scoreValue').textContent = `${total} / 21`;
+  document.getElementById('message').textContent = faixa(total);
+  document.getElementById('advice').hidden = total < 10;
+  const dif = lerDificuldade();
+  const difEl = document.getElementById('difficultyOut');
+  difEl.hidden = !dif;
+  difEl.textContent = dif ? `Quanto isso dificultou o dia a dia: ${dif}` : '';
+  resultEl.classList.add('show');
+  resultEl.scrollIntoView({behavior:'smooth', block:'start'});
+  resultEl.focus({preventScroll:true});
+  return total;
+}
+calcBtn.addEventListener('click', calcular);
+
+// Se alguém mudar uma resposta depois de ver o resultado, esconder o resultado antigo
+container.addEventListener('change', () => { if(resultEl.classList.contains('show')) resultEl.classList.remove('show'); });
+
+// ---------- Imprimir / copiar (tudo local, nada é enviado) ----------
+document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+function textoResultado(){
+  const respostas = lerRespostas();
+  const total = calcularTotal(respostas);
+  const summary = idSummary();
+  const linhas = respostas.map((r, i) => `${i+1}. ${r.texto}: ${r.resposta} (${r.valor})`).join('\n');
+  const dif = lerDificuldade();
+  let t = 'GAD-7 — Preocupação e ansiedade (últimas 2 semanas)\n';
+  if(summary) t += summary + '\n';
+  t += '\n' + linhas + '\n\n';
+  t += `Pontuação total: ${total} / 21\n`;
+  t += `Dificuldade no dia a dia: ${dif || 'não respondida'}\n\n`;
+  t += 'Este resultado não é um diagnóstico. Ele serve para organizar a conversa na consulta.';
+  return t;
+}
+
+function copiarResultado(){
+  const texto = textoResultado();
+  const status = document.getElementById('copyStatus');
+  const ok = () => { status.textContent = 'Resultado copiado. Agora é só colar onde quiser guardar.'; };
+  const falha = () => { status.textContent = 'Não foi possível copiar automaticamente. Use o botão Imprimir / salvar em PDF.'; };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(texto).then(ok, () => fallbackCopy(texto) ? ok() : falha());
+  } else {
+    fallbackCopy(texto) ? ok() : falha();
+  }
+}
+function fallbackCopy(texto){
+  const ta = document.createElement('textarea');
+  ta.value = texto; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  return ok;
+}
+document.getElementById('copyBtn').addEventListener('click', copiarResultado);
+</script>
+
+</body>
+</html>
